@@ -5,9 +5,9 @@ import bo.net.tigo.domain.Task;
 import bo.net.tigo.domain.Tasks;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * Created by aralco on 10/29/14.
  */
-@RestController
+@Controller
 @RequestMapping(value = "/luckynumbers/import")
 public class MonitorResourceImpl {
 
