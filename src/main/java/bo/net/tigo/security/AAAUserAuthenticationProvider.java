@@ -24,6 +24,7 @@ public class AAAUserAuthenticationProvider implements AuthenticationProvider {
 
         boolean result = aaaProxy.isValidUser(authentication.getPrincipal()
                 .toString(), authentication.getCredentials().toString());
+        System.out.println("##** ->> Lllamando al AAAUserAuthenticationProvider:authenticate:"+authentication);
 
         if (result) {
             List<GrantedAuthority> grantedAuthorities =

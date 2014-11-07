@@ -1,5 +1,7 @@
 package bo.net.tigo.security;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
 import org.springframework.security.oauth2.provider.ClientDetails;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
@@ -18,10 +20,12 @@ public class AAAGuestServiceImpl implements ClientDetailsService {
 
     private String id;
     private String secretKey;
+    private static final Logger logger = LoggerFactory.getLogger(AAAGuestServiceImpl.class);
 
     @Override
     public ClientDetails loadClientByClientId(String clientId)
             throws OAuth2Exception {
+        logger.info("%%^^&& --->> AAAGuestServiceImpl:loadClientByClientId:"+clientId);
 
         if (clientId.equals(id))
         {

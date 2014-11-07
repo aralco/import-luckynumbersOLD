@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+    <class name="bo.net.tigo.model.OrderRequest" table="ILN_ORDERREQUEST" schema="IMPORTLUCKY">
+        <id name="id" type="java.lang.Long">
+            <column name="ILN_OR_ID"/>
+            <generator class="native">
+            <param name="sequence">ILN_ORDERREQUEST_ID_SEQ</param>
+            </generator>
+        </id>
+        <property name="orderType" type="java.lang.String">
+            <column name="ILN_OR_ORDERTYPE"/>
+        </property>
+        <property name="city" type="java.lang.Integer">
+            <column name="ILN_OR_CITY"/>
+        </property>
+        <property name="from" type="java.lang.String">
+            <column name="ILN_OR_FROM"/>
+        </property>
+        <property name="to" type="java.lang.String">
+            <column name="ILN_OR_TO"/>
+        </property>
+        <many-to-one name="taskRequest" class="bo.net.tigo.model.TaskRequest" fetch="select">
+            <column name="ILN_TASKREQUEST_ILN_TR_ID" not-null="true"/>
+        </many-to-one>
+    </class>
+</hibernate-mapping>

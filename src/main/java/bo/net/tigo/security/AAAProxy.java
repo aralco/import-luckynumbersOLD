@@ -48,6 +48,7 @@ public class AAAProxy {
 //        }
 //
 //        return false;
+        System.out.println("#### AAAProxy:isValidUser:"+user);
         return true;
     }
 

@@ -3,6 +3,7 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:tx="http://www.springframework.org/schema/tx"
        xmlns:oauth="http://www.springframework.org/schema/security/oauth2"
        xmlns:sec="http://www.springframework.org/schema/security"
        xsi:schemaLocation="
@@ -12,8 +13,10 @@
        http://www.springframework.org/schema/context/spring-context.xsd
        http://www.springframework.org/schema/mvc
        http://www.springframework.org/schema/mvc/spring-mvc.xsd
+       http://www.springframework.org/schema/tx
+       http://www.springframework.org/schema/tx/spring-tx.xsd
        http://www.springframework.org/schema/security/oauth2
-       http://www.springframework.org/schema/security/spring-security-oauth2-1.0.xsd
+       http://www.springframework.org/schema/security/spring-security-oauth2.xsd
        http://www.springframework.org/schema/security
        http://www.springframework.org/schema/security/spring-security.xsd">
     <context:component-scan base-package="bo.net.tigo"/>
@@ -23,12 +26,28 @@
     <mvc:default-servlet-handler />
     <context:annotation-config/>
 
+    <!--<bean id="filterChainProxy" class="org.springframework.security.web.FilterChainProxy">-->
+        <!--<sec:filter-chain-map path-type="ant">-->
+            <!--<sec:filter-chain pattern="/webServices/**" filters="-->
+           <!--securityContextPersistenceFilterWithASCFalse,-->
+           <!--basicAuthenticationFilter,-->
+           <!--exceptionTranslationFilter,-->
+           <!--filterSecurityInterceptor" />-->
+            <!--<sec:filter-chain pattern="/**" filters="-->
+           <!--securityContextPersistenceFilterWithASCTrue,-->
+           <!--formLoginFilter,-->
+           <!--exceptionTranslationFilter,-->
+           <!--filterSecurityInterceptor" />-->
+        <!--</sec:filter-chain-map>-->
+    <!--</bean>    -->
+
 
     <sec:http pattern="/oauth/token" create-session="stateless"
               authentication-manager-ref="authenticationManager">
         <sec:intercept-url pattern="/oauth/token" access="IS_AUTHENTICATED_FULLY" />
         <sec:anonymous enabled="false" />
         <sec:http-basic entry-point-ref="clientAuthenticationEntryPoint" />
+        <!-- include this only if you need to authenticate clients via request parameters -->
         <sec:custom-filter ref="clientCredentialsTokenEndpointFilter" before="BASIC_AUTH_FILTER" />
         <sec:access-denied-handler ref="oauthAccessDeniedHandler" />
     </sec:http>
@@ -108,4 +127,65 @@
 
     <!--<bean id="MyResource" class="bo.net.tigo.rest.UserResource"></bean>-->
     <bean id="aaaProxy" class="bo.net.tigo.security.AAAProxy"></bean>
+
+    <!--********** DB2 Spring Data Source **********-->
+
+    <bean id="db2DataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="${db2.jdbc.driverClassName}"/>
+        <property name="url" value="jdbc:db2://${db2.jdbc.host}:${db2.jdbc.port}/${db2.jdbc.schema}"/>
+        <property name="username" value="${db2.jdbc.username}"/>
+        <property name="password" value="${db2.jdbc.password}"/>
+    </bean>
+
+    <!--********** Oracle Spring Data Source **********-->
+    <bean id="oracleDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="${oracle.jdbc.driverClassName}"/>
+        <property name="url" value="jdbc:oracle:thin:@//${oracle.jdbc.host}:${oracle.jdbc.port}/${oracle.jdbc.service.name}"/>
+        <property name="username" value="${oracle.jdbc.username}"/>
+        <property name="password" value="${oracle.jdbc.password}"/>
+    </bean>
+    <context:property-placeholder location="classpath:database.properties"/>
+
+
+    <!--********** SessionFactory **********-->
+    <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+        <property name="dataSource" ref="oracleDataSource"/>
+        <!--<property name="packagesToScan" value="bo.net.tigo.model" />-->
+        <property name="hibernateProperties">
+            <props>
+                <prop key="hibernate.dialect">org.hibernate.dialect.Oracle10gDialect</prop>
+                <prop key="hibernate.jdbc.batch_size">20</prop>
+                <prop key="hibernate.show_sql">true</prop>
+                <prop key="hibernate.connection.SetBigStringTryClob">true</prop>
+                <!--On production must be changed to validate-->
+                <prop key="hibernate.hbm2ddl.auto">create</prop>
+            </props>
+        </property>
+        <property name="mappingResources">
+            <list>
+                <value>mappings/OrderRequest.hbm.xml</value>
+                <value>mappings/TaskRequest.hbm.xml</value>
+            </list>
+        </property>
+        <!--<property name="mappingLocations">-->
+            <!--<list>-->
+                <!--<value>classpath:bo/net/tigo/model/TaskRequest.hbm.xml</value>-->
+                <!--<value>classpath:bo/net/tigo/model/OrderRequest.hbm.xml</value>-->
+            <!--</list>-->
+        <!--</property>-->
+
+        <!--<property name="annotatedClasses">-->
+            <!--<list>-->
+                <!--<value>bo.net.tigo.model.TaskRequest</value>-->
+                <!--<value>bo.net.tigo.model.OrderRequest</value>-->
+            <!--</list>-->
+        <!--</property>-->
+    </bean>
+
+    <!--********** TransactionManager **********-->
+    <bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+
 </beans>

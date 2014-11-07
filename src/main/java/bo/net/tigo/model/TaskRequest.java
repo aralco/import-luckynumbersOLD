@@ -1,28 +1,34 @@
-package bo.net.tigo.domain;
-
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.ser.std.DateSerializer;
+package bo.net.tigo.model;
 
 import java.util.Date;
-import java.util.List;
+import java.util.Set;
 
 /**
- * Created by aralco on 10/29/14.
+ * Created by aralco on 11/4/14.
  */
 public class TaskRequest {
-    @JsonSerialize(using=DateSerializer.class)
+    private Long id;
     private Date datetime;
     private boolean now;
-    private List<OrderRequest> orderRequests;
+    private Set<OrderRequest> orderRequests;
 
-    public TaskRequest(Date datetime, boolean now, List<OrderRequest> orderRequests) {
+    public TaskRequest(Date datetime, boolean now) {
+        this.datetime = datetime;
+        this.now = now;
+    }
+
+    public TaskRequest(Date datetime, boolean now, Set<OrderRequest> orderRequests) {
         this.datetime = datetime;
         this.now = now;
         this.orderRequests = orderRequests;
     }
 
+    public Long getId() {
+        return id;
+    }
 
-    public TaskRequest() {
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Date getDatetime() {
@@ -41,11 +47,11 @@ public class TaskRequest {
         this.now = now;
     }
 
-    public List<OrderRequest> getOrderRequests() {
+    public Set<OrderRequest> getOrderRequests() {
         return orderRequests;
     }
 
-    public void setOrderRequests(List<OrderRequest> orderRequests) {
+    public void setOrderRequests(Set<OrderRequest> orderRequests) {
         this.orderRequests = orderRequests;
     }
 }
