@@ -16,14 +16,18 @@ import java.util.List;
 public class AAAUserAuthenticationProvider implements AuthenticationProvider {
 
     @Autowired
-    AAAProxy aaaProxy;
+    MyAuthenticator myAuthenticator;
+//    @Autowired
+//    ActiveDirectoryLdapAuthenticationProvider myAuthenticationManager;
 
     @Override
     public Authentication authenticate(Authentication authentication)
             throws AuthenticationException {
+//Use it only on Test Server
+//        boolean result = myAuthenticator.login(authentication.getPrincipal()
+//                .toString(), authentication.getCredentials().toString());
+        boolean result = true;
 
-        boolean result = aaaProxy.isValidUser(authentication.getPrincipal()
-                .toString(), authentication.getCredentials().toString());
         System.out.println("##** ->> Lllamando al AAAUserAuthenticationProvider:authenticate:"+authentication);
 
         if (result) {

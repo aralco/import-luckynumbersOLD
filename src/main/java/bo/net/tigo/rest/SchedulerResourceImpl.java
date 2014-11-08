@@ -1,7 +1,7 @@
 package bo.net.tigo.rest;
 
-import bo.net.tigo.domain.CommonResponse;
-import bo.net.tigo.domain.TaskRequest;
+import bo.net.tigo.rest.domain.CommonResponse;
+import bo.net.tigo.rest.domain.TaskRequest;
 import bo.net.tigo.service.SchedulerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

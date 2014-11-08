@@ -6,7 +6,7 @@
 
     <class name="bo.net.tigo.model.TaskRequest" table="ILN_TASKREQUEST" schema="IMPORTLUCKY">
         <id name="id" type="java.lang.Long">
-            <column name="ILN_TR_ID"/>
+            <column name="TR_ID"/>
             <generator class="native">
                 <param name="sequence">ILN_TASKREQUEST_ID_SEQ</param>
             </generator>
@@ -17,9 +17,9 @@
         <property name="now" type="java.lang.Boolean">
             <column name="ILN_TR_NOW"/>
         </property>
-        <set name="orderRequests" table="ILN_TASKREQUEST" inverse="true" lazy="true" fetch="select">
+        <set name="orderRequests" table="ILN_ORDERREQUEST" inverse="true" lazy="true" fetch="select">
             <key>
-                <column name="ILN_TASKREQUEST_ILN_TR_ID" not-null="true"/>
+                <column name="TR_ID" not-null="true"/>
             </key>
             <one-to-many class="bo.net.tigo.model.OrderRequest"/>
         </set>

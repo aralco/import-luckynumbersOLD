@@ -1,7 +1,7 @@
 package bo.net.tigo.rest;
 
-import bo.net.tigo.domain.Token;
-import bo.net.tigo.domain.User;
+import bo.net.tigo.rest.domain.Token;
+import bo.net.tigo.rest.domain.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;

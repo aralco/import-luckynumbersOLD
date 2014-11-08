@@ -1,4 +1,4 @@
-package bo.net.tigo.domain;
+package bo.net.tigo.rest.domain;
 
 /**
  * Created by aralco on 10/22/14.

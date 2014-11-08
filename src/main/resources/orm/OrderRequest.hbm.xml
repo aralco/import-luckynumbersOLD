@@ -6,7 +6,7 @@
 
     <class name="bo.net.tigo.model.OrderRequest" table="ILN_ORDERREQUEST" schema="IMPORTLUCKY">
         <id name="id" type="java.lang.Long">
-            <column name="ILN_OR_ID"/>
+            <column name="OR_ID"/>
             <generator class="native">
             <param name="sequence">ILN_ORDERREQUEST_ID_SEQ</param>
             </generator>
@@ -24,7 +24,7 @@
             <column name="ILN_OR_TO"/>
         </property>
         <many-to-one name="taskRequest" class="bo.net.tigo.model.TaskRequest" fetch="select">
-            <column name="ILN_TASKREQUEST_ILN_TR_ID" not-null="true"/>
+            <column name="TR_ID" not-null="true"/>
         </many-to-one>
     </class>
 </hibernate-mapping>

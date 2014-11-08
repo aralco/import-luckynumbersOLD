@@ -95,6 +95,17 @@
             </exclusions>
         </dependency>
         <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-ldap</artifactId>
+            <version>3.2.5.RELEASE</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>commons-logging</artifactId>
+                    <groupId>commons-logging</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.ldap</groupId>
             <artifactId>spring-ldap-core</artifactId>
             <version>2.0.2.RELEASE</version>
@@ -206,6 +217,13 @@
             <artifactId>logback-classic</artifactId>
             <version>1.0.7</version>
         </dependency>
+
+        <!--<dependency>-->
+            <!--<groupId>xml-apis</groupId>-->
+            <!--<artifactId>xml-apis</artifactId>-->
+            <!--<version>1.0.b2</version>-->
+            <!--<scope>provided</scope>-->
+        <!--</dependency>-->
 
     </dependencies>
   <build>

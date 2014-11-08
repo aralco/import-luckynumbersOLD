@@ -23,6 +23,9 @@ public class TaskRequest {
         this.orderRequests = orderRequests;
     }
 
+    public TaskRequest() {
+    }
+
     public Long getId() {
         return id;
     }

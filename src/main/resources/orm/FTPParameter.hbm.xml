@@ -1,0 +1,39 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+    <class name="bo.net.tigo.model.FTPParameter" table="ILN_FTP_PARAMETER" schema="IMPORTLUCKY">
+        <id name="id" type="java.lang.Long">
+            <column name="ILN_FTP_PARAMETER_ID"/>
+            <generator class="native">
+                <param name="sequence">ILN_FTP_PARAMETER_SEQ_ID</param>
+            </generator>
+        </id>
+        <property name="host" type="java.lang.String">
+            <column name="ILN_FTP_PARAMETER_HOST"/>
+        </property>
+        <property name="port" type="java.lang.Integer">
+            <column name="ILN_FTP_PARAMETER_PORT"/>
+        </property>
+        <property name="user" type="java.lang.String">
+            <column name="ILN_FTP_PARAMETER_USER"/>
+        </property>
+        <property name="password" type="java.lang.String">
+            <column name="ILN_FTP_PARAMETER_PASSWORD"/>
+        </property>
+        <property name="pathin" type="java.lang.String">
+            <column name="ILN_FTP_PARAMETER_PATH_IN"/>
+        </property>
+        <property name="pathout" type="java.lang.String">
+            <column name="ILN_FTP_PARAMETER_PATH_OUT"/>
+        </property>
+        <property name="pathtemp" type="java.lang.String">
+            <column name="ILN_FTP_PARAMETER_PATH_TEMP"/>
+        </property>
+        <property name="lastUpdate" type="java.util.Date">
+            <column name="ILN_FTP_PARAMETER_LAST_UPDATE"/>
+        </property>
+    </class>
+</hibernate-mapping>

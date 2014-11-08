@@ -1,4 +1,4 @@
-package bo.net.tigo.domain;
+package bo.net.tigo.rest.domain;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.DateSerializer;

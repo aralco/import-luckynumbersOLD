@@ -1,4 +1,4 @@
-package bo.net.tigo.domain;
+package bo.net.tigo.rest.domain;
 
 import java.util.List;
 

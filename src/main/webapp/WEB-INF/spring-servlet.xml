@@ -4,8 +4,8 @@
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:mvc="http://www.springframework.org/schema/mvc"
        xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:security="http://www.springframework.org/schema/security"
        xmlns:oauth="http://www.springframework.org/schema/security/oauth2"
-       xmlns:sec="http://www.springframework.org/schema/security"
        xsi:schemaLocation="
        http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans.xsd
@@ -15,118 +15,15 @@
        http://www.springframework.org/schema/mvc/spring-mvc.xsd
        http://www.springframework.org/schema/tx
        http://www.springframework.org/schema/tx/spring-tx.xsd
-       http://www.springframework.org/schema/security/oauth2
-       http://www.springframework.org/schema/security/spring-security-oauth2.xsd
        http://www.springframework.org/schema/security
-       http://www.springframework.org/schema/security/spring-security.xsd">
+       http://www.springframework.org/schema/security/spring-security.xsd
+       http://www.springframework.org/schema/security/oauth2
+       http://www.springframework.org/schema/security/spring-security-oauth2.xsd">
     <context:component-scan base-package="bo.net.tigo"/>
     <mvc:annotation-driven />
-
-
     <mvc:default-servlet-handler />
     <context:annotation-config/>
-
-    <!--<bean id="filterChainProxy" class="org.springframework.security.web.FilterChainProxy">-->
-        <!--<sec:filter-chain-map path-type="ant">-->
-            <!--<sec:filter-chain pattern="/webServices/**" filters="-->
-           <!--securityContextPersistenceFilterWithASCFalse,-->
-           <!--basicAuthenticationFilter,-->
-           <!--exceptionTranslationFilter,-->
-           <!--filterSecurityInterceptor" />-->
-            <!--<sec:filter-chain pattern="/**" filters="-->
-           <!--securityContextPersistenceFilterWithASCTrue,-->
-           <!--formLoginFilter,-->
-           <!--exceptionTranslationFilter,-->
-           <!--filterSecurityInterceptor" />-->
-        <!--</sec:filter-chain-map>-->
-    <!--</bean>    -->
-
-
-    <sec:http pattern="/oauth/token" create-session="stateless"
-              authentication-manager-ref="authenticationManager">
-        <sec:intercept-url pattern="/oauth/token" access="IS_AUTHENTICATED_FULLY" />
-        <sec:anonymous enabled="false" />
-        <sec:http-basic entry-point-ref="clientAuthenticationEntryPoint" />
-        <!-- include this only if you need to authenticate clients via request parameters -->
-        <sec:custom-filter ref="clientCredentialsTokenEndpointFilter" before="BASIC_AUTH_FILTER" />
-        <sec:access-denied-handler ref="oauthAccessDeniedHandler" />
-    </sec:http>
-
-    <sec:http pattern="/protected/**" create-session="never"
-              entry-point-ref="oauthAuthenticationEntryPoint">
-        <sec:anonymous enabled="false" />
-        <sec:intercept-url pattern="/protected/**" method="GET" access="IS_AUTHENTICATED_FULLY" />
-        <sec:custom-filter ref="resourceServerFilter" before="PRE_AUTH_FILTER" />
-        <sec:access-denied-handler ref="oauthAccessDeniedHandler" />
-    </sec:http>
-
-    <bean id="oauthAuthenticationEntryPoint"
-          class="org.springframework.security.oauth2.provider.error.OAuth2AuthenticationEntryPoint">
-    </bean>
-
-    <bean id="clientAuthenticationEntryPoint"
-          class="org.springframework.security.oauth2.provider.error.OAuth2AuthenticationEntryPoint">
-        <property name="realmName" value="springsec/client" />
-        <property name="typeName" value="Basic" />
-    </bean>
-
-    <bean id="oauthAccessDeniedHandler"
-          class="org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHandler">
-    </bean>
-
-    <bean id="clientCredentialsTokenEndpointFilter"
-          class="org.springframework.security.oauth2.provider.client.ClientCredentialsTokenEndpointFilter">
-        <property name="authenticationManager" ref="authenticationManager" />
-    </bean>
-
-    <sec:authentication-manager alias="authenticationManager">
-        <sec:authentication-provider user-service-ref="clientDetailsUserService" />
-    </sec:authentication-manager>
-
-    <bean id="clientDetailsUserService"
-          class="org.springframework.security.oauth2.provider.client.ClientDetailsUserDetailsService">
-        <constructor-arg ref="clientDetails" />
-    </bean>
-
-    <bean id="clientDetails" class="bo.net.tigo.security.AAAGuestServiceImpl">
-        <property name="id" value="mysupplycompany" />
-        <property name="secretKey" value="mycompanykey" />
-    </bean>
-
-    <sec:authentication-manager id="userAuthenticationManager">
-        <sec:authentication-provider ref="customUserAuthenticationProvider" />
-    </sec:authentication-manager>
-
-    <bean id="customUserAuthenticationProvider"
-          class="bo.net.tigo.security.AAAUserAuthenticationProvider">
-    </bean>
-
-    <oauth:authorization-server
-            client-details-service-ref="clientDetails" token-services-ref="tokenServices">
-        <oauth:authorization-code />
-        <oauth:implicit/>
-        <oauth:refresh-token/>
-        <oauth:client-credentials />
-        <oauth:password authentication-manager-ref="userAuthenticationManager"/>
-    </oauth:authorization-server>
-
-    <oauth:resource-server id="resourceServerFilter"
-                           resource-id="springsec" token-services-ref="tokenServices" />
-
-    <bean id="tokenStore"
-          class="org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore" />
-
-    <bean id="tokenServices"
-          class="org.springframework.security.oauth2.provider.token.DefaultTokenServices">
-        <property name="tokenStore" ref="tokenStore" />
-        <property name="supportRefreshToken" value="true" />
-        <property name="accessTokenValiditySeconds" value="1200"></property>
-        <property name="clientDetailsService" ref="clientDetails" />
-    </bean>
-
-
-    <!--<bean id="MyResource" class="bo.net.tigo.rest.UserResource"></bean>-->
-    <bean id="aaaProxy" class="bo.net.tigo.security.AAAProxy"></bean>
+    <!--############### PERSISTENCE ###############-->
 
     <!--********** DB2 Spring Data Source **********-->
 
@@ -163,23 +60,17 @@
         </property>
         <property name="mappingResources">
             <list>
-                <value>mappings/OrderRequest.hbm.xml</value>
-                <value>mappings/TaskRequest.hbm.xml</value>
+                <value>orm/OrderRequest.hbm.xml</value>
+                <value>orm/TaskRequest.hbm.xml</value>
+                <value>orm/AccessLog.hbm.xml</value>
+                <value>orm/City.hbm.xml</value>
+                <value>orm/Contact.hbm.xml</value>
+                <value>orm/FTPParameter.hbm.xml</value>
+                <value>orm/Job.hbm.xml</value>
+                <value>orm/Task.hbm.xml</value>
+                <value>orm/User.hbm.xml</value>
             </list>
         </property>
-        <!--<property name="mappingLocations">-->
-            <!--<list>-->
-                <!--<value>classpath:bo/net/tigo/model/TaskRequest.hbm.xml</value>-->
-                <!--<value>classpath:bo/net/tigo/model/OrderRequest.hbm.xml</value>-->
-            <!--</list>-->
-        <!--</property>-->
-
-        <!--<property name="annotatedClasses">-->
-            <!--<list>-->
-                <!--<value>bo.net.tigo.model.TaskRequest</value>-->
-                <!--<value>bo.net.tigo.model.OrderRequest</value>-->
-            <!--</list>-->
-        <!--</property>-->
     </bean>
 
     <!--********** TransactionManager **********-->
@@ -187,5 +78,111 @@
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
     <tx:annotation-driven transaction-manager="transactionManager"/>
+
+    <!--############### SECURITY ###############-->
+    <security:http pattern="/oauth/token" create-session="stateless"
+                   authentication-manager-ref="authenticationManager">
+        <security:intercept-url pattern="/oauth/token" access="IS_AUTHENTICATED_FULLY" />
+        <security:anonymous enabled="false" />
+        <security:http-basic entry-point-ref="clientAuthenticationEntryPoint" />
+        <!-- include this only if you need to authenticate clients via request parameters -->
+        <security:custom-filter ref="clientCredentialsTokenEndpointFilter" before="BASIC_AUTH_FILTER" />
+        <security:access-denied-handler ref="oauthAccessDeniedHandler" />
+    </security:http>
+
+    <security:http pattern="/protected/**" create-session="never"
+                   entry-point-ref="oauthAuthenticationEntryPoint">
+        <security:anonymous enabled="false" />
+        <security:intercept-url pattern="/protected/**" method="GET" access="IS_AUTHENTICATED_FULLY" />
+        <security:custom-filter ref="resourceServerFilter" before="PRE_AUTH_FILTER" />
+        <security:access-denied-handler ref="oauthAccessDeniedHandler" />
+    </security:http>
+
+    <bean id="oauthAuthenticationEntryPoint"
+          class="org.springframework.security.oauth2.provider.error.OAuth2AuthenticationEntryPoint">
+    </bean>
+
+    <bean id="clientAuthenticationEntryPoint"
+          class="org.springframework.security.oauth2.provider.error.OAuth2AuthenticationEntryPoint">
+        <property name="realmName" value="springsec/client" />
+        <property name="typeName" value="Basic" />
+    </bean>
+
+    <bean id="oauthAccessDeniedHandler"
+          class="org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHandler">
+    </bean>
+
+    <bean id="clientCredentialsTokenEndpointFilter"
+          class="org.springframework.security.oauth2.provider.client.ClientCredentialsTokenEndpointFilter">
+        <property name="authenticationManager" ref="authenticationManager" />
+    </bean>
+
+    <security:authentication-manager alias="authenticationManager">
+        <security:authentication-provider user-service-ref="clientDetailsUserService" />
+    </security:authentication-manager>
+
+    <bean id="clientDetailsUserService"
+          class="org.springframework.security.oauth2.provider.client.ClientDetailsUserDetailsService">
+        <constructor-arg ref="clientDetails" />
+    </bean>
+
+    <bean id="clientDetails" class="bo.net.tigo.security.AAAGuestServiceImpl">
+        <property name="id" value="mysupplycompany" />
+        <property name="secretKey" value="mycompanykey" />
+    </bean>
+
+    <security:authentication-manager id="userAuthenticationManager">
+        <security:authentication-provider ref="customUserAuthenticationProvider" />
+    </security:authentication-manager>
+
+    <bean id="customUserAuthenticationProvider"
+          class="bo.net.tigo.security.AAAUserAuthenticationProvider">
+    </bean>
+
+    <oauth:authorization-server
+            client-details-service-ref="clientDetails" token-services-ref="tokenServices">
+        <oauth:authorization-code />
+        <oauth:implicit/>
+        <oauth:refresh-token/>
+        <oauth:client-credentials />
+        <oauth:password authentication-manager-ref="userAuthenticationManager"/>
+    </oauth:authorization-server>
+
+    <oauth:resource-server id="resourceServerFilter"
+                           resource-id="springsec" token-services-ref="tokenServices" />
+
+    <bean id="tokenStore"
+          class="org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore" />
+
+    <bean id="tokenServices"
+          class="org.springframework.security.oauth2.provider.token.DefaultTokenServices">
+        <property name="tokenStore" ref="tokenStore" />
+        <property name="supportRefreshToken" value="true" />
+        <property name="accessTokenValiditySeconds" value="1200"></property>
+        <property name="clientDetailsService" ref="clientDetails" />
+    </bean>
+
+    <!--LDAP Authentication-->
+    <!--<bean id="contextSource" class="org.springframework.ldap.core.support.LdapContextSource">-->
+    <!--<property name="url" value="ldap://73.20.0.6:389"/>-->
+    <!--<property name="base" value="dc=tigo,dc=net,dc=bo"/>-->
+    <!--</bean>-->
+    <!--<bean id="ldapTemplate" class="org.springframework.ldap.core.LdapTemplate">-->
+    <!--<constructor-arg ref="contextSource"/>-->
+    <!--<property name="ignorePartialResultException" value="true"/>-->
+    <!--</bean>-->
+    <bean id="myAuthenticator" class="bo.net.tigo.security.MyAuthenticator">
+        <!--<constructor-arg ref="ldapTemplate"/>-->
+    </bean>
+
+    <!--<bean id="adAuthenticationProvider" class="org.springframework.security.ldap.authentication.ad.ActiveDirectoryLdapAuthenticationProvider">-->
+    <!--<constructor-arg value="tigo.net.bo"/>-->
+    <!--<constructor-arg value="ldap://73.20.0.6:389"/>-->
+    <!--<property name="useAuthenticationRequestCredentials" value="true" />-->
+    <!--<property name="convertSubErrorCodesToExceptions" value="true"/>-->
+    <!--</bean>-->
+    <!--<sec:authentication-manager id="myAuthenticationManager">-->
+    <!--<sec:authentication-provider ref="adAuthenticationProvider" />-->
+    <!--</sec:authentication-manager>-->
 
 </beans>

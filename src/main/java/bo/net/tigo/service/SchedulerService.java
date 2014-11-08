@@ -2,7 +2,7 @@ package bo.net.tigo.service;
 
 import bo.net.tigo.dao.OrderRequestDao;
 import bo.net.tigo.dao.TaskRequestDao;
-import bo.net.tigo.domain.TaskRequest;
+import bo.net.tigo.rest.domain.TaskRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +33,7 @@ public class SchedulerService {
             taskRequestModel = new bo.net.tigo.model.TaskRequest(taskRequest.getDatetime(), taskRequest.isNow());
         taskRequestDao.save(taskRequestModel);
 
-        for(bo.net.tigo.domain.OrderRequest or : taskRequest.getOrderRequests()) {
+        for(bo.net.tigo.rest.domain.OrderRequest or : taskRequest.getOrderRequests()) {
             bo.net.tigo.model.OrderRequest tempOrder = new bo.net.tigo.model.OrderRequest();
             tempOrder.setCity(or.getCity());
             tempOrder.setFrom(or.getFrom());

@@ -1,8 +1,8 @@
 package bo.net.tigo.rest;
 
-import bo.net.tigo.domain.Order;
-import bo.net.tigo.domain.Task;
-import bo.net.tigo.domain.Tasks;
+import bo.net.tigo.rest.domain.Order;
+import bo.net.tigo.rest.domain.Task;
+import bo.net.tigo.rest.domain.Tasks;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
