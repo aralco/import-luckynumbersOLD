@@ -16,18 +16,18 @@ import java.util.List;
  * Created by aralco on 10/29/14.
  */
 @Service
-public class AAAGuestServiceImpl implements ClientDetailsService {
+public class ClientDetailsServiceImpl implements ClientDetailsService {
 
-    private String id;
-    private String secretKey;
-    private static final Logger logger = LoggerFactory.getLogger(AAAGuestServiceImpl.class);
+    private String clientId;
+    private String clientSecret;
+    private static final Logger logger = LoggerFactory.getLogger(ClientDetailsServiceImpl.class);
 
     @Override
     public ClientDetails loadClientByClientId(String clientId)
             throws OAuth2Exception {
         logger.info("%%^^&& --->> AAAGuestServiceImpl:loadClientByClientId:"+clientId);
 
-        if (clientId.equals(id))
+        if (clientId.equals(this.clientId))
         {
             List<String> authorizedGrantTypes = new ArrayList<String>();
             authorizedGrantTypes.add("password");
@@ -35,32 +35,32 @@ public class AAAGuestServiceImpl implements ClientDetailsService {
             authorizedGrantTypes.add("client_credentials");
 
             BaseClientDetails clientDetails = new BaseClientDetails();
-            clientDetails.setClientId(id);
-            clientDetails.setClientSecret(secretKey);
+            clientDetails.setClientId(this.clientId);
+            clientDetails.setClientSecret(clientSecret);
             clientDetails.setAuthorizedGrantTypes(authorizedGrantTypes);
 
             return clientDetails;
         }
         else {
-            throw new NoSuchClientException("No client recognized with id: "
+            throw new NoSuchClientException("No client recognized with clientId: "
                     + clientId);
         }
     }
 
-    public String getId() {
-        return id;
+    public String getClientId() {
+        return clientId;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
     }
 
-    public String getSecretKey() {
-        return secretKey;
+    public String getClientSecret() {
+        return clientSecret;
     }
 
-    public void setSecretKey(String secretKey) {
-        this.secretKey = secretKey;
+    public void setClientSecret(String clientSecret) {
+        this.clientSecret = clientSecret;
     }
 
 }

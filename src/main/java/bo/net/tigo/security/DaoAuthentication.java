@@ -1,6 +1,9 @@
 package bo.net.tigo.security;
 
-import org.springframework.ldap.core.LdapTemplate;
+import bo.net.tigo.dao.UserDao;
+import bo.net.tigo.model.User;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import javax.naming.Context;
 import javax.naming.NamingEnumeration;
@@ -18,28 +21,23 @@ import java.util.Map;
 /**
  * Created by aralco on 11/7/14.
  */
-public class MyAuthenticator {
-    private LdapTemplate ldapTemplate = null;
+@Service
+public class DaoAuthentication {
 
-//    public MyAuthenticator(LdapTemplate ldapTemplate) {
-//        this.ldapTemplate = ldapTemplate;
-//    }
+    @Autowired
+    private UserDao userDao;
 
-    public LdapTemplate getLdapTemplate() {
-        return ldapTemplate;
+    public boolean isUser(String username)   {
+        boolean exists = false;
+        User user = userDao.findByUsername(username);
+        if(user != null && user.getUsername().equals(username))
+            exists = true;
+        return exists;
     }
 
-    public void setLdapTemplate(LdapTemplate ldapTemplate) {
-        this.ldapTemplate = ldapTemplate;
-    }
 
-//    public boolean login(String username, String password)  {
-//        AndFilter filter = new AndFilter();
-//        filter.and(new EqualsFilter("objectclass","user")).
-//                and(new EqualsFilter("sAMAccountName", username));
-//        return ldapTemplate.authenticate(DistinguishedName.EMPTY_PATH, filter.toString(), password);
-//    }
-    public boolean login(String user, String pass) {
+
+    public boolean activeDirectoryLogin(String user, String pass) {
 
         String LDAPSearchBase = "DC=tigo,DC=net,DC=bo";
         String LDAPUrl = "ldap://73.20.0.6:389";
