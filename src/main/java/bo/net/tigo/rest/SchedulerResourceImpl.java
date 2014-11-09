@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * Created by aralco on 10/22/14.
  */
 @Controller
-@RequestMapping(value = "/luckynumbers/import",
+@RequestMapping(value = "/import",
         consumes = "application/json",
         produces = "application/json")
 public class SchedulerResourceImpl {

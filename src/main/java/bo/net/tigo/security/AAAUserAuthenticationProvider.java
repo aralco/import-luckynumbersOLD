@@ -17,30 +17,36 @@ public class AAAUserAuthenticationProvider implements AuthenticationProvider {
 
     @Autowired
     MyAuthenticator myAuthenticator;
-//    @Autowired
-//    ActiveDirectoryLdapAuthenticationProvider myAuthenticationManager;
 
     @Override
     public Authentication authenticate(Authentication authentication)
             throws AuthenticationException {
-//Use it only on Test Server
-//        boolean result = myAuthenticator.login(authentication.getPrincipal()
-//                .toString(), authentication.getCredentials().toString());
-        boolean result = true;
+        System.out.println("User Authentication:"+authentication.getPrincipal()+","+authentication.getCredentials());
+        if(authentication.getPrincipal().equals("user")&& authentication.getCredentials().equals("user"))
+        {
 
-        System.out.println("##** ->> Lllamando al AAAUserAuthenticationProvider:authenticate:"+authentication);
+            List<GrantedAuthority> grantedAuthorities = new ArrayList<GrantedAuthority>();
+            AAAUserAuthenticationToken auth=new AAAUserAuthenticationToken(authentication.getPrincipal(), authentication.getCredentials(),grantedAuthorities);
 
-        if (result) {
-            List<GrantedAuthority> grantedAuthorities =
-
-                    new ArrayList<GrantedAuthority>();
-            AAAUserAuthenticationToken auth =
-
-                    new AAAUserAuthenticationToken(authentication.getPrincipal(),
-                            authentication.getCredentials(), grantedAuthorities);
-
+            System.out.println("OAUTH: auth object -->> "+auth);
             return auth;
-        } else {
+
+        }
+        else if(authentication.getPrincipal().equals("admin")&& authentication.getCredentials().equals("admin"))
+        {
+            List<GrantedAuthority> grantedAuthorities = new ArrayList<GrantedAuthority>();
+            AAAUserAuthenticationToken auth=new AAAUserAuthenticationToken(authentication.getPrincipal(), authentication.getCredentials(),grantedAuthorities);
+            System.out.println("OAUTH: auth object -->> "+auth);
+            return auth;
+        }
+        else if(authentication.getPrincipal().equals("user1")&& authentication.getCredentials().equals("user1"))
+        {
+            List<GrantedAuthority> grantedAuthorities = new ArrayList<GrantedAuthority>();
+            AAAUserAuthenticationToken auth=new AAAUserAuthenticationToken(authentication.getPrincipal(), authentication.getCredentials(),grantedAuthorities);
+            System.out.println("OAUTH: auth object -->> "+auth);
+            return auth;
+        }
+        else{
             throw new BadCredentialsException("Bad User Credentials.");
         }
     }

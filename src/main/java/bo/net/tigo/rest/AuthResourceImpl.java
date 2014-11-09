@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
  * Created by aralco on 10/22/14.
  */
 @Controller
-@RequestMapping(value = "/luckynumbers/import")
+@RequestMapping(value = "/import")
 public class AuthResourceImpl {
     public static final String USERNAME = "admin";
     public static final String PASSWORD = "secret";
