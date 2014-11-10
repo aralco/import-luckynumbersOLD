@@ -26,12 +26,9 @@ public class AAAUserAuthenticationToken
     public AAAUserAuthenticationToken(Object principal, Object credentials,
                                       Collection<? extends GrantedAuthority> authorities) {
         super(authorities);
-        System.out.println("-->>1 Token Authentication:"+authorities);
         this.principal = principal;
         this.credentials = credentials;
-        System.out.println("-->>2 Token Authentication:"+principal+", "+credentials);
         super.setAuthenticated(true);
-        System.out.println("-->>3 Token Authentication:"+principal+", "+credentials);
     }
 
     public Object getCredentials() {

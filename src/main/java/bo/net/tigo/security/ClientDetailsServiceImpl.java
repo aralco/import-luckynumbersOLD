@@ -25,7 +25,7 @@ public class ClientDetailsServiceImpl implements ClientDetailsService {
     @Override
     public ClientDetails loadClientByClientId(String clientId)
             throws OAuth2Exception {
-        logger.info("%%^^&& --->> AAAGuestServiceImpl:loadClientByClientId:"+clientId);
+        logger.info("ClientDetailsServiceImpl:loadClientByClientId:"+clientId);
 
         if (clientId.equals(this.clientId))
         {
