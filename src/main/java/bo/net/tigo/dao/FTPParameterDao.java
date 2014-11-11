@@ -9,8 +9,7 @@ import java.util.List;
  */
 public interface FTPParameterDao {
     public void save(FTPParameter ftpParameter);
-    public void update(FTPParameter ftpParameter);
-    public FTPParameter findLast(Long userId);
+    public FTPParameter findLast();
     public List<FTPParameter> findAll();
 
 }

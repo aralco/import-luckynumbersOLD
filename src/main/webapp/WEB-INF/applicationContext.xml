@@ -6,8 +6,8 @@
        xmlns:tx="http://www.springframework.org/schema/tx"
        xmlns:security="http://www.springframework.org/schema/security"
        xmlns:oauth="http://www.springframework.org/schema/security/oauth2"
-       xsi:schemaLocation="
-       http://www.springframework.org/schema/beans
+       xmlns:task="http://www.springframework.org/schema/task"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/context
        http://www.springframework.org/schema/context/spring-context.xsd
@@ -18,7 +18,7 @@
        http://www.springframework.org/schema/security
        http://www.springframework.org/schema/security/spring-security.xsd
        http://www.springframework.org/schema/security/oauth2
-       http://www.springframework.org/schema/security/spring-security-oauth2.xsd">
+       http://www.springframework.org/schema/security/spring-security-oauth2.xsd http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd">
     <context:component-scan base-package="bo.net.tigo"/>
     <mvc:annotation-driven />
     <mvc:default-servlet-handler />
@@ -60,8 +60,6 @@
         </property>
         <property name="mappingResources">
             <list>
-                <value>orm/OrderRequest.hbm.xml</value>
-                <value>orm/TaskRequest.hbm.xml</value>
                 <value>orm/AccessLog.hbm.xml</value>
                 <value>orm/City.hbm.xml</value>
                 <value>orm/Contact.hbm.xml</value>
@@ -93,8 +91,12 @@
     <security:http pattern="/luckynumbers/**" create-session="never"
                    entry-point-ref="oauthAuthenticationEntryPoint">
         <security:anonymous enabled="false" />
-        <security:intercept-url pattern="/luckynumbers/**" method="GET" access="IS_AUTHENTICATED_FULLY"/>
-        <security:intercept-url pattern="/luckynumbers/**" method="POST" access="IS_AUTHENTICATED_FULLY"/>
+        <security:intercept-url pattern="/luckynumbers/config/**" method="GET" access="ROLE_ADMIN"/>
+        <security:intercept-url pattern="/luckynumbers/config/**" method="POST" access="ROLE_ADMIN"/>
+        <security:intercept-url pattern="/luckynumbers/scheduler/**" method="GET" access="ROLE_USER, ROLE_ADMIN"/>
+        <security:intercept-url pattern="/luckynumbers/scheduler/**" method="POST" access="ROLE_USER, ROLE_ADMIN"/>
+        <security:intercept-url pattern="/luckynumbers/monitor/**" method="GET" access="ROLE_USER, ROLE_ADMIN"/>
+        <security:intercept-url pattern="/luckynumbers/monitor/**" method="POST" access="ROLE_USER, ROLE_ADMIN"/>
         <security:custom-filter ref="resourceServerFilter" before="PRE_AUTH_FILTER"/>
         <security:access-denied-handler ref="oauthAccessDeniedHandler" />
     </security:http>
@@ -132,10 +134,10 @@
     <!--OAUTH2 USER AUTHENTICATION - PART2 TOKEN GENERATION-->
     <oauth:authorization-server
             client-details-service-ref="clientDetails" token-services-ref="tokenServices">
-        <oauth:authorization-code />
+        <oauth:authorization-code/>
         <oauth:implicit/>
         <oauth:refresh-token/>
-        <oauth:client-credentials />
+        <oauth:client-credentials/>
         <oauth:password authentication-manager-ref="userAuthenticationManager"/>
     </oauth:authorization-server>
 
@@ -173,4 +175,11 @@
         <property name="useAuthenticationRequestCredentials" value="true" />
         <property name="convertSubErrorCodesToExceptions" value="true"/>
     </bean>
+
+    <!--Starting taskScheduler-->
+    <!--<task:scheduled-tasks scheduler="threadPoolTaskScheduler"> -->
+        <!--<task:scheduled ref="" method="" trigger=""/>-->
+    <!--</task:scheduled-tasks>-->
+    <bean id="threadPoolTaskScheduler" class="org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler"/>
+
 </beans>

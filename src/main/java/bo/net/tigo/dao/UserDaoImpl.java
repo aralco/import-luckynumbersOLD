@@ -1,6 +1,7 @@
 package bo.net.tigo.dao;
 
 import bo.net.tigo.model.User;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -18,29 +19,44 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public void save(User user) {
-
+        Session session = sessionFactory.getCurrentSession();
+        session.save(user);
     }
 
     @Override
     public void update(User user) {
-
+        Session session = sessionFactory.getCurrentSession();
+        session.update(user);
     }
 
     @Override
     public User findOne(Long userId) {
-        return null;
+        Session session = sessionFactory.getCurrentSession();
+        return (User)session.load(User.class, userId);
+
     }
 
+    //TODO check
     @Override
+    @SuppressWarnings("unchecked")
     public User findByUsername(String username) {
         //MOCK
-        User user = new User();
-        user.setUsername("sysportal");
-        return user;
+//        User user = new User();
+//        user.setUsername(username);
+//        return user;
+        //REAL
+        Session session = sessionFactory.getCurrentSession();
+        return (User)session.createQuery("from User where username=:username")
+                .setParameter("username", username)
+                .uniqueResult();
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<User> findAll() {
-        return null;
+
+        Session session = sessionFactory.getCurrentSession();
+        return session.createQuery("from User").list();
+
     }
 }

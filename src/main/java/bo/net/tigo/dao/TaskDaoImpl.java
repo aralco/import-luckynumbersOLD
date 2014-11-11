@@ -18,22 +18,30 @@ public class TaskDaoImpl implements TaskDao {
 
     @Override
     public void save(Task task) {
+        //TODO verify
         Session session = sessionFactory.getCurrentSession();
         session.save(task);
     }
 
     @Override
     public void update(Task task) {
-
+        //TODO verify
+        Session session = sessionFactory.getCurrentSession();
+        session.update(task);
     }
 
     @Override
     public Task findOne(Long taskId) {
-        return null;
+        Session session = sessionFactory.getCurrentSession();
+        return (Task)session.load(Task.class, taskId);
+
     }
 
     @Override
-    public List<Task> findAll() {
-        return null;
+    @SuppressWarnings("unchecked")
+    public List<Task> findAll(Long jobId) {
+        //TODO verify
+        Session session = sessionFactory.getCurrentSession();
+        return session.createQuery("from Task").list();
     }
 }

@@ -12,6 +12,7 @@ import bo.net.tigo.rest.domain.TaskRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +27,8 @@ public class SchedulerService {
     private JobDao jobDao;
     @Autowired
     private TaskDao taskDao;
+    @Autowired
+    private ThreadPoolTaskScheduler threadPoolTaskScheduler;
 
     private static final Logger logger = LoggerFactory.getLogger(SchedulerService.class);
 
@@ -71,8 +74,15 @@ public class SchedulerService {
             //task.setCreatedDate(creationDate);
             taskDao.save(task);
         }
-        job.getTasks();
+
+        importNumbers(job.getScheduledDate());
         return job;
     }
+
+    private void importNumbers(Date scheduledDate) {
+        System.out.println("import Numbers");
+        threadPoolTaskScheduler.schedule(new GetFrozenAndFreeNumbers(), scheduledDate);
+    }
+
 
 }

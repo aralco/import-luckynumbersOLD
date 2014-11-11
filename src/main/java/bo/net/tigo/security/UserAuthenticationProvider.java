@@ -1,5 +1,6 @@
 package bo.net.tigo.security;
 
+import bo.net.tigo.model.Roles;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,12 +38,16 @@ public class UserAuthenticationProvider implements AuthenticationProvider {
             Authentication auth = authentication;
             if(authentication.getPrincipal().equals("sysportal")&& authentication.getCredentials().equals("Sysp0rt4l")) {
                 List<GrantedAuthority> grantedAuthorities = new ArrayList<GrantedAuthority>();
+                //TODO with role loaded from user
+                grantedAuthorities.add(new LuckyNumbersGrantedAuthorities(String.valueOf(Roles.ROLE_USER)));
                 AAAUserAuthenticationToken authTemp = new AAAUserAuthenticationToken(authentication.getPrincipal(), authentication.getCredentials(), grantedAuthorities);
                 auth = authTemp;
                 logger.info("User successfully authenticated - authenticate:"+auth);
             }
             if(authentication.getPrincipal().equals("admin")&& authentication.getCredentials().equals("admin")) {
                 List<GrantedAuthority> grantedAuthorities = new ArrayList<GrantedAuthority>();
+                //TODO with role loaded from user
+                grantedAuthorities.add(new LuckyNumbersGrantedAuthorities(String.valueOf(Roles.ROLE_ADMIN)));
                 AAAUserAuthenticationToken authTemp = new AAAUserAuthenticationToken(authentication.getPrincipal(), authentication.getCredentials(), grantedAuthorities);
                 auth = authTemp;
                 logger.info("User successfully authenticated - authenticate:"+auth);

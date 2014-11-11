@@ -1,6 +1,7 @@
 package bo.net.tigo.dao;
 
 import bo.net.tigo.model.Contact;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -17,21 +18,27 @@ public class ContactDaoImpl implements ContactDao {
 
     @Override
     public void save(Contact contact) {
-
+        Session session = sessionFactory.getCurrentSession();
+        session.save(contact);
     }
 
     @Override
     public void update(Contact contact) {
-
+        Session session = sessionFactory.getCurrentSession();
+        session.update(contact);
     }
 
     @Override
     public Contact findOne(Long contactId) {
-        return null;
+        Session session = sessionFactory.getCurrentSession();
+        return (Contact)session.load(Contact.class, contactId);
+
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<Contact> findAll() {
-        return null;
+        Session session = sessionFactory.getCurrentSession();
+        return session.createQuery("from Contact").list();
     }
 }
