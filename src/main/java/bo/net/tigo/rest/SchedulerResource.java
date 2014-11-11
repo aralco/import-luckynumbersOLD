@@ -21,7 +21,6 @@ import javax.validation.Valid;
  */
 @Controller
 @RequestMapping(value = "/scheduler",
-        consumes = "application/json",
         produces = "application/json")
 public class SchedulerResource {
 
@@ -29,7 +28,7 @@ public class SchedulerResource {
     private SchedulerService schedulerService;
     private static final Logger logger = LoggerFactory.getLogger(SchedulerResource.class);
 
-    @RequestMapping(value = "/job", method = RequestMethod.POST)
+    @RequestMapping(value = "/job", method = RequestMethod.POST, consumes = "application/json")
     @ResponseBody
     public ResponseEntity<Job> createJob(@RequestBody @Valid JobRequest jobRequest) {
         if(jobRequest==null)
@@ -47,14 +46,14 @@ public class SchedulerResource {
         return new ResponseEntity<Job>(new Job(), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/job/{jobId:[\\p{Digit}]+}", method = RequestMethod.POST)
+    @RequestMapping(value = "/job/{jobId:[\\p{Digit}]+}", method = RequestMethod.POST, consumes = "application/json")
     @ResponseBody
     public ResponseEntity<Job> updateJob(@PathVariable Long jobId, @RequestBody @Valid Job job)   {
         return null;
     }
 
 
-    @RequestMapping(value = "/task/{jobId:[\\p{Digit}]+}", method = RequestMethod.POST)
+    @RequestMapping(value = "/task/{jobId:[\\p{Digit}]+}", method = RequestMethod.POST, consumes = "application/json")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
     public ResponseEntity<Task> createTask(@PathVariable Long jobId, @RequestBody @Valid TaskRequest taskRequest)   {
@@ -67,7 +66,7 @@ public class SchedulerResource {
         return null;
     }
 
-    @RequestMapping(value = "/task/{taskId:[\\p{Digit}]+}", method = RequestMethod.POST)
+    @RequestMapping(value = "/task/{taskId:[\\p{Digit}]+}", method = RequestMethod.POST, consumes = "application/json")
     @ResponseBody
     public ResponseEntity<Task> updateTask(@PathVariable Long taskId, @RequestBody @Valid Task task)   {
         return null;

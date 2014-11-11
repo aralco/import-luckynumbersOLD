@@ -32,29 +32,41 @@ public class JobDaoImpl implements JobDao {
     @Override
     public Job findOne(Long jobId) {
         Session session = sessionFactory.getCurrentSession();
-        Job job = (Job) session.load(Job.class, jobId);
-        return job;
+        return (Job)session.load(Job.class, jobId);
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<Job> finByOwner(String owner) {
-        return null;
+        Session session = sessionFactory.getCurrentSession();
+        return session.createQuery("from Job where owner=:owner")
+                .setParameter("owner", owner)
+                .list();
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<Job> finByState(String state) {
-        return null;
+        Session session = sessionFactory.getCurrentSession();
+        return session.createQuery("from Job where state=:state")
+                .setParameter("state", state)
+                .list();
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<Job> finBetweenDates(Date from, Date to) {
-        return null;
+        Session session = sessionFactory.getCurrentSession();
+        return session.createQuery("from Job where scheduledDate between :from and :to")
+                .setParameter("from", from)
+                .setParameter("to", to)
+                .list();
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<Job> findAll() {
         Session session = sessionFactory.getCurrentSession();
-        List<Job> jobs = (List<Job>)session.createQuery("from Job").list();
-        return jobs;
+        return session.createQuery("from Job").list();
     }
 }

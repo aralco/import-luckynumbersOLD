@@ -12,11 +12,10 @@ import java.util.List;
  */
 @Controller
 @RequestMapping(value = "/config",
-        consumes = "application/json",
         produces = "application/json")
 public class ConfigurationResource {
 
-    @RequestMapping(value = "/city", method = RequestMethod.POST)
+    @RequestMapping(value = "/city", method = RequestMethod.POST, consumes = "application/json")
     @ResponseBody
     public ResponseEntity<City> createCity(@RequestBody City city)   {
         return null;
@@ -28,7 +27,7 @@ public class ConfigurationResource {
         return null;
     }
 
-    @RequestMapping(value = "/contact", method = RequestMethod.POST)
+    @RequestMapping(value = "/contact", method = RequestMethod.POST, consumes = "application/json")
     @ResponseBody
     public ResponseEntity<Contact> createContact(@RequestBody Contact contact)   {
         return null;
@@ -41,7 +40,7 @@ public class ConfigurationResource {
     }
 
 
-    @RequestMapping(value = "/contact/{contactId}", method = RequestMethod.POST)
+    @RequestMapping(value = "/contact/{contactId}", method = RequestMethod.POST, consumes = "application/json")
     @ResponseBody
     public ResponseEntity<Contact> updateContact(@PathVariable Long contactId, @RequestBody Contact contact)   {
         return null;
@@ -53,7 +52,7 @@ public class ConfigurationResource {
         return null;
     }
 
-    @RequestMapping(value = "/user", method = RequestMethod.POST)
+    @RequestMapping(value = "/user", method = RequestMethod.POST, consumes = "application/json")
     @ResponseBody
     public ResponseEntity<User> createUser(@RequestBody User user)   {
         return null;
@@ -65,7 +64,7 @@ public class ConfigurationResource {
         return null;
     }
 
-    @RequestMapping(value = "/user/{userId}", method = RequestMethod.POST)
+    @RequestMapping(value = "/user/{userId}", method = RequestMethod.POST, consumes = "application/json")
     @ResponseBody
     public ResponseEntity<User> updateUser(@PathVariable Long contactId, @RequestBody User user)   {
         return null;
@@ -89,7 +88,7 @@ public class ConfigurationResource {
         return null;
     }
 
-    @RequestMapping(value = "/ftp", method = RequestMethod.POST)
+    @RequestMapping(value = "/ftp", method = RequestMethod.POST, consumes = "application/json")
     @ResponseBody
     public ResponseEntity<FTPParameter> updateFTPParameters(@RequestBody FTPParameter ftpParameter)   {
         return null;

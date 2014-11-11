@@ -1,5 +1,6 @@
 package bo.net.tigo.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.DateSerializer;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -15,7 +16,7 @@ public class Job {
     private String name;
     private String description;
     @JsonSerialize(using=DateSerializer.class)
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    @DateTimeFormat(pattern = "yyyy-MM-ddThh:mm:ss±hh:mm")
     private Date scheduledDate; //yyyy-MM-ddThh:mm:ss±hh:mm; e.g. 2014-11-05T12:54:00-04:00
     private Boolean now;  //If user decides to start now. false by default.
     private String state; //{NOT_STARTED;IN_PROGRESS;DONE};
@@ -29,6 +30,7 @@ public class Job {
     private Date createdDate;
     @JsonSerialize(using=DateSerializer.class)
     private Date lastUpdate;
+    @JsonManagedReference
     private Set<Task> tasks;
 
     public Job(Long id, String name, String description, Date scheduledDate, Boolean now, String state, String owner, Integer totalTasks, Integer passedTasks, Integer failedTasks, String totalCoverage, String summary, Date createdDate, Date lastUpdate, Set<Task> tasks) {
@@ -188,4 +190,5 @@ public class Job {
     public void setTasks(Set<Task> tasks) {
         this.tasks = tasks;
     }
+
 }

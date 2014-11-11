@@ -4,6 +4,8 @@ import bo.net.tigo.dao.JobDao;
 import bo.net.tigo.dao.TaskDao;
 import bo.net.tigo.exception.LuckyNumbersGenericException;
 import bo.net.tigo.model.Job;
+import bo.net.tigo.model.State;
+import bo.net.tigo.model.Status;
 import bo.net.tigo.model.Task;
 import bo.net.tigo.rest.domain.JobRequest;
 import bo.net.tigo.rest.domain.TaskRequest;
@@ -30,14 +32,26 @@ public class SchedulerService {
     @Transactional
     public Job createJob(JobRequest jobRequest) throws LuckyNumbersGenericException {
         logger.info("createJob:"+jobRequest);
+        Date creationDate = new Date();
         Job job = new Job();
         job.setName(jobRequest.getName());
         job.setDescription(jobRequest.getDescription());
         if(jobRequest.getNow())
-            job.setScheduledDate(new Date());
+            job.setScheduledDate(creationDate);
         else
             job.setScheduledDate(jobRequest.getScheduledDate());
         job.setNow(jobRequest.getNow());
+        job.setState(String.valueOf(State.NOT_STARTED));
+        job.setOwner("user");
+        int totalTasks=0;
+        if(jobRequest.getTasks()!=null && jobRequest.getTasks().size()>0)
+            totalTasks=jobRequest.getTasks().size();
+        job.setTotalTasks(totalTasks);
+        job.setPassedTasks(0);
+        job.setFailedTasks(0);
+        job.setTotalCoverage("0%");
+        job.setSummary("");
+        //job.setCreatedDate(creationDate);
         jobDao.save(job);
 
         for(TaskRequest taskRequest : jobRequest.getTasks())   {
@@ -46,9 +60,18 @@ public class SchedulerService {
             task.setCity(taskRequest.getCity());
             task.setFrom(taskRequest.getFrom());
             task.setTo(taskRequest.getTo());
+            task.setExecutionDate(job.getScheduledDate());
+            task.setStatus(String.valueOf(Status.SCHEDULED));
+            task.setProcessed(0);
+            task.setPassed(0);
+            task.setFailed(0);
             task.setJob(job);
+            task.setSummary("");
+            task.setCoverage("0%");
+            //task.setCreatedDate(creationDate);
             taskDao.save(task);
         }
+        job.getTasks();
         return job;
     }
 

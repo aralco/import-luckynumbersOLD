@@ -51,7 +51,7 @@
             <column name="ILN_JOB_LAST_UPDATE"/>
         </property>
 
-        <set name="tasks" table="TASK" inverse="true" lazy="true" fetch="select">
+        <set name="tasks" table="TASK" inverse="true" cascade="all" lazy="false" fetch="join">
             <key>
                 <column name="ILN_JOB_ID" not-null="true"/>
             </key>

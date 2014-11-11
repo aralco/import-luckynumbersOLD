@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -21,10 +23,15 @@ public class MonitorService {
     private static final Logger logger = LoggerFactory.getLogger(MonitorService.class);
 
     @Transactional
-    public List<Job> monitorJobs()  {
-        logger.info("monitorJobsBEFORE:");
-        List<Job> jobs= jobDao.findAll();
-        logger.info("monitorJobsAFTER:"+jobs);
+    public List<Job> monitorJobs(Long jobId, String owner, String jobState, Date from, Date to)  {
+        List<Job> jobs= new ArrayList<Job>(0);
+//        if(jobId==0 && owner=="" && jobState=="" && from==null && to==null)  {
+//            jobs = jobDao.findAll();
+//        }
+//        else if(jobId==null && owner==null && jobState==null && from==null && to==null)  {
+//            jobs = jobDao.findAll();
+//        }
+        jobs = jobDao.findAll();
         return jobs;
     }
 }

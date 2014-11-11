@@ -1,9 +1,9 @@
 package bo.net.tigo.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.DateSerializer;
 
-import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 /**
@@ -29,7 +29,7 @@ public class Task {
     private Date createdDate;
     @JsonSerialize(using=DateSerializer.class)
     private Date lastUpdate;
-    @NotNull
+    @JsonBackReference
     private Job job;
 
     public Task(Long id, String type, Integer city, String from, String to, Date executionDate, String status, Integer processed, Integer passed, Integer failed, String summary, String coverage, String urlin, String urlout, Date createdDate, Date lastUpdate, Job job) {
@@ -209,4 +209,5 @@ public class Task {
     public void setJob(Job job) {
         this.job = job;
     }
+
 }
