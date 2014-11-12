@@ -39,13 +39,16 @@
             <column name="ILN_USER_LAST_UPDATE"/>
         </property>
         <property name="enabled" type="java.lang.Boolean">
-            <column name="ILN_USER_ENABLED"/>
+            <column name="ILN_USER_ENABLED" not-null="true"/>
         </property>
         <property name="username" type="java.lang.String">
-            <column name="ILN_USER_USERNAME"/>
+            <column name="ILN_USER_USERNAME" not-null="true"/>
+        </property>
+        <property name="password" type="java.lang.String">
+            <column name="ILN_USER_PASSWORD" not-null="true"/>
         </property>
         <property name="role" type="java.lang.String">
-            <column name="ILN_USER_ROLE"/>
+            <column name="ILN_USER_ROLE" not-null="true"/>
         </property>
     </class>
 </hibernate-mapping>

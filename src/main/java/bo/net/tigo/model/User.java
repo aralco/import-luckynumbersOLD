@@ -24,9 +24,10 @@ public class User {
     private Date lastUpdate;
     private Boolean enabled;
     private String username; //must be the same AD username
-    private String role; //{ADMIN;NORMAL_USER}
+    private String password; //must be the same AD password
+    private String role; //{ROLE_ADMIN,ROLE_USER}
 
-    public User(Long id, String name, String email1, String email2, String phone1, String phone2, String phone3, String description, Date createdDate, Date lastUpdate, Boolean enabled, String username, String role) {
+    public User(Long id, String name, String email1, String email2, String phone1, String phone2, String phone3, String description, Date createdDate, Date lastUpdate, Boolean enabled, String username, String password, String role) {
         this.id = id;
         this.name = name;
         this.email1 = email1;
@@ -39,6 +40,7 @@ public class User {
         this.lastUpdate = lastUpdate;
         this.enabled = enabled;
         this.username = username;
+        this.password = password;
         this.role = role;
     }
 
@@ -139,6 +141,14 @@ public class User {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getRole() {

@@ -9,6 +9,7 @@ import bo.net.tigo.model.Status;
 import bo.net.tigo.model.Task;
 import bo.net.tigo.rest.domain.JobRequest;
 import bo.net.tigo.rest.domain.TaskRequest;
+import bo.net.tigo.security.SecurityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +46,7 @@ public class SchedulerService {
             job.setScheduledDate(jobRequest.getScheduledDate());
         job.setNow(jobRequest.getNow());
         job.setState(String.valueOf(State.NOT_STARTED));
-        job.setOwner("user");
+        job.setOwner(SecurityUtils.getCurrentUsername());
         int totalTasks=0;
         if(jobRequest.getTasks()!=null && jobRequest.getTasks().size()>0)
             totalTasks=jobRequest.getTasks().size();

@@ -24,6 +24,7 @@
     <mvc:default-servlet-handler />
     <context:annotation-config/>
     <context:property-placeholder location="classpath:luckynumbers.properties"/>
+    <security:global-method-security secured-annotations="enabled" />
 
     <!--############### PERSISTENCE ###############-->
 
@@ -142,9 +143,14 @@
     </oauth:authorization-server>
 
     <security:authentication-manager id="userAuthenticationManager">
-        <security:authentication-provider ref="userAuthenticationProvider" />
+        <security:authentication-provider user-service-ref="userDetailsService"/>
+        <security:authentication-provider ref="activeDirectoryLdapAuthenticationProvider" />
+        <!--<security:authentication-provider ref="userAuthenticationProvider" />-->
     </security:authentication-manager>
 
+    <bean id="userDetailsService"
+          class="bo.net.tigo.security.UserDetailsServiceImpl">
+    </bean>
     <bean id="userAuthenticationProvider"
           class="bo.net.tigo.security.UserAuthenticationProvider">
     </bean>

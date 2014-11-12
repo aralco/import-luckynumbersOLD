@@ -40,11 +40,6 @@ public class UserDaoImpl implements UserDao {
     @Override
     @SuppressWarnings("unchecked")
     public User findByUsername(String username) {
-        //MOCK
-//        User user = new User();
-//        user.setUsername(username);
-//        return user;
-        //REAL
         Session session = sessionFactory.getCurrentSession();
         return (User)session.createQuery("from User where username=:username")
                 .setParameter("username", username)

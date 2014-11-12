@@ -18,6 +18,9 @@ import java.util.List;
 @Service
 public class ClientDetailsServiceImpl implements ClientDetailsService {
 
+    public static final String PASSWORD = "password";
+    public static final String REFRESH_TOKEN = "refresh_token";
+    public static final String CLIENT_CREDENTIALS = "client_credentials";
     private String clientId;
     private String clientSecret;
     private static final Logger logger = LoggerFactory.getLogger(ClientDetailsServiceImpl.class);
@@ -30,9 +33,9 @@ public class ClientDetailsServiceImpl implements ClientDetailsService {
         if (clientId.equals(this.clientId))
         {
             List<String> authorizedGrantTypes = new ArrayList<String>();
-            authorizedGrantTypes.add("password");
-            authorizedGrantTypes.add("refresh_token");
-            authorizedGrantTypes.add("client_credentials");
+            authorizedGrantTypes.add(PASSWORD);
+            authorizedGrantTypes.add(REFRESH_TOKEN);
+            authorizedGrantTypes.add(CLIENT_CREDENTIALS);
 
             BaseClientDetails clientDetails = new BaseClientDetails();
             clientDetails.setClientId(this.clientId);
