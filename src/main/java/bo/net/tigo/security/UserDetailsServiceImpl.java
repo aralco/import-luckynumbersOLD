@@ -1,12 +1,10 @@
 package bo.net.tigo.security;
 
 import bo.net.tigo.dao.UserDao;
-import bo.net.tigo.exception.LuckyNumbersGenericException;
 import bo.net.tigo.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -32,14 +30,12 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         logger.info("loadUserByUsername:"+username);
         User domainUser = userDao.findByUsername(username);
-        if(domainUser==null)
-            throw new UsernameNotFoundException("user "+username+" doesn't exists.");
-        if(!domainUser.getEnabled())
-            throw new LuckyNumbersGenericException(HttpStatus.UNAUTHORIZED.toString(), "User "+domainUser.getUsername()+" has disabled account.");
-
+        if(domainUser==null)    {
+            //if user doesn't exist in database must go away
+            return null;
+        }
         List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>(0);
         authorities.add(new LuckyNumbersGrantedAuthorities(domainUser.getRole()));
-
         return new org.springframework.security.core.userdetails.User(
                 domainUser.getUsername(),
                 domainUser.getPassword(),

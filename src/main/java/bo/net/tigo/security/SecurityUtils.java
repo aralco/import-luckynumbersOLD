@@ -3,7 +3,6 @@ package bo.net.tigo.security;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 /**
  * Created by aralco on 11/11/14.
@@ -23,13 +22,7 @@ public class SecurityUtils {
     }
 
     public static String getCurrentUsername()  {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String username = null;
-        if (principal instanceof UserDetails) {
-            username = ((UserDetails)principal).getUsername();
-        } else
-            throw new UsernameNotFoundException("user "+username+" doesn't exists.");
-        return username;
+        return SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
     }
 
 }
