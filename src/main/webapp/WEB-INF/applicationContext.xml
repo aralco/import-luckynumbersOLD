@@ -7,6 +7,8 @@
        xmlns:security="http://www.springframework.org/schema/security"
        xmlns:oauth="http://www.springframework.org/schema/security/oauth2"
        xmlns:task="http://www.springframework.org/schema/task"
+       xmlns:int="http://www.springframework.org/schema/integration"
+       xmlns:int-ftp="http://www.springframework.org/schema/integration/ftp"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/context
@@ -18,7 +20,12 @@
        http://www.springframework.org/schema/security
        http://www.springframework.org/schema/security/spring-security.xsd
        http://www.springframework.org/schema/security/oauth2
-       http://www.springframework.org/schema/security/spring-security-oauth2.xsd http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd">
+       http://www.springframework.org/schema/security/spring-security-oauth2.xsd
+       http://www.springframework.org/schema/task
+       http://www.springframework.org/schema/task/spring-task.xsd
+       http://www.springframework.org/schema/integration/ftp
+       http://www.springframework.org/schema/integration/ftp/spring-integration-ftp.xsd
+       ">
     <context:component-scan base-package="bo.net.tigo"/>
     <mvc:annotation-driven />
     <mvc:default-servlet-handler />
@@ -193,9 +200,32 @@
     </bean>
 
     <!--Starting taskScheduler-->
-    <!--<task:scheduled-tasks scheduler="threadPoolTaskScheduler"> -->
-        <!--<task:scheduled ref="" method="" trigger=""/>-->
+    <!--<task:scheduled-tasks scheduler="luckyNumbersScheduler">-->
+        <!--<task:scheduled ref="getFrozenAndFreeNumbers" method="run" fixed-delay="60000"/>-->
     <!--</task:scheduled-tasks>-->
-    <bean id="threadPoolTaskScheduler" class="org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler"/>
+    <!--<task:scheduler id="luckyNumbersScheduler" pool-size="10"/>-->
+
+    <!--FTP Server Inbound-->
+    <!--<bean id="ftpClientFactory" class="org.springframework.integration.ftp.session.DefaultFtpSessionFactory">-->
+        <!--<property name="host" value="${ftp.host}"/>-->
+        <!--<property name="port" value="${ftp.port}"/>-->
+        <!--<property name="username" value="${ftp.user}"/>-->
+        <!--<property name="password" value="${ftp.password}"/>-->
+    <!--</bean>-->
+
+    <!--<int-ftp:inbound-channel-adapter id="ftpInbound"-->
+                                     <!--channel="ftpChannel"-->
+                                     <!--session-factory="ftpClientFactory"-->
+                                     <!--filename-pattern="*.out"-->
+                                     <!--auto-create-local-directory="true"-->
+                                     <!--delete-remote-files="false"-->
+                                     <!--remote-directory="/Public/ftpserver/out/"-->
+                                     <!--local-directory="file:ftpInbound">-->
+        <!--<int:poller fixed-rate="1000"/>-->
+    <!--</int-ftp:inbound-channel-adapter>-->
+
+    <!--<int:channel id="ftpChannel">-->
+        <!--<int:queue/>-->
+    <!--</int:channel>-->
 
 </beans>

@@ -39,7 +39,14 @@ public class TaskDaoImpl implements TaskDao {
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<Task> findAll(Long jobId) {
+    public List<Task> findAll() {
+        Session session = sessionFactory.getCurrentSession();
+        return session.createQuery("from Task").list();
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<Task> findByJob(Long jobId) {
         //TODO verify
         Session session = sessionFactory.getCurrentSession();
         return session.createQuery("from Task").list();

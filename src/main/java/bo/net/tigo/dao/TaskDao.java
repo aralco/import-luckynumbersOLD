@@ -11,5 +11,6 @@ public interface TaskDao {
     public void save(Task task);
     public void update(Task task);
     public Task findOne(Long taskId);
-    public List<Task> findAll(Long jobId);
+    public List<Task> findAll();
+    public List<Task> findByJob(Long jobId);
 }
