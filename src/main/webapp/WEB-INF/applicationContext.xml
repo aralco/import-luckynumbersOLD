@@ -102,6 +102,16 @@
         <security:access-denied-handler ref="oauthAccessDeniedHandler" />
     </security:http>
 
+    <security:http pattern="/logout" create-session="never"
+          entry-point-ref="oauthAuthenticationEntryPoint"
+          xmlns="http://www.springframework.org/schema/security">
+        <anonymous enabled="false" />
+        <intercept-url pattern="/logout" method="GET" />
+        <security:logout invalidate-session="true" logout-url="/logout" success-handler-ref="logoutSuccessHandler"   />
+        <custom-filter ref="resourceServerFilter" before="PRE_AUTH_FILTER" />
+        <access-denied-handler ref="oauthAccessDeniedHandler" />
+    </security:http>
+
     <!--OAUTH2 CLIENT AUTHENTICATION-->
     <bean id="clientCredentialsTokenEndpointFilter"
           class="org.springframework.security.oauth2.provider.client.ClientCredentialsTokenEndpointFilter">
@@ -168,6 +178,10 @@
     <!--OAUTH2 USER AUTHENTICATION USING TOKEN - RESOURCE ACCESS-->
     <oauth:resource-server id="resourceServerFilter"
                            resource-id="springsec" token-services-ref="tokenServices" />
+    <!--Looout-->
+    <bean id="logoutSuccessHandler" class="bo.net.tigo.security.LogoutImpl" >
+        <property name="tokenstore" ref="tokenStore"></property>
+    </bean>
 
     <!--LDAP Authentication-->
     <bean id="activeDirectoryLdapAuthenticationProvider" class="org.springframework.security.ldap.authentication.ad.ActiveDirectoryLdapAuthenticationProvider">
