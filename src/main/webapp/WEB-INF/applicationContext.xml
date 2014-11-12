@@ -98,6 +98,7 @@
         <security:intercept-url pattern="/luckynumbers/scheduler/**" method="POST" access="ROLE_USER, ROLE_ADMIN"/>
         <security:intercept-url pattern="/luckynumbers/monitor/**" method="GET" access="ROLE_USER, ROLE_ADMIN"/>
         <security:intercept-url pattern="/luckynumbers/monitor/**" method="POST" access="ROLE_USER, ROLE_ADMIN"/>
+        <security:intercept-url pattern="/luckynumbers/sysutils/**" method="GET" access="ROLE_USER, ROLE_ADMIN"/>
         <security:custom-filter ref="resourceServerFilter" before="PRE_AUTH_FILTER"/>
         <security:access-denied-handler ref="oauthAccessDeniedHandler" />
     </security:http>

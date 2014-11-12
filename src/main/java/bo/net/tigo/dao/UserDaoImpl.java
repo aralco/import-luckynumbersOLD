@@ -36,7 +36,6 @@ public class UserDaoImpl implements UserDao {
 
     }
 
-    //TODO check
     @Override
     @SuppressWarnings("unchecked")
     public User findByUsername(String username) {

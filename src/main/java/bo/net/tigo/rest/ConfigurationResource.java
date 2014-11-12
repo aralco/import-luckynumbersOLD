@@ -1,6 +1,8 @@
 package bo.net.tigo.rest;
 
 import bo.net.tigo.model.*;
+import bo.net.tigo.service.ConfigurationService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +16,8 @@ import java.util.List;
 @RequestMapping(value = "/config",
         produces = "application/json")
 public class ConfigurationResource {
+    @Autowired
+    private ConfigurationService configurationService;
 
     @RequestMapping(value = "/city", method = RequestMethod.POST, consumes = "application/json")
     @ResponseBody

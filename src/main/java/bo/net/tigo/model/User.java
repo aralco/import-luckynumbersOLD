@@ -1,5 +1,6 @@
 package bo.net.tigo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.DateSerializer;
 
@@ -24,6 +25,7 @@ public class User {
     private Date lastUpdate;
     private Boolean enabled;
     private String username; //must be the same AD username
+    @JsonIgnore
     private String password; //must be the same AD password
     private String role; //{ROLE_ADMIN,ROLE_USER}
 
