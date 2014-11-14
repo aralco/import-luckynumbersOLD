@@ -17,6 +17,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by aralco on 10/22/14.
@@ -55,6 +57,7 @@ public class SchedulerService {
         job.setCreatedDate(creationDate);
         jobDao.save(job);
 
+        Set<Task> tasks = new HashSet<Task>(0);
         for(TaskRequest taskRequest : jobRequest.getTasks())   {
             Task task = new Task();
             task.setType(taskRequest.getType());
@@ -71,8 +74,9 @@ public class SchedulerService {
             task.setCoverage("0%");
             task.setCreatedDate(creationDate);
             taskDao.save(task);
+            tasks.add(task);
         }
-
+        job.setTasks(tasks);
         return job;
     }
 

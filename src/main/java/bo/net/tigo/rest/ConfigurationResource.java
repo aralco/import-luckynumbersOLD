@@ -1,11 +1,9 @@
 package bo.net.tigo.rest;
 
 import bo.net.tigo.model.*;
-import bo.net.tigo.rest.domain.AccessLogResponse;
-import bo.net.tigo.rest.domain.CityResponse;
-import bo.net.tigo.rest.domain.ContactResponse;
-import bo.net.tigo.rest.domain.UserResponse;
 import bo.net.tigo.service.ConfigurationService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +22,8 @@ public class ConfigurationResource {
     @Autowired
     private ConfigurationService configurationService;
 
+    private static final Logger logger = LoggerFactory.getLogger(ConfigurationResource.class);
+
     @RequestMapping(value = "/city", method = RequestMethod.POST, consumes = "application/json")
     @ResponseBody
     public ResponseEntity<City> createCity(@RequestBody City city)   {
@@ -33,9 +33,9 @@ public class ConfigurationResource {
 
     @RequestMapping(value = "/city", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<CityResponse> viewCities()   {
+    public ResponseEntity<List<City>> viewCities()   {
         List<City> cities = configurationService.getCities();
-        return new ResponseEntity<CityResponse>(new CityResponse(cities), HttpStatus.OK);
+        return new ResponseEntity<List<City>>(cities, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/contact", method = RequestMethod.POST, consumes = "application/json")
@@ -48,7 +48,9 @@ public class ConfigurationResource {
     @RequestMapping(value = "/contact/{contactId}", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<Contact> viewContact(@PathVariable Long contactId)   {
+        logger.info("Contact for lookup"+contactId);
         Contact contact = configurationService.getContact(contactId);
+        logger.info("Contact found: "+contact);
         return new ResponseEntity<Contact>(contact, HttpStatus.OK);
     }
 
@@ -62,9 +64,9 @@ public class ConfigurationResource {
 
     @RequestMapping(value = "/contact", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<ContactResponse> viewContacts()   {
+    public ResponseEntity<List<Contact>> viewContacts()   {
         List<Contact> contacts = configurationService.getContacts();
-        return new ResponseEntity<ContactResponse>(new ContactResponse(contacts), HttpStatus.OK);
+        return new ResponseEntity<List<Contact>>(contacts, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/user", method = RequestMethod.POST, consumes = "application/json")
@@ -90,16 +92,16 @@ public class ConfigurationResource {
 
     @RequestMapping(value = "/user", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<UserResponse> viewUsers()   {
+    public ResponseEntity<List<User>> viewUsers()   {
         List<User> users = configurationService.getUsers();
-        return new ResponseEntity<UserResponse>(new UserResponse(users), HttpStatus.OK);
+        return new ResponseEntity<List<User>>(users, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/accesslog", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<AccessLogResponse> viewAccessLogs()   {
+    public ResponseEntity<List<AccessLog>> viewAccessLogs()   {
         List<AccessLog> accessLogs = configurationService.getAccessLogs();
-        return new ResponseEntity<AccessLogResponse>(new AccessLogResponse(accessLogs), HttpStatus.OK);
+        return new ResponseEntity<List<AccessLog>>(accessLogs, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/ftp", method = RequestMethod.GET)
