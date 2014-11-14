@@ -1,8 +1,13 @@
 package bo.net.tigo.rest;
 
 import bo.net.tigo.model.*;
+import bo.net.tigo.rest.domain.AccessLogResponse;
+import bo.net.tigo.rest.domain.CityResponse;
+import bo.net.tigo.rest.domain.ContactResponse;
+import bo.net.tigo.rest.domain.UserResponse;
 import bo.net.tigo.service.ConfigurationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -22,68 +27,79 @@ public class ConfigurationResource {
     @RequestMapping(value = "/city", method = RequestMethod.POST, consumes = "application/json")
     @ResponseBody
     public ResponseEntity<City> createCity(@RequestBody City city)   {
-        return null;
+        City createdCity = configurationService.createCity(city);
+        return new ResponseEntity<City>(createdCity, HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "/city", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<List<City>> viewTask()   {
-        return null;
+    public ResponseEntity<CityResponse> viewCities()   {
+        List<City> cities = configurationService.getCities();
+        return new ResponseEntity<CityResponse>(new CityResponse(cities), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/contact", method = RequestMethod.POST, consumes = "application/json")
     @ResponseBody
     public ResponseEntity<Contact> createContact(@RequestBody Contact contact)   {
-        return null;
+        Contact createdContact = configurationService.createContact(contact);
+        return new ResponseEntity<Contact>(createdContact, HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "/contact/{contactId}", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<Contact> viewContact(@PathVariable Long contactId)   {
-        return null;
+        Contact contact = configurationService.getContact(contactId);
+        return new ResponseEntity<Contact>(contact, HttpStatus.OK);
     }
 
 
     @RequestMapping(value = "/contact/{contactId}", method = RequestMethod.POST, consumes = "application/json")
     @ResponseBody
     public ResponseEntity<Contact> updateContact(@PathVariable Long contactId, @RequestBody Contact contact)   {
-        return null;
+        Contact updatedContact = configurationService.updateContact(contact);
+        return new ResponseEntity<Contact>(updatedContact, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/contact", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<List<City>> viewContacts()   {
-        return null;
+    public ResponseEntity<ContactResponse> viewContacts()   {
+        List<Contact> contacts = configurationService.getContacts();
+        return new ResponseEntity<ContactResponse>(new ContactResponse(contacts), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/user", method = RequestMethod.POST, consumes = "application/json")
     @ResponseBody
     public ResponseEntity<User> createUser(@RequestBody User user)   {
-        return null;
+        User createdUser = configurationService.createUser(user);
+        return new ResponseEntity<User>(createdUser, HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "/user/{userId}", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<User> viewUser(@PathVariable Long userId)   {
-        return null;
+        User user = configurationService.getUser(userId);
+        return new ResponseEntity<User>(user, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/user/{userId}", method = RequestMethod.POST, consumes = "application/json")
     @ResponseBody
-    public ResponseEntity<User> updateUser(@PathVariable Long contactId, @RequestBody User user)   {
-        return null;
+    public ResponseEntity<User> updateUser(@PathVariable Long userId, @RequestBody User user)   {
+        User updatedUser = configurationService.updateUser(user);
+        return new ResponseEntity<User>(updatedUser, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/user", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<List<User>> viewUsers()   {
-        return null;
+    public ResponseEntity<UserResponse> viewUsers()   {
+        List<User> users = configurationService.getUsers();
+        return new ResponseEntity<UserResponse>(new UserResponse(users), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/accesslog", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<List<AccessLog>> viewAccessLogs()   {
-        return null;
+    public ResponseEntity<AccessLogResponse> viewAccessLogs()   {
+        List<AccessLog> accessLogs = configurationService.getAccessLogs();
+        return new ResponseEntity<AccessLogResponse>(new AccessLogResponse(accessLogs), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/ftp", method = RequestMethod.GET)

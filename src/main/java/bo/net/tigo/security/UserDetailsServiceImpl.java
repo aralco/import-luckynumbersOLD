@@ -38,7 +38,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         authorities.add(new LuckyNumbersGrantedAuthorities(domainUser.getRole()));
         return new org.springframework.security.core.userdetails.User(
                 domainUser.getUsername(),
-                domainUser.getPassword(),
+                "",
                 domainUser.getEnabled(),
                 domainUser.getEnabled(),
                 domainUser.getEnabled(),

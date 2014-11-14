@@ -52,7 +52,7 @@ public class SchedulerService {
         job.setFailedTasks(0);
         job.setTotalCoverage("0%");
         job.setSummary("");
-        //job.setCreatedDate(creationDate);
+        job.setCreatedDate(creationDate);
         jobDao.save(job);
 
         for(TaskRequest taskRequest : jobRequest.getTasks())   {
@@ -62,14 +62,14 @@ public class SchedulerService {
             task.setFrom(taskRequest.getFrom());
             task.setTo(taskRequest.getTo());
             task.setExecutionDate(job.getScheduledDate());
-            task.setStatus(String.valueOf(Status.NOT_SCHEDULED));
+            task.setStatus(String.valueOf(Status.SCHEDULED));
             task.setProcessed(0);
             task.setPassed(0);
             task.setFailed(0);
             task.setJob(job);
             task.setSummary("");
             task.setCoverage("0%");
-            //task.setCreatedDate(creationDate);
+            task.setCreatedDate(creationDate);
             taskDao.save(task);
         }
 

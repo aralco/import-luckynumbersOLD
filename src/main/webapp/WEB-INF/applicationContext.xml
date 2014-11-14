@@ -99,6 +99,8 @@
     <security:http pattern="/luckynumbers/**" create-session="never"
                    entry-point-ref="oauthAuthenticationEntryPoint">
         <security:anonymous enabled="false" />
+        <security:intercept-url pattern="/luckynumbers/config/city/**" method="GET" access="ROLE_USER, ROLE_ADMIN"/>
+        <security:intercept-url pattern="/luckynumbers/config/city/**" method="POST" access="ROLE_ADMIN"/>
         <security:intercept-url pattern="/luckynumbers/config/**" method="GET" access="ROLE_ADMIN"/>
         <security:intercept-url pattern="/luckynumbers/config/**" method="POST" access="ROLE_ADMIN"/>
         <security:intercept-url pattern="/luckynumbers/scheduler/**" method="GET" access="ROLE_USER, ROLE_ADMIN"/>
@@ -200,32 +202,38 @@
     </bean>
 
     <!--Starting taskScheduler-->
-    <!--<task:scheduled-tasks scheduler="luckyNumbersScheduler">-->
-        <!--<task:scheduled ref="getFrozenAndFreeNumbers" method="run" fixed-delay="60000"/>-->
-    <!--</task:scheduled-tasks>-->
-    <!--<task:scheduler id="luckyNumbersScheduler" pool-size="10"/>-->
+    <task:scheduled-tasks scheduler="luckyNumbersScheduler">
+        <task:scheduled ref="getFrozenAndFreeNumbers" method="run" fixed-delay="60000"/>
+    </task:scheduled-tasks>
+    <task:scheduler id="luckyNumbersScheduler" pool-size="10"/>
 
     <!--FTP Server Inbound-->
-    <!--<bean id="ftpClientFactory" class="org.springframework.integration.ftp.session.DefaultFtpSessionFactory">-->
-        <!--<property name="host" value="${ftp.host}"/>-->
-        <!--<property name="port" value="${ftp.port}"/>-->
-        <!--<property name="username" value="${ftp.user}"/>-->
-        <!--<property name="password" value="${ftp.password}"/>-->
-    <!--</bean>-->
+    <bean id="ftpSessionFactory" class="org.springframework.integration.ftp.session.DefaultFtpSessionFactory">
+        <property name="host" value="${ftp.host}"/>
+        <property name="port" value="${ftp.port}"/>
+        <property name="username" value="${ftp.user}"/>
+        <property name="password" value="${ftp.password}"/>
+        <property name="bufferSize" value="100000"/>
+    </bean>
 
-    <!--<int-ftp:inbound-channel-adapter id="ftpInbound"-->
-                                     <!--channel="ftpChannel"-->
-                                     <!--session-factory="ftpClientFactory"-->
-                                     <!--filename-pattern="*.out"-->
-                                     <!--auto-create-local-directory="true"-->
-                                     <!--delete-remote-files="false"-->
-                                     <!--remote-directory="/Public/ftpserver/out/"-->
-                                     <!--local-directory="file:ftpInbound">-->
-        <!--<int:poller fixed-rate="1000"/>-->
-    <!--</int-ftp:inbound-channel-adapter>-->
+    <int-ftp:inbound-channel-adapter id="ftpInbound"
+            channel="ftpChannel"
+            session-factory="ftpSessionFactory"
+            charset="UTF-8"
+            auto-create-local-directory="true"
+            delete-remote-files="true"
+            filename-pattern="*.out"
+            remote-directory="${ftp.path}/out"
+            remote-file-separator="/"
+            preserve-timestamp="true"
+            temporary-file-suffix=".writing"
+            local-directory="."
+            >
+        <int:poller max-messages-per-poll="-1" fixed-rate="1000"/>
+    </int-ftp:inbound-channel-adapter>
 
-    <!--<int:channel id="ftpChannel">-->
-        <!--<int:queue/>-->
-    <!--</int:channel>-->
+    <int:channel id="ftpChannel">
+        <int:queue/>
+    </int:channel>
 
 </beans>

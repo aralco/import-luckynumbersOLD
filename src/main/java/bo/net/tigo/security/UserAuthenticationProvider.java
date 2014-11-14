@@ -53,7 +53,11 @@ public class UserAuthenticationProvider implements AuthenticationProvider {
                 logger.info("User successfully authenticated - authenticate:"+usernamePasswordAuthenticationToken);
                 return usernamePasswordAuthenticationToken;
             }
-            else if(authentication.getPrincipal().equals("admin")&& authentication.getCredentials().equals("admin")) {
+            else if(authentication.getPrincipal().equals("user1")&& authentication.getCredentials().equals("user1")) {
+                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(authentication.getPrincipal(), authentication.getCredentials(), userDetails.getAuthorities());
+                logger.info("User successfully authenticated - authenticate:"+usernamePasswordAuthenticationToken);
+                return usernamePasswordAuthenticationToken;
+            } else if(authentication.getPrincipal().equals("user2")&& authentication.getCredentials().equals("user2")) {
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(authentication.getPrincipal(), authentication.getCredentials(), userDetails.getAuthorities());
                 logger.info("User successfully authenticated - authenticate:"+usernamePasswordAuthenticationToken);
                 return usernamePasswordAuthenticationToken;
@@ -80,7 +84,7 @@ public class UserAuthenticationProvider implements AuthenticationProvider {
         authorities.add(new LuckyNumbersGrantedAuthorities(domainUser.getRole()));
         return new org.springframework.security.core.userdetails.User(
                 domainUser.getUsername(),
-                domainUser.getPassword(),
+                "",
                 domainUser.getEnabled(),
                 domainUser.getEnabled(),
                 domainUser.getEnabled(),
