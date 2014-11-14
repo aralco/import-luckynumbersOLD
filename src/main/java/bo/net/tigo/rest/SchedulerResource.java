@@ -41,15 +41,17 @@ public class SchedulerResource {
     @RequestMapping(value = "/job/{jobId:[\\p{Digit}]+}", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<Job> viewJob(@PathVariable Long jobId)   {
-        if(jobId==null)
+        Job job = schedulerService.getJob(jobId);
+        if(job==null)
             return new ResponseEntity<Job>(new Job(), HttpStatus.NOT_FOUND);
-        return new ResponseEntity<Job>(new Job(), HttpStatus.OK);
+        return new ResponseEntity<Job>(job, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/job/{jobId:[\\p{Digit}]+}", method = RequestMethod.POST, consumes = "application/json")
     @ResponseBody
     public ResponseEntity<Job> updateJob(@PathVariable Long jobId, @RequestBody @Valid Job job)   {
-        return null;
+        Job updatedJob = schedulerService.updateJob(jobId, job);
+        return new ResponseEntity<Job>(updatedJob, HttpStatus.OK);
     }
 
 
@@ -57,19 +59,25 @@ public class SchedulerResource {
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
     public ResponseEntity<Task> createTask(@PathVariable Long jobId, @RequestBody @Valid TaskRequest taskRequest)   {
-        return new ResponseEntity<Task>(new Task(), HttpStatus.CREATED);
+        Task createdTask = schedulerService.createTask(jobId, taskRequest);
+        return new ResponseEntity<Task>(createdTask, HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "/task/{taskId:[\\p{Digit}]+}", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<Task> viewTask(@PathVariable Long taskId)   {
-        return null;
+        Task task = schedulerService.getTask(taskId);
+        if(task==null)
+            return new ResponseEntity<Task>(new Task(), HttpStatus.NOT_FOUND);
+        return new ResponseEntity<Task>(task, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/task/{taskId:[\\p{Digit}]+}", method = RequestMethod.POST, consumes = "application/json")
     @ResponseBody
     public ResponseEntity<Task> updateTask(@PathVariable Long taskId, @RequestBody @Valid Task task)   {
-        return null;
+        Task updatedTask = schedulerService.updateTask(task);
+        return new ResponseEntity<Task>(updatedTask, HttpStatus.OK);
+
     }
 
 

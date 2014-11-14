@@ -80,4 +80,47 @@ public class SchedulerService {
         return job;
     }
 
+    @Transactional
+    public Job getJob(Long jobId)   {
+        return jobDao.findOne(jobId);
+    }
+
+    @Transactional
+    public Job updateJob(Long jobId, Job job)   {
+        jobDao.update(job);
+        return job;
+    }
+
+    @Transactional
+    public Task createTask(Long jobId, TaskRequest taskRequest) {
+        Job job = jobDao.findOne(jobId);
+        Task task = new Task();
+        task.setType(taskRequest.getType());
+        task.setCity(taskRequest.getCity());
+        task.setFrom(taskRequest.getFrom());
+        task.setTo(taskRequest.getTo());
+        task.setExecutionDate(job.getScheduledDate());
+        task.setStatus(String.valueOf(Status.SCHEDULED));
+        task.setProcessed(0);
+        task.setPassed(0);
+        task.setFailed(0);
+        task.setJob(job);
+        task.setSummary("");
+        task.setCoverage("0%");
+        task.setCreatedDate(new Date());
+        taskDao.save(task);
+
+        return task;
+    }
+
+    @Transactional
+    public Task getTask(Long taskId) {
+        return taskDao.findOne(taskId);
+    }
+
+    @Transactional
+    public Task updateTask(Task task) {
+        taskDao.update(task);
+        return task;
+    }
 }
