@@ -31,7 +31,7 @@ public class CityDaoImpl implements CityDao {
     @Override
     public City findOne(Long cityId) {
         Session session = sessionFactory.getCurrentSession();
-        return (City)session.load(City.class, cityId);
+        return (City)session.get(City.class, cityId);
     }
 
     @Override

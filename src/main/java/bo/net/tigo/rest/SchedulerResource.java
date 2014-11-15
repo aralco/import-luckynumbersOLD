@@ -3,6 +3,7 @@ package bo.net.tigo.rest;
 import bo.net.tigo.exception.LuckyNumbersGenericException;
 import bo.net.tigo.model.Job;
 import bo.net.tigo.model.Task;
+import bo.net.tigo.rest.domain.CommonResponse;
 import bo.net.tigo.rest.domain.JobRequest;
 import bo.net.tigo.rest.domain.TaskRequest;
 import bo.net.tigo.service.SchedulerService;
@@ -42,8 +43,9 @@ public class SchedulerResource {
     @ResponseBody
     public ResponseEntity<Job> viewJob(@PathVariable Long jobId)   {
         Job job = schedulerService.getJob(jobId);
+        logger.info("viewJob:"+job);
         if(job==null)
-            return new ResponseEntity<Job>(new Job(), HttpStatus.NOT_FOUND);
+            throw new LuckyNumbersGenericException(HttpStatus.NOT_FOUND.toString(),"Job cannot be found");
         return new ResponseEntity<Job>(job, HttpStatus.OK);
     }
 
@@ -51,15 +53,24 @@ public class SchedulerResource {
     @ResponseBody
     public ResponseEntity<Job> updateJob(@PathVariable Long jobId, @RequestBody @Valid Job job)   {
         Job updatedJob = schedulerService.updateJob(jobId, job);
+        logger.info("updateJob:"+job);
         return new ResponseEntity<Job>(updatedJob, HttpStatus.OK);
     }
 
+    @RequestMapping(value = "/job/{jobId:[\\p{Digit}]+}", method = RequestMethod.DELETE)
+    @ResponseBody
+    public ResponseEntity<CommonResponse> deleteJob(@PathVariable Long jobId)   {
+        schedulerService.deleteJob(jobId);
+        logger.info("deleteJob:"+jobId);
+        return new ResponseEntity<CommonResponse>(new CommonResponse("Operation completed successfully"), HttpStatus.OK);
+    }
 
     @RequestMapping(value = "/task/{jobId:[\\p{Digit}]+}", method = RequestMethod.POST, consumes = "application/json")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
     public ResponseEntity<Task> createTask(@PathVariable Long jobId, @RequestBody @Valid TaskRequest taskRequest)   {
         Task createdTask = schedulerService.createTask(jobId, taskRequest);
+        logger.info("createTask:"+createdTask);
         return new ResponseEntity<Task>(createdTask, HttpStatus.CREATED);
     }
 
@@ -67,8 +78,9 @@ public class SchedulerResource {
     @ResponseBody
     public ResponseEntity<Task> viewTask(@PathVariable Long taskId)   {
         Task task = schedulerService.getTask(taskId);
+        logger.info("viewTask:"+task);
         if(task==null)
-            return new ResponseEntity<Task>(new Task(), HttpStatus.NOT_FOUND);
+            throw new LuckyNumbersGenericException(HttpStatus.NOT_FOUND.toString(),"Task cannot be found");
         return new ResponseEntity<Task>(task, HttpStatus.OK);
     }
 
@@ -76,10 +88,15 @@ public class SchedulerResource {
     @ResponseBody
     public ResponseEntity<Task> updateTask(@PathVariable Long taskId, @RequestBody @Valid Task task)   {
         Task updatedTask = schedulerService.updateTask(task);
+        logger.info("updateTask:"+updatedTask);
         return new ResponseEntity<Task>(updatedTask, HttpStatus.OK);
-
     }
 
-
-
+    @RequestMapping(value = "/task/{taskId:[\\p{Digit}]+}", method = RequestMethod.DELETE)
+    @ResponseBody
+    public ResponseEntity<CommonResponse> deleteTask(@PathVariable Long taskId)   {
+        schedulerService.deleteTask(taskId);
+        logger.info("deleteTask:"+taskId);
+        return new ResponseEntity<CommonResponse>(new CommonResponse("Operation completed successfully"), HttpStatus.OK);
+    }
 }

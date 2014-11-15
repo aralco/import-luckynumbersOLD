@@ -1,5 +1,6 @@
 package bo.net.tigo.dao;
 
+import bo.net.tigo.model.Job;
 import bo.net.tigo.model.Task;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -18,14 +19,12 @@ public class TaskDaoImpl implements TaskDao {
 
     @Override
     public void save(Task task) {
-        //TODO verify
         Session session = sessionFactory.getCurrentSession();
         session.save(task);
     }
 
     @Override
     public void update(Task task) {
-        //TODO verify
         Session session = sessionFactory.getCurrentSession();
         session.update(task);
     }
@@ -33,8 +32,13 @@ public class TaskDaoImpl implements TaskDao {
     @Override
     public Task findOne(Long taskId) {
         Session session = sessionFactory.getCurrentSession();
-        return (Task)session.load(Task.class, taskId);
+        return (Task)session.get(Task.class, taskId);
+    }
 
+    @Override
+    public void delete(Task task) {
+        Session session = sessionFactory.getCurrentSession();
+        session.delete(task);
     }
 
     @Override
@@ -46,9 +50,8 @@ public class TaskDaoImpl implements TaskDao {
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<Task> findByJob(Long jobId) {
-        //TODO verify
+    public List<Task> findByJob(Job job) {
         Session session = sessionFactory.getCurrentSession();
-        return session.createQuery("from Task").list();
+        return session.createQuery("from Task where job = :job").list();
     }
 }

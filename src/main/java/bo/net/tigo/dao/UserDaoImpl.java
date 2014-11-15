@@ -32,7 +32,7 @@ public class UserDaoImpl implements UserDao {
     @Override
     public User findOne(Long userId) {
         Session session = sessionFactory.getCurrentSession();
-        return (User)session.load(User.class, userId);
+        return (User)session.get(User.class, userId);
 
     }
 

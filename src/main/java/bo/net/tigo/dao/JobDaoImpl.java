@@ -32,7 +32,13 @@ public class JobDaoImpl implements JobDao {
     @Override
     public Job findOne(Long jobId) {
         Session session = sessionFactory.getCurrentSession();
-        return (Job)session.load(Job.class, jobId);
+        return (Job)session.get(Job.class, jobId);
+    }
+
+    @Override
+    public void delete(Job job) {
+        Session session = sessionFactory.getCurrentSession();
+        session.delete(job);
     }
 
     @Override

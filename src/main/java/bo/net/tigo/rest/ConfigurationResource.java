@@ -48,9 +48,9 @@ public class ConfigurationResource {
     @RequestMapping(value = "/contact/{contactId}", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<Contact> viewContact(@PathVariable Long contactId)   {
-        logger.info("Contact for lookup"+contactId);
+        logger.info("Contact for lookup:"+contactId);
         Contact contact = configurationService.getContact(contactId);
-        logger.info("Contact found: "+contact);
+        logger.info("viewContact: "+contact);
         return new ResponseEntity<Contact>(contact, HttpStatus.OK);
     }
 
@@ -80,6 +80,7 @@ public class ConfigurationResource {
     @ResponseBody
     public ResponseEntity<User> viewUser(@PathVariable Long userId)   {
         User user = configurationService.getUser(userId);
+        logger.info("viewUser:"+user);
         return new ResponseEntity<User>(user, HttpStatus.OK);
     }
 
@@ -103,17 +104,17 @@ public class ConfigurationResource {
         List<AccessLog> accessLogs = configurationService.getAccessLogs();
         return new ResponseEntity<List<AccessLog>>(accessLogs, HttpStatus.OK);
     }
-
-    @RequestMapping(value = "/ftp", method = RequestMethod.GET)
-    @ResponseBody
-    public ResponseEntity<FTPParameter> viewFTPParameters()   {
-        return null;
-    }
-
-    @RequestMapping(value = "/ftp", method = RequestMethod.POST, consumes = "application/json")
-    @ResponseBody
-    public ResponseEntity<FTPParameter> updateFTPParameters(@RequestBody FTPParameter ftpParameter)   {
-        return null;
-    }
+//
+//    @RequestMapping(value = "/ftp", method = RequestMethod.GET)
+//    @ResponseBody
+//    public ResponseEntity<FTPParameter> viewFTPParameters()   {
+//        return null;
+//    }
+//
+//    @RequestMapping(value = "/ftp", method = RequestMethod.POST, consumes = "application/json")
+//    @ResponseBody
+//    public ResponseEntity<FTPParameter> updateFTPParameters(@RequestBody FTPParameter ftpParameter)   {
+//        return null;
+//    }
 
 }

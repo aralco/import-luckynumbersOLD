@@ -13,6 +13,7 @@ import bo.net.tigo.security.SecurityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,7 +34,7 @@ public class SchedulerService {
     private static final Logger logger = LoggerFactory.getLogger(SchedulerService.class);
 
     @Transactional
-    public Job createJob(JobRequest jobRequest) throws LuckyNumbersGenericException {
+    public Job createJob(JobRequest jobRequest) {
         logger.info("createJob:"+jobRequest);
         Date creationDate = new Date();
         Job job = new Job();
@@ -44,7 +45,7 @@ public class SchedulerService {
         else
             job.setScheduledDate(jobRequest.getScheduledDate());
         job.setNow(jobRequest.getNow());
-        job.setState(String.valueOf(State.NOT_STARTED));
+        job.setState(State.NOT_STARTED.name());
         job.setOwner(SecurityUtils.getCurrentUsername());
         int totalTasks=0;
         if(jobRequest.getTasks()!=null && jobRequest.getTasks().size()>0)
@@ -65,7 +66,7 @@ public class SchedulerService {
             task.setFrom(taskRequest.getFrom());
             task.setTo(taskRequest.getTo());
             task.setExecutionDate(job.getScheduledDate());
-            task.setStatus(String.valueOf(Status.SCHEDULED));
+            task.setStatus(Status.SCHEDULED.name());
             task.setProcessed(0);
             task.setPassed(0);
             task.setFailed(0);
@@ -87,20 +88,48 @@ public class SchedulerService {
 
     @Transactional
     public Job updateJob(Long jobId, Job job)   {
+        logger.info("updateJob:job="+job);
+        if(!job.getState().equals(State.NOT_STARTED.name()))
+            throw new LuckyNumbersGenericException(HttpStatus.PRECONDITION_FAILED.toString(),"Related Job must have NOT_STARTED state");
+        if(job.getNow())
+            job.setScheduledDate(new Date());
+        else
+            job.setScheduledDate(job.getScheduledDate());
+        for(Task task : job.getTasks()) {
+            task.setExecutionDate(job.getScheduledDate());
+        }
         jobDao.update(job);
         return job;
     }
 
     @Transactional
+    public void deleteJob(Long jobId)   {
+        Job job = jobDao.findOne(jobId);
+        if(job==null)   {
+            throw new LuckyNumbersGenericException(HttpStatus.NOT_FOUND.toString(),"Related Job cannot be found");
+        }
+        if(!job.getState().equals(State.NOT_STARTED.name()))   {
+            throw new LuckyNumbersGenericException(HttpStatus.PRECONDITION_FAILED.toString(),"Related Job must have NOT_STARTED state");
+        }
+        jobDao.delete(job);
+    }
+
+    @Transactional
     public Task createTask(Long jobId, TaskRequest taskRequest) {
         Job job = jobDao.findOne(jobId);
+        if(job==null)   {
+            throw new LuckyNumbersGenericException(HttpStatus.NOT_FOUND.toString(),"Related Job cannot be found");
+        }
+        if(!job.getState().equals(State.NOT_STARTED.name()))   {
+            throw new LuckyNumbersGenericException(HttpStatus.PRECONDITION_FAILED.toString(),"Related Job must have NOT_STARTED state");
+        }
         Task task = new Task();
         task.setType(taskRequest.getType());
         task.setCity(taskRequest.getCity());
         task.setFrom(taskRequest.getFrom());
         task.setTo(taskRequest.getTo());
         task.setExecutionDate(job.getScheduledDate());
-        task.setStatus(String.valueOf(Status.SCHEDULED));
+        task.setStatus(Status.SCHEDULED.name());
         task.setProcessed(0);
         task.setPassed(0);
         task.setFailed(0);
@@ -109,7 +138,6 @@ public class SchedulerService {
         task.setCoverage("0%");
         task.setCreatedDate(new Date());
         taskDao.save(task);
-
         return task;
     }
 
@@ -120,7 +148,20 @@ public class SchedulerService {
 
     @Transactional
     public Task updateTask(Task task) {
+        if(!task.getStatus().equals(Status.SCHEDULED.name()))
+            throw new LuckyNumbersGenericException(HttpStatus.PRECONDITION_FAILED.toString(),"Related Task must have NOT_SCHEDULED status");
         taskDao.update(task);
         return task;
     }
+
+    @Transactional
+    public void deleteTask(Long taskId) {
+        Task task = taskDao.findOne(taskId);
+        if(task==null)
+            throw new LuckyNumbersGenericException(HttpStatus.NOT_FOUND.toString(),"Related Task cannot be found");
+        if(!task.getStatus().equals(Status.SCHEDULED.name()))
+            throw new LuckyNumbersGenericException(HttpStatus.PRECONDITION_FAILED.toString(),"Related Task must have NOT_SCHEDULED status");
+        taskDao.delete(task);
+    }
+
 }

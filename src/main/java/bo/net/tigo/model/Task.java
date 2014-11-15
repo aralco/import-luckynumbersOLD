@@ -17,7 +17,7 @@ public class Task {
     private String to;
     @JsonSerialize(using=DateSerializer.class)
     private Date executionDate;  //yyyy-MM-ddThh:mm:ss±hh:mm; e.g. 2014-11-05T12:54:00-04:00
-    private String status; //{SCHEDULED;STARTED;COMPLETED_OK;CANCELLED;COMPLETED_WITH_ERRORS}            
+    private String status; //{SCHEDULED, STARTED, COMPLETED_PHASE1_OK,COMPLETED_PHASE1_WITH_ERRORS, COMPLETED_OK, COMPLETED_WITH_ERRORS}
     private Integer processed;
     private Integer passed;
     private Integer failed;

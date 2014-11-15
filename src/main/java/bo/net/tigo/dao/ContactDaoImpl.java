@@ -31,7 +31,7 @@ public class ContactDaoImpl implements ContactDao {
     @Override
     public Contact findOne(Long contactId) {
         Session session = sessionFactory.getCurrentSession();
-        return (Contact)session.load(Contact.class, contactId);
+        return (Contact)session.get(Contact.class, contactId);
 
     }
 
