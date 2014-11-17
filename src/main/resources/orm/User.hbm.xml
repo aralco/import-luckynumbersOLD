@@ -42,7 +42,7 @@
             <column name="ILN_USER_ENABLED" not-null="true"/>
         </property>
         <property name="username" type="java.lang.String">
-            <column name="ILN_USER_USERNAME" not-null="true" unique="true"/>
+            <column name="ILN_USER_USERNAME" not-null="true" unique="true" length="2048"/>
         </property>
         <property name="role" type="java.lang.String">
             <column name="ILN_USER_ROLE" not-null="true"/>

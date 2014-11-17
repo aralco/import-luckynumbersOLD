@@ -1,12 +1,14 @@
 package bo.net.tigo.dao;
 
 import bo.net.tigo.model.Job;
+import bo.net.tigo.model.Status;
 import bo.net.tigo.model.Task;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -53,5 +55,17 @@ public class TaskDaoImpl implements TaskDao {
     public List<Task> findByJob(Job job) {
         Session session = sessionFactory.getCurrentSession();
         return session.createQuery("from Task where job = :job").list();
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<Task> findScheduledAndReScheduledTasks(Date currentDate) {
+        Session session = sessionFactory.getCurrentSession();
+        return session.createQuery("from Task " +
+                "where status in (:scheduled ,:rescheduled) " +
+                "and executionDate <= :currentDate")
+                .setParameter("scheduled", Status.SCHEDULED.name())
+                .setParameter("rescheduled", Status.RE_SCHEDULED.name())
+                .setParameter("currentDate", currentDate).list();
     }
 }

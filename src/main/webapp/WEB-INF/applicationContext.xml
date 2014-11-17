@@ -63,7 +63,7 @@
                 <prop key="hibernate.show_sql">true</prop>
                 <prop key="hibernate.connection.SetBigStringTryClob">true</prop>
                 <!--On production must be changed to validate-->
-                <prop key="hibernate.hbm2ddl.auto">create</prop>
+                <prop key="hibernate.hbm2ddl.auto">validate</prop>
             </props>
         </property>
         <property name="mappingResources">
@@ -175,6 +175,11 @@
     </oauth:authorization-server>
 
     <security:authentication-manager id="userAuthenticationManager">
+        <security:authentication-provider>
+            <security:user-service>
+                <security:user name="admin" password="admin" authorities="ROLE_ADMIN"/>
+            </security:user-service>
+        </security:authentication-provider>
         <security:authentication-provider ref="userAuthenticationProvider" />
     </security:authentication-manager>
 
@@ -205,7 +210,7 @@
         <property name="tokenstore" ref="tokenStore"></property>
     </bean>
 
-    <!--LDAP Authentication-->
+    <!--ACTIVE DIRECTORY Authentication-->
     <bean id="activeDirectoryLdapAuthenticationProvider" class="org.springframework.security.ldap.authentication.ad.ActiveDirectoryLdapAuthenticationProvider">
         <constructor-arg value="${activeDirectory.domain}"/>
         <constructor-arg value="${activeDirectory.url}"/>
@@ -215,18 +220,26 @@
 
     <!--Starting taskScheduler-->
     <task:scheduled-tasks scheduler="luckyNumbersScheduler">
-        <task:scheduled ref="getFrozenAndFreeNumbers" method="run" fixed-delay="60000000"/>
+        <!--Improve to start using trigger-->
+        <task:scheduled ref="getFrozenAndFreeNumbers" method="executeTasks" fixed-delay="${scheduler.fixedDelay}"/>
     </task:scheduled-tasks>
     <task:scheduler id="luckyNumbersScheduler" pool-size="10"/>
 
-    <!--FTP Server Inbound-->
-    <!--<bean id="ftpSessionFactory" class="org.springframework.integration.ftp.session.DefaultFtpSessionFactory">-->
-        <!--<property name="host" value="${ftp.host}"/>-->
-        <!--<property name="port" value="${ftp.port}"/>-->
-        <!--<property name="username" value="${ftp.user}"/>-->
-        <!--<property name="password" value="${ftp.password}"/>-->
-        <!--<property name="bufferSize" value="100000"/>-->
-    <!--</bean>-->
+    <!--FTP Server-->
+    <bean id="ftpSessionFactory" class="org.springframework.integration.ftp.session.DefaultFtpSessionFactory">
+        <property name="host" value="${ftp.host}"/>
+        <property name="port" value="${ftp.port}"/>
+        <property name="username" value="${ftp.user}"/>
+        <property name="password" value="${ftp.password}"/>
+        <property name="bufferSize" value="100000"/>
+    </bean>
+
+    <int-ftp:outbound-channel-adapter  id="ftpOutbound"
+                                       channel="ftpChannel"
+                                       remote-directory="${ftp.path}/in"
+                                       session-factory="ftpSessionFactory" />
+
+    <int:channel id="ftpChannel"/>
 
     <!--<int-ftp:inbound-channel-adapter id="ftpInbound"-->
             <!--channel="ftpChannel"-->

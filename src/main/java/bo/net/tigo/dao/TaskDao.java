@@ -3,6 +3,7 @@ package bo.net.tigo.dao;
 import bo.net.tigo.model.Job;
 import bo.net.tigo.model.Task;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -15,4 +16,5 @@ public interface TaskDao {
     public void delete(Task task);
     public List<Task> findAll();
     public List<Task> findByJob(Job job);
+    public List<Task> findScheduledAndReScheduledTasks(Date currentDate);
 }

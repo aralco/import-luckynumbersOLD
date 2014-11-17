@@ -20,7 +20,6 @@ import java.util.List;
  * Created by aralco on 10/22/14.
  */
 @Service
-@Transactional
 public class ConfigurationService {
     @Autowired
     private UserDao userDao;
