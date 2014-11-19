@@ -2,7 +2,6 @@ package bo.net.tigo.service;
 
 import bo.net.tigo.dao.FreeAndFrozenDao;
 import bo.net.tigo.dao.InAuditDao;
-import bo.net.tigo.dao.OutAuditDao;
 import bo.net.tigo.dao.TaskDao;
 import bo.net.tigo.model.*;
 import org.slf4j.Logger;
@@ -34,8 +33,6 @@ public class GetFrozenAndFreeNumbers {
     private FreeAndFrozenDao freeAndFrozenDao;
     @Autowired
     private InAuditDao inAuditDao;
-    @Autowired
-    private OutAuditDao outAuditDao;
 
     private static final Logger logger = LoggerFactory.getLogger(GetFrozenAndFreeNumbers.class);
 
@@ -55,30 +52,23 @@ public class GetFrozenAndFreeNumbers {
                    job.setState(State.IN_PROGRESS.name());
                 }
                 logger.info("Start task execution for task=> taskId:"+task.getId()+", status="+task.getStatus()+", executionDate="+task.getExecutionDate()+", job="+task.getJob().getState());
-                List<InAuditMapper> retrievedNumbers;
+                List<InAudit> retrievedNumbers;
                 if(task.getType().equals(Type.FREE.name())) {
                     retrievedNumbers = freeAndFrozenDao.getFreeNumbers(task.getCity(), task.getFrom(), task.getTo());
                 } else  {
                     retrievedNumbers = freeAndFrozenDao.getFrozenNumbers(task.getCity(), task.getFrom(), task.getTo());
                 }
                 logger.info("Values from Caller retrievedNumbers:"+retrievedNumbers);
-                String content =
-                        "Numero,Ciudad,Channel\n";
+                String header =
+                        "Numero,Ciudad,Channel";
 
-                for(Object o : retrievedNumbers) {
-                    if(o instanceof InAuditMapper)  {
-                        InAudit inAudit = new InAudit();
-                        inAudit.setRow(((InAuditMapper) o).getRow());
+                for(InAudit inAudit : retrievedNumbers) {
+                        header=header+"\n"+inAudit.getRow();
+                        inAudit.setCreatedDate(new Date());
                         inAuditDao.save(inAudit);
-                        content=content+inAudit.getRow()+"\n";
-                    }
                 }
                 logger.info("File generation:"+retrievedNumbers);
 
-//                logger.info("calling desreservas o unblocking");
-//                List<InAuditMapper> unblockedNumbers;
-//                unblockedNumbers = freeAndFrozenDao.unBlockeNumbers(task.getCity(), task.getFrom(), task.getTo());
-//                logger.info("unblocked results: "+unblockedNumbers);
                 //TODO If success Guardar registro de importados
                 //TODO Create temporal file using executionDate
                 //TODO copy file to FTP server
@@ -90,7 +80,7 @@ public class GetFrozenAndFreeNumbers {
                     inFile.createNewFile();
                 logger.info("File exists:"+inFile);
                 FileOutputStream fileOutputStream = new FileOutputStream(inFile);
-                byte[] contentInBytes = content.getBytes();
+                byte[] contentInBytes = header.getBytes();
                 fileOutputStream.write(contentInBytes);
                 fileOutputStream.flush();
                 fileOutputStream.close();
@@ -100,12 +90,6 @@ public class GetFrozenAndFreeNumbers {
                 task.setStatus(Status.COMPLETED_PHASE1_OK.name());
 
             }
-//            String number = "69460106";
-//            logger.info("Make a reservation:"+number);
-//            String result = freeAndFrozenDao.reserveNumber(number);
-//            logger.info("Make a reservation:"+number+", result:"+result);
-
-
         }
     }
 }
