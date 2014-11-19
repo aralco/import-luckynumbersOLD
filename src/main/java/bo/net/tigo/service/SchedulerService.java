@@ -91,13 +91,16 @@ public class SchedulerService {
         logger.info("updateJob:job="+job);
         if(!job.getState().equals(State.NOT_STARTED.name()))
             throw new LuckyNumbersGenericException(HttpStatus.PRECONDITION_FAILED.toString(),"Related Job must have NOT_STARTED state");
+        Date currentDate = new Date();
         if(job.getNow())
-            job.setScheduledDate(new Date());
-        else
-            job.setScheduledDate(job.getScheduledDate());
+            job.setScheduledDate(currentDate);
+//        else
+//            job.setScheduledDate(job.getScheduledDate());
         for(Task task : job.getTasks()) {
             task.setExecutionDate(job.getScheduledDate());
+            task.setLastUpdate(currentDate);
         }
+        job.setLastUpdate(currentDate);
         jobDao.update(job);
         return job;
     }
@@ -150,6 +153,8 @@ public class SchedulerService {
     public Task updateTask(Task task) {
         if(!task.getStatus().equals(Status.SCHEDULED.name()))
             throw new LuckyNumbersGenericException(HttpStatus.PRECONDITION_FAILED.toString(),"Related Task must have NOT_SCHEDULED status");
+        Date currentDate = new Date();
+        task.setLastUpdate(currentDate);
         taskDao.update(task);
         return task;
     }

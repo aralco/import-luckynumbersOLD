@@ -8,7 +8,7 @@
         <id name="id" type="java.lang.Long">
             <column name="ILN_USER_ID"/>
             <generator class="native">
-                <param name="sequence">USER_SEQ_ID</param>
+                <param name="sequence">ILN_USER_SEQ_ID</param>
             </generator>
         </id>
         <property name="name" type="java.lang.String">
@@ -42,7 +42,7 @@
             <column name="ILN_USER_ENABLED" not-null="true"/>
         </property>
         <property name="username" type="java.lang.String">
-            <column name="ILN_USER_USERNAME" not-null="true" unique="true" length="2048"/>
+            <column name="ILN_USER_USERNAME" not-null="true" unique="true"/>
         </property>
         <property name="role" type="java.lang.String">
             <column name="ILN_USER_ROLE" not-null="true"/>

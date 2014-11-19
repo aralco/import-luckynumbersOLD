@@ -42,25 +42,26 @@ public class UserAuthenticationProvider implements AuthenticationProvider {
             UserDetails userDetails = loadUserByUsername(authentication.getPrincipal().toString());
             if(userDetails==null)
                 throw new UsernameNotFoundException("User doesn't exists.");
-//            authentication = activeDirectoryLdapAuthenticationProvider.authenticate(authentication);
-//            if(authentication!=null && authentication.isAuthenticated())    {
+//PROD MODE
+            authentication = activeDirectoryLdapAuthenticationProvider.authenticate(authentication);
+            if(authentication!=null && authentication.isAuthenticated())    {
+                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(authentication.getPrincipal(), authentication.getCredentials(), userDetails.getAuthorities());
+                logger.info("User successfully authenticated - authenticate:"+usernamePasswordAuthenticationToken);
+                return usernamePasswordAuthenticationToken;
+//DEV MODE
+//            if(authentication.getPrincipal().equals("sysportal")&& authentication.getCredentials().equals("Sysp0rt4l")) {
 //                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(authentication.getPrincipal(), authentication.getCredentials(), userDetails.getAuthorities());
 //                logger.info("User successfully authenticated - authenticate:"+usernamePasswordAuthenticationToken);
 //                return usernamePasswordAuthenticationToken;
-
-            if(authentication.getPrincipal().equals("sysportal")&& authentication.getCredentials().equals("Sysp0rt4l")) {
-                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(authentication.getPrincipal(), authentication.getCredentials(), userDetails.getAuthorities());
-                logger.info("User successfully authenticated - authenticate:"+usernamePasswordAuthenticationToken);
-                return usernamePasswordAuthenticationToken;
-            }
-            else if(authentication.getPrincipal().equals("user1")&& authentication.getCredentials().equals("user1")) {
-                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(authentication.getPrincipal(), authentication.getCredentials(), userDetails.getAuthorities());
-                logger.info("User successfully authenticated - authenticate:"+usernamePasswordAuthenticationToken);
-                return usernamePasswordAuthenticationToken;
-            } else if(authentication.getPrincipal().equals("user2")&& authentication.getCredentials().equals("user2")) {
-                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(authentication.getPrincipal(), authentication.getCredentials(), userDetails.getAuthorities());
-                logger.info("User successfully authenticated - authenticate:"+usernamePasswordAuthenticationToken);
-                return usernamePasswordAuthenticationToken;
+//            }
+//            else if(authentication.getPrincipal().equals("user1")&& authentication.getCredentials().equals("user1")) {
+//                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(authentication.getPrincipal(), authentication.getCredentials(), userDetails.getAuthorities());
+//                logger.info("User successfully authenticated - authenticate:"+usernamePasswordAuthenticationToken);
+//                return usernamePasswordAuthenticationToken;
+//            } else if(authentication.getPrincipal().equals("user2")&& authentication.getCredentials().equals("user2")) {
+//                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(authentication.getPrincipal(), authentication.getCredentials(), userDetails.getAuthorities());
+//                logger.info("User successfully authenticated - authenticate:"+usernamePasswordAuthenticationToken);
+//                return usernamePasswordAuthenticationToken;
             } else {
                 throw new BadCredentialsException("Bad User Credentials.");
             }

@@ -39,7 +39,7 @@
 
     <bean id="db2DataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="${db2.jdbc.driverClassName}"/>
-        <property name="url" value="jdbc:db2://${db2.jdbc.host}:${db2.jdbc.port}/${db2.jdbc.schema}"/>
+        <property name="url" value="jdbc:as400://${db2.jdbc.host}:${db2.jdbc.port}/${db2.jdbc.schema}"/>
         <property name="username" value="${db2.jdbc.username}"/>
         <property name="password" value="${db2.jdbc.password}"/>
     </bean>
@@ -75,6 +75,8 @@
                 <value>orm/Job.hbm.xml</value>
                 <value>orm/Task.hbm.xml</value>
                 <value>orm/User.hbm.xml</value>
+                <value>orm/InAudit.hbm.xml</value>
+                <value>orm/OutAudit.hbm.xml</value>
             </list>
         </property>
     </bean>
@@ -235,30 +237,33 @@
     </bean>
 
     <int-ftp:outbound-channel-adapter  id="ftpOutbound"
-                                       channel="ftpChannel"
+                                       channel="ftpChannelOUT"
                                        remote-directory="${ftp.path}/in"
-                                       session-factory="ftpSessionFactory" />
+                                       session-factory="ftpSessionFactory"
+                                       use-temporary-file-name="true"
+                                       temporary-file-suffix=".writing"/>
 
-    <int:channel id="ftpChannel"/>
+    <int:channel id="ftpChannelOUT"/>
 
-    <!--<int-ftp:inbound-channel-adapter id="ftpInbound"-->
-            <!--channel="ftpChannel"-->
-            <!--session-factory="ftpSessionFactory"-->
-            <!--charset="UTF-8"-->
-            <!--auto-create-local-directory="true"-->
-            <!--delete-remote-files="true"-->
-            <!--filename-pattern="*.out"-->
-            <!--remote-directory="${ftp.path}/out"-->
-            <!--remote-file-separator="/"-->
-            <!--preserve-timestamp="true"-->
-            <!--temporary-file-suffix=".writing"-->
-            <!--local-directory="."-->
-            <!-->-->
-        <!--<int:poller max-messages-per-poll="-1" fixed-rate="1000"/>-->
-    <!--</int-ftp:inbound-channel-adapter>-->
+    <int-ftp:inbound-channel-adapter id="ftpInbound"
+            channel="ftpChannelIN"
+            session-factory="ftpSessionFactory"
+            charset="UTF-8"
+            auto-create-local-directory="true"
+            delete-remote-files="true"
+            filename-pattern="*.out"
+            remote-directory="${ftp.path}/out"
+            remote-file-separator="/"
+            preserve-timestamp="true"
+            temporary-file-suffix=".writing"
+            local-directory="."
 
-    <!--<int:channel id="ftpChannel">-->
-        <!--<int:queue/>-->
-    <!--</int:channel>-->
+            >
+        <int:poller max-messages-per-poll="-1" fixed-rate="60000"/>
+    </int-ftp:inbound-channel-adapter>
+
+    <int:channel id="ftpChannelIN">
+        <int:queue/>
+    </int:channel>
 
 </beans>

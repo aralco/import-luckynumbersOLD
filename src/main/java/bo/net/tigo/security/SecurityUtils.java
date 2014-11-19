@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 /**
  * Created by aralco on 11/11/14.
@@ -26,8 +27,23 @@ public class SecurityUtils {
     }
 
     public static String getCurrentUsername()  {
-        logger.info("Authenticate="+SecurityContextHolder.getContext().getAuthentication());
-        return SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
-    }
+        //DEV MODE
+//        logger.info("Authenticate:SecurityContextHolder.getContext().getAuthentication()="+SecurityContextHolder.getContext().getAuthentication());
+//        logger.info("AuthenticateSecurityContextHolder.getContext().getAuthentication().getPrincipal()="+SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+//        logger.info("AuthenticateSecurityContextHolder.getContext().getAuthentication().getPrincipal()="+SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+//        logger.info("Authenticate=SecurityContextHolder.getContext().getAuthentication().getCredentials()="+SecurityContextHolder.getContext().getAuthentication().getCredentials());
+//        logger.info("Authenticate=SecurityContextHolder.getContext().getAuthentication().getAuthorities()="+SecurityContextHolder.getContext().getAuthentication().getAuthorities());
+//        logger.info("Authenticate=SecurityContextHolder.getContext().getAuthentication().getDetails()="+SecurityContextHolder.getContext().getAuthentication().getDetails());
+//        return SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
 
+        //PROD MODE
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username = null;
+        if (principal instanceof UserDetails) {
+            username = ((UserDetails)principal).getUsername();
+        } else
+            throw new UsernameNotFoundException("user "+username+" doesn't exists.");
+        return username;
+
+    }
 }
