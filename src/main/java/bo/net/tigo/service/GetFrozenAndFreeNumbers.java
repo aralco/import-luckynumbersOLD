@@ -96,6 +96,7 @@ public class GetFrozenAndFreeNumbers {
                 final Message<File> fileMessage = MessageBuilder.withPayload(inFile).build();
                 ftpChannelOUT.send(fileMessage);
                 task.setStatus(Status.COMPLETED_PHASE1_OK.name());
+                task.setUrlin(fileName);
                 calendar.add(Calendar.SECOND, +1);
 
             }

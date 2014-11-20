@@ -23,7 +23,7 @@
         <property name="codeFailed" type="java.lang.String">
             <column name="ILN_OUT_AUDIT_CODE_FAILED"/>
         </property>
-        <property name="message" type="java.lang.Integer">
+        <property name="message" type="java.lang.String">
             <column name="ILN_OUT_AUDIT_MESSAGE"/>
         </property>
         <property name="fileName" type="java.lang.String">

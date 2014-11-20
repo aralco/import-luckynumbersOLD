@@ -11,10 +11,18 @@ import java.util.List;
  */
 public interface TaskDao {
     public void save(Task task);
+
     public void update(Task task);
+
     public Task findOne(Long taskId);
+
     public void delete(Task task);
+
     public List<Task> findAll();
+
     public List<Task> findByJob(Job job);
+
     public List<Task> findScheduledAndReScheduledTasks(Date currentDate);
+
+    public Task findByFileName(String filename);
 }

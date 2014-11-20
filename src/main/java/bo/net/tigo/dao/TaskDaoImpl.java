@@ -68,4 +68,12 @@ public class TaskDaoImpl implements TaskDao {
                 .setParameter("rescheduled", Status.RE_SCHEDULED.name())
                 .setParameter("currentDate", currentDate).list();
     }
+
+    public Task findByFileName(String filename) {
+        filename=filename+".in";
+        Session session = sessionFactory.getCurrentSession();
+        return (Task)session.createQuery("from Task where urlin = :filename")
+                .setParameter("filename",filename)
+                .uniqueResult();
+    }
 }

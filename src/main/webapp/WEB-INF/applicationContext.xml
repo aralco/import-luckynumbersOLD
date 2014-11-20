@@ -9,6 +9,7 @@
        xmlns:task="http://www.springframework.org/schema/task"
        xmlns:int="http://www.springframework.org/schema/integration"
        xmlns:int-ftp="http://www.springframework.org/schema/integration/ftp"
+       xmlns:int-file="http://www.springframework.org/schema/integration/file"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/context
@@ -25,7 +26,8 @@
        http://www.springframework.org/schema/task/spring-task.xsd
        http://www.springframework.org/schema/integration/ftp
        http://www.springframework.org/schema/integration/ftp/spring-integration-ftp.xsd
-       ">
+       http://www.springframework.org/schema/integration/file
+       http://www.springframework.org/schema/integration/file/spring-integration-file.xsd">
     <context:component-scan base-package="bo.net.tigo"/>
     <mvc:annotation-driven />
     <mvc:default-servlet-handler />
@@ -256,14 +258,38 @@
             remote-file-separator="/"
             preserve-timestamp="true"
             temporary-file-suffix=".writing"
-            local-directory="."
-
+            local-directory="/tmp/import"
             >
-        <int:poller max-messages-per-poll="-1" fixed-rate="60000"/>
+        <int:poller max-messages-per-poll="-1" fixed-rate="6000"/>
     </int-ftp:inbound-channel-adapter>
 
     <int:channel id="ftpChannelIN">
         <int:queue/>
     </int:channel>
+
+    <!--<int:channel id="filesOutChannel">-->
+        <!--<int:queue/>-->
+    <!--</int:channel>-->
+    <!---->
+    <!--<int:poller id="defaultPoller" default="true" max-messages-per-poll="-1" fixed-rate="60000"/>-->
+
+    <!--<int:service-activator input-channel="ftpChannelIN" method="process" output-channel="filesOutChannel">-->
+        <!--<bean class="bo.net.tigo.util.OutProcessor"/>-->
+    <!--</int:service-activator>-->
+
+    <int:service-activator input-channel="filesInChannel" output-channel="filesOutChannel" method="process">
+        <bean class="bo.net.tigo.util.OutProcessor"/>
+    </int:service-activator>
+
+    <int-file:inbound-channel-adapter id="filesInChannel"
+                                      directory="/tmp/import" prevent-duplicates="true">
+        <int:poller id="poller" fixed-rate="6000"/>
+    </int-file:inbound-channel-adapter>
+
+
+    <int:channel id="filesOutChannel">
+        <int:queue/>
+    </int:channel>
+
 
 </beans>
