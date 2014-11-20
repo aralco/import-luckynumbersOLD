@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -43,11 +44,13 @@ public class GetFrozenAndFreeNumbers {
         if(scheduledAndReScheduledTasks.size()<=0)   {
             logger.info("No tasks to execute:" + scheduledAndReScheduledTasks.size());
         } else  {
+            Calendar calendar = Calendar.getInstance();
             for(Task task:scheduledAndReScheduledTasks) {
+                Date currentDate = calendar.getTime();
                 Job job = task.getJob();
                 logger.info("Start task execution for task=> taskId:"+task.getId()+", status="+task.getStatus()+", executionDate="+task.getExecutionDate()+", job="+job);
                 task.setStatus(Status.STARTED.name());
-                task.setExecutionDate(new Date());
+                task.setExecutionDate(currentDate);
                 if(job.getState().equals(State.NOT_STARTED.name()))  {
                    job.setState(State.IN_PROGRESS.name());
                 }
@@ -59,28 +62,33 @@ public class GetFrozenAndFreeNumbers {
                     retrievedNumbers = freeAndFrozenDao.getFrozenNumbers(task.getCity(), task.getFrom(), task.getTo());
                 }
                 logger.info("Values from Caller retrievedNumbers:"+retrievedNumbers);
-                String header =
+                String fileContent =
                         "Numero,Ciudad,Channel";
 
+
                 for(InAudit inAudit : retrievedNumbers) {
-                        header=header+"\n"+inAudit.getRow();
-                        inAudit.setCreatedDate(new Date());
-                        inAuditDao.save(inAudit);
+                    fileContent=fileContent+"\n"+inAudit.getRow();
+                    inAudit.setCreatedDate(currentDate);
+                    inAudit.setCity(task.getCity());
+                    inAudit.setTaskId(task.getId());
+                    inAudit.setJobId(task.getJob().getId());
+                    String fields[] = inAudit.getRow().split(",");
+                    inAudit.setNumber(fields[0]);
+                    inAudit.setCity(Integer.valueOf(fields[1]));
+                    inAudit.setChannel(Integer.valueOf(fields[2]));
+                    inAuditDao.save(inAudit);
                 }
                 logger.info("File generation:"+retrievedNumbers);
 
-                //TODO If success Guardar registro de importados
-                //TODO Create temporal file using executionDate
-                //TODO copy file to FTP server
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
-                String fileName = sdf.format(task.getExecutionDate())+".in";
+                String fileName = sdf.format(currentDate)+".in";
                 File inFile = new File(fileName);
                 logger.info("File to copy:"+inFile);
                 if(!inFile.exists())
                     inFile.createNewFile();
                 logger.info("File exists:"+inFile);
                 FileOutputStream fileOutputStream = new FileOutputStream(inFile);
-                byte[] contentInBytes = header.getBytes();
+                byte[] contentInBytes = fileContent.getBytes();
                 fileOutputStream.write(contentInBytes);
                 fileOutputStream.flush();
                 fileOutputStream.close();
@@ -88,6 +96,7 @@ public class GetFrozenAndFreeNumbers {
                 final Message<File> fileMessage = MessageBuilder.withPayload(inFile).build();
                 ftpChannelOUT.send(fileMessage);
                 task.setStatus(Status.COMPLETED_PHASE1_OK.name());
+                calendar.add(Calendar.SECOND, +1);
 
             }
         }
