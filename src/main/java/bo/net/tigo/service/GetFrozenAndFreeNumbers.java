@@ -7,6 +7,8 @@ import bo.net.tigo.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.integration.Message;
 import org.springframework.integration.MessageChannel;
 import org.springframework.integration.support.MessageBuilder;
@@ -25,6 +27,7 @@ import java.util.List;
  * Created by aralco on 11/11/14.
  */
 @Service
+@PropertySource("classpath:luckynumbers.properties")
 public class GetFrozenAndFreeNumbers {
     @Autowired
     private TaskDao taskDao;
@@ -34,6 +37,8 @@ public class GetFrozenAndFreeNumbers {
     private FreeAndFrozenDao freeAndFrozenDao;
     @Autowired
     private InAuditDao inAuditDao;
+    @Value("${file.path.import.in}")
+    private String filePath;
 
     private static final Logger logger = LoggerFactory.getLogger(GetFrozenAndFreeNumbers.class);
 
@@ -62,42 +67,46 @@ public class GetFrozenAndFreeNumbers {
                     retrievedNumbers = freeAndFrozenDao.getFrozenNumbers(task.getCity(), task.getFrom(), task.getTo());
                 }
                 logger.info("Values from Caller retrievedNumbers:"+retrievedNumbers);
-                String fileContent =
-                        "Numero,Ciudad,Channel";
+                if(retrievedNumbers.size()>0)   {
+                    String fileContent =
+                            "Numero,Ciudad,Channel";
 
+                    for(InAudit inAudit : retrievedNumbers) {
+                        fileContent=fileContent+"\n"+inAudit.getRow();
+                        inAudit.setCreatedDate(currentDate);
+                        inAudit.setCity(task.getCity());
+                        inAudit.setTaskId(task.getId());
+                        inAudit.setJobId(task.getJob().getId());
+                        String fields[] = inAudit.getRow().split(",");
+                        inAudit.setNumber(fields[0]);
+                        inAudit.setCity(Integer.valueOf(fields[1]));
+                        inAudit.setChannel(Integer.valueOf(fields[2]));
+                        inAuditDao.save(inAudit);
+                    }
+                    logger.info("File generation:"+retrievedNumbers);
 
-                for(InAudit inAudit : retrievedNumbers) {
-                    fileContent=fileContent+"\n"+inAudit.getRow();
-                    inAudit.setCreatedDate(currentDate);
-                    inAudit.setCity(task.getCity());
-                    inAudit.setTaskId(task.getId());
-                    inAudit.setJobId(task.getJob().getId());
-                    String fields[] = inAudit.getRow().split(",");
-                    inAudit.setNumber(fields[0]);
-                    inAudit.setCity(Integer.valueOf(fields[1]));
-                    inAudit.setChannel(Integer.valueOf(fields[2]));
-                    inAuditDao.save(inAudit);
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
+                    String fileName = sdf.format(currentDate)+".in";
+                    File inFile = new File(filePath+"/"+fileName);
+                    logger.info("File to copy:"+inFile);
+                    if(!inFile.exists())
+                        inFile.createNewFile();
+                    logger.info("File exists:"+inFile);
+                    FileOutputStream fileOutputStream = new FileOutputStream(inFile);
+                    byte[] contentInBytes = fileContent.getBytes();
+                    fileOutputStream.write(contentInBytes);
+                    fileOutputStream.flush();
+                    fileOutputStream.close();
+
+                    final Message<File> fileMessage = MessageBuilder.withPayload(inFile).build();
+                    ftpChannelOUT.send(fileMessage);
+                    task.setStatus(Status.COMPLETED_PHASE1_OK.name());
+                    task.setUrlin(fileName);
+                    calendar.add(Calendar.SECOND, +1);
+                } else  {
+                    task.setStatus(Status.COMPLETED_PHASE1_WITHOUT_DATA.name());
+                    task.setUrlin("NA");
                 }
-                logger.info("File generation:"+retrievedNumbers);
-
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
-                String fileName = sdf.format(currentDate)+".in";
-                File inFile = new File(fileName);
-                logger.info("File to copy:"+inFile);
-                if(!inFile.exists())
-                    inFile.createNewFile();
-                logger.info("File exists:"+inFile);
-                FileOutputStream fileOutputStream = new FileOutputStream(inFile);
-                byte[] contentInBytes = fileContent.getBytes();
-                fileOutputStream.write(contentInBytes);
-                fileOutputStream.flush();
-                fileOutputStream.close();
-
-                final Message<File> fileMessage = MessageBuilder.withPayload(inFile).build();
-                ftpChannelOUT.send(fileMessage);
-                task.setStatus(Status.COMPLETED_PHASE1_OK.name());
-                task.setUrlin(fileName);
-                calendar.add(Calendar.SECOND, +1);
 
             }
         }

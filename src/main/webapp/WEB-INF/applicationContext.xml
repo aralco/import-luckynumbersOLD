@@ -252,13 +252,13 @@
             session-factory="ftpSessionFactory"
             charset="UTF-8"
             auto-create-local-directory="true"
-            delete-remote-files="true"
+            delete-remote-files="false"
             filename-pattern="*.out"
             remote-directory="${ftp.path}/out"
             remote-file-separator="/"
             preserve-timestamp="true"
             temporary-file-suffix=".writing"
-            local-directory="/tmp/import"
+            local-directory="${file.path.import.out}"
             >
         <int:poller max-messages-per-poll="-1" fixed-rate="6000"/>
     </int-ftp:inbound-channel-adapter>
@@ -282,7 +282,7 @@
     </int:service-activator>
 
     <int-file:inbound-channel-adapter id="filesInChannel"
-                                      directory="/tmp/import" prevent-duplicates="true">
+                                      directory="${file.path.import.out}" prevent-duplicates="true">
         <int:poller id="poller" fixed-rate="6000"/>
     </int-file:inbound-channel-adapter>
 

@@ -80,7 +80,7 @@ public class FreeAndFrozenDao {
                 );
 
         this.unlockNumbersProc = new SimpleJdbcCall(jdbcTemplate)
-                .withProcedureName("SP2_LNROSLCXSUCURSALNRODESDEHASTAPORC_ACTESTLI")
+                .withProcedureName("SP2_LNROSLCXSUCURSALNRODESDEHASTAPORC_ACTESTLI1")
                 .withoutProcedureColumnMetaDataAccess()
                 .declareParameters(
                     new SqlParameter("sucursal", Types.NUMERIC),

@@ -27,6 +27,12 @@ public class OutProcessor {
 
     private static final Logger logger = LoggerFactory.getLogger(OutProcessor.class);
 
+//    LOG.trace("Hello World!");
+//    LOG.debug("How are you today?");
+//    LOG.info("I am fine.");
+//    LOG.warn("I love programming.");
+//    LOG.error("I am programming.");
+
 
     @Transactional
     public File process(File file) throws Exception{
@@ -41,6 +47,7 @@ public class OutProcessor {
             logger.info("filename to Process:"+fileName);
             String shortFilename = fileName.substring(0,15);
             logger.info("array Size:"+shortFilename.length()+",values:"+shortFilename);
+            //TODO create a exception when file doesn't exist in db
             Task task = taskDao.findByFileName(shortFilename);
             task.setUrlout(fileName);
             task.setLastUpdate(currentDate);
