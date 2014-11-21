@@ -260,30 +260,20 @@
             temporary-file-suffix=".writing"
             local-directory="${file.path.import.out}"
             >
-        <int:poller max-messages-per-poll="-1" fixed-rate="6000"/>
+        <int:poller max-messages-per-poll="-1" fixed-rate="${ftp.delay}"/>
     </int-ftp:inbound-channel-adapter>
 
     <int:channel id="ftpChannelIN">
         <int:queue/>
     </int:channel>
 
-    <!--<int:channel id="filesOutChannel">-->
-        <!--<int:queue/>-->
-    <!--</int:channel>-->
-    <!---->
-    <!--<int:poller id="defaultPoller" default="true" max-messages-per-poll="-1" fixed-rate="60000"/>-->
-
-    <!--<int:service-activator input-channel="ftpChannelIN" method="process" output-channel="filesOutChannel">-->
-        <!--<bean class="bo.net.tigo.util.OutProcessor"/>-->
-    <!--</int:service-activator>-->
-
     <int:service-activator input-channel="filesInChannel" output-channel="filesOutChannel" method="process">
-        <bean class="bo.net.tigo.util.OutProcessor"/>
+        <bean class="bo.net.tigo.service.OutProcessor"/>
     </int:service-activator>
 
     <int-file:inbound-channel-adapter id="filesInChannel"
                                       directory="${file.path.import.out}" prevent-duplicates="true">
-        <int:poller id="poller" fixed-rate="6000"/>
+        <int:poller id="poller" fixed-rate="${ftp.delay}"/>
     </int-file:inbound-channel-adapter>
 
 
