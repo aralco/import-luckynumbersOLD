@@ -2,6 +2,9 @@
 
 /* Services */
 
+var URL = {};
+URL.host = "http://10.211.55.10";
+
 luckynumbersApp.factory('Register', function ($resource) {
         return $resource('app/rest/register', {}, {
         });
@@ -13,11 +16,6 @@ luckynumbersApp.factory('Activate', function ($resource) {
         });
     });
 
-luckynumbersApp.factory('Account', function ($resource) {
-        return $resource('app/rest/account', {}, {
-        });
-    });
-
 luckynumbersApp.factory('Password', function ($resource) {
         return $resource('app/rest/account/change_password', {}, {
         });
@@ -25,6 +23,17 @@ luckynumbersApp.factory('Password', function ($resource) {
 
 luckynumbersApp.factory('Sessions', function ($resource) {
         return $resource('app/rest/account/sessions/:series', {}, {
+            'get': { method: 'GET', isArray: true}
+        });
+    });
+
+luckynumbersApp.factory('Account', function ($resource) {
+        return $resource(URL.host + ':7001/import-luckynumbers/luckynumbers/sysutils/loggeduser', {}, {
+        });
+    });
+
+luckynumbersApp.factory('Jobs', function ($resource) {
+        return $resource(URL.host + ':7001/import-luckynumbers/luckynumbers/monitor', {}, {
             'get': { method: 'GET', isArray: true}
         });
     });
@@ -87,18 +96,14 @@ luckynumbersApp.factory('AuditsService', function ($http) {
     });
 
 luckynumbersApp.factory('Session', function () {
-        this.create = function (login, firstName, lastName, email, userRoles) {
+        this.create = function (login, userId, userRoles) {
             this.login = login;
-            this.firstName = firstName;
-            this.lastName = lastName;
-            this.email = email;
+            this.userId = userId;
             this.userRoles = userRoles;
         };
         this.invalidate = function () {
             this.login = null;
-            this.firstName = null;
-            this.lastName = null;
-            this.email = null;
+            this.userId = null;
             this.userRoles = null;
         };
         return this;
@@ -108,11 +113,11 @@ luckynumbersApp.factory('AuthenticationSharedService', function ($rootScope, $ht
         return {
             login: function (param) {
                 var data = "username=" + param.username + "&password=" + param.password + "&grant_type=password&scope=app&client_secret=botigo&client_id=tigobo";
-                $http.post('http://192.168.0.111:7001/import-luckynumbers/oauth/token', data, {
+                $http.post(URL.host + ':7001/import-luckynumbers/oauth/token', data, {
                     headers: {
                         "Content-Type": "application/x-www-form-urlencoded",
                         "Accept": "application/json",
-                        "Authorization": "Basic " + Base64Service.encode("jAuthapp" + ':' + "mySecretOAuthSecret")
+                        "access_type" : "offline"
                     },
                     ignoreAuthModule: 'ignoreAuthModule'
                 }).success(function (data, status, headers, config) {
@@ -120,8 +125,8 @@ luckynumbersApp.factory('AuthenticationSharedService', function ($rootScope, $ht
                     AccessToken.set(data);
 
                     Account.get(function(data) {
-                        Session.create(data.login, data.firstName, data.lastName, data.email, data.roles);
-                        $rootScope.account = Session;
+                       Session.create(data.name, data.id, data.role);
+                       $rootScope.account = Session;
                         authService.loginConfirmed(data);
                     });
                 }).error(function (data, status, headers, config) {
@@ -130,9 +135,10 @@ luckynumbersApp.factory('AuthenticationSharedService', function ($rootScope, $ht
                     AccessToken.remove();
                     delete httpHeaders.common['Authorization'];
 
-                    if (!$rootScope.isAuthorized(authorizedRoles)) {
-                        $rootScope.$broadcast('event:auth-loginRequired', data);
-                    }
+                    $rootScope.errorMessage=data.errors[0];
+                    $rootScope.authenticationError = true;
+                    $rootScope.$broadcast('event:auth-loginRequired', data);
+
                 });
             },
             valid: function (authorizedRoles) {
@@ -140,8 +146,13 @@ luckynumbersApp.factory('AuthenticationSharedService', function ($rootScope, $ht
                     httpHeaders.common['Authorization'] = 'Bearer ' + AccessToken.get();
                 }
 
-                $http.get('http://192.168.0.111:7001/import-luckynumbers/luckynumbers/config/city', {
-                    ignoreAuthModule: 'ignoreAuthModule'
+                $http({
+                        method: 'GET',
+                        url: URL.host + ':7001/import-luckynumbers/luckynumbers/config/city',
+                        data: {'key1':'value1', 'key2':'value2'},
+                        headers: {"Content-Type": "application/json"},
+                        ignoreAuthModule: 'ignoreAuthModule'
+
                 }).success(function (data, status, headers, config) {
                     if (!Session.login || AccessToken.get() != undefined) {
                         if (AccessToken.get() == undefined || AccessToken.expired()) {
@@ -149,7 +160,7 @@ luckynumbersApp.factory('AuthenticationSharedService', function ($rootScope, $ht
                             return;
                         }
                         Account.get(function(data) {
-                            Session.create(data.login, data.firstName, data.lastName, data.email, data.roles);
+                            Session.create(data.name, data.id, data.role);
                             $rootScope.account = Session;
                             if (!$rootScope.isAuthorized(authorizedRoles)) {
                                 // user is not allowed
@@ -199,7 +210,7 @@ luckynumbersApp.factory('AuthenticationSharedService', function ($rootScope, $ht
                 $rootScope.account = null;
                 AccessToken.remove();
 
-                $http.get('app/logout');
+                $http.get(URL.host + ':7001/import-luckynumbers/logout');
                 Session.invalidate();
                 delete httpHeaders.common['Authorization'];
                 authService.loginCancelled();

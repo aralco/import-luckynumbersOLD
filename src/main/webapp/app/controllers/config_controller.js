@@ -1,0 +1,1 @@
+angular.module('luckynumbersApp').controller('ConfigController',['$scope', function($scope){}]);

@@ -11,3 +11,10 @@ angular.module('luckynumbersApp').controller('LoginController', function ($scope
 angular.module('luckynumbersApp').controller('LogoutController', function ($location, AuthenticationSharedService) {
         AuthenticationSharedService.logout();
     });
+
+
+angular.module('luckynumbersApp').controller('IntroController', function ($location, AuthenticationSharedService) {
+        if ($scope.authenticated) {
+            $location.path('/mprogramaciones').replace();
+        }
+    });

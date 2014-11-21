@@ -1,12 +1,72 @@
- <h4>Crear nueva programación</h4>
- <div class="container">
+ 
+<div class="container">
+    <div class="dialog demo-dialog">
+        <div id="login" class="form-action show">
+            <h4>Crear nueva programación</h4>
 
+            <div class="alert alert-danger" ng-show="formError">
+                Error al enviar los datos <span class="text-primary">{{errorMessage}}</span>
+            </div>
+            <p>
+                Por favor ingrese al sistema los datos y fecha de la programación
+            </p>
+            <form class="form-inline" role="form">
+               <div class="form-group">
+ 			 					<label class="sr-only" for="dialogName">Nombre/Descripción</label>
+ 			 					<input type="text" class="form-control flat" id="dialogName" name="name" placeholder="Nombre/Descripción">
+ 			 		 </div>
+ 			 		 <br>
+ 			 		 <br>
+ 			         <div class="form-group">
+ 			 					<div class="dropdown">
+ 			 					    <a class="dropdown-toggle" id="dLabel" role="button" data-toggle="dropdown" data-target="#" href="">
+ 			 					        Seleccionar fecha de inicio
+ 			 					    </a>
+ 			 					    <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+ 			 					        <datetimepicker data-ng-model="data.date"
+ 			 					                        data-datetimepicker-config="{ dropdownSelector: '.dropdown-toggle' }"></datetimepicker>
+ 			 					    </ul>
+ 			 					</div>
+ 			 					<p>Fecha Seleccionada: {{ data.date | date:'dd-MM-yyyy HH:mm' }}</p>
+ 			 		</div>
+ 			 		<br>
+ 			 		 <br>
+ 			 		  <label class="checkbox" for="checkbox1">
+            <input type="checkbox" value="" id="checkbox1" data-toggle="checkbox">
+            .......Ejecutar inmediatamente
+          </label>
 
-<div class="demo-row">
-        
+ 			 		  <br>
+ 			 		 <br>
+ 			         <button class="btn btn-primary btn-wide">Enviar</button>
+ 			         <input type="hidden" name="description" value="">
+            </form>
+        </div>
+    </div>
 
+    <div class="dialog dialog-success">
+      Tareas Asociadas
+      <button class="btn btn-primary btn-wide mll">
+        <span class="fui-plus"></span>
+        Nueva Tarea
+      </button>
+    </div> <!-- /dialog -->
 
-      </div> <!-- /row -->
-
+    <div class="table-responsive">
+    	        	<table class="table table-bordered">
+    	            <thead>
+    	              <tr>
+    	                <th>Tipo</th>
+    	                <th>Sucursal</th>
+    	                <th>Rango Desde</th>
+    	                <th>Rango Hasta</th>
+    	              </tr>
+    	            </thead>
+    	            <tbody>
+    	              <tr>
+    	              </tr>
+    	            </tbody>
+    	          </table>
+            	</div>
 
 </div>

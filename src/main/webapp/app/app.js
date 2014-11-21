@@ -5,7 +5,7 @@
 var httpHeaders;
 
 
-var luckynumbersApp = angular.module('luckynumbersApp', ['ngRoute', 'route-segment', 'view-segment', 'http-auth-interceptor', 'ngResource', 'ngCookies', 'luckynumbersAppUtils']);
+var luckynumbersApp = angular.module('luckynumbersApp', ['ngRoute', 'route-segment', 'view-segment', 'http-auth-interceptor', 'ngResource', 'ngCookies', 'angular-loading-bar', 'ui.bootstrap.datetimepicker', 'luckynumbersAppUtils']);
 
 
 luckynumbersApp.config(function ($routeSegmentProvider, $httpProvider, USER_ROLES) {
@@ -16,6 +16,15 @@ luckynumbersApp.config(function ($routeSegmentProvider, $httpProvider, USER_ROLE
         .when('/mprogramaciones', 'mprogramaciones')
         .when('/nprogramacion', 'nprogramacion')
         .when('/login', 'login')
+        .when('/logout', 'logout')
+        .when('/error', 'error')
+        .when('/intro', 'mintro')
+        .when('/configuracion', 'mconfiguracion')
+
+        .segment('mintro', {
+            templateUrl: 'templates/intro.html',
+            controller: "IntroController"
+        })
  
         .segment('mprogramaciones',{
             default: true,
@@ -26,13 +35,24 @@ luckynumbersApp.config(function ($routeSegmentProvider, $httpProvider, USER_ROLE
             templateUrl: 'templates/nuevaprogramacion.html',
             controller: 'NuevaProgramacionController',
         })
-         .segment('modal', {
+        .segment('modal', {
             templateUrl: 'templates/modal.html',
             controller: 'DirectivesController',
         })
-         .segment('login', {
+        .segment('login', {
             templateUrl: 'templates/login.html',
             controller: 'LoginController',
+        })
+        .segment('error', {
+            templateUrl: 'templates/error.html',
+        })
+        .segment('logout', {
+            templateUrl: 'templates/login.html',
+            controller: 'LogoutController',
+        })
+        .segment('mconfiguracion', {
+            templateUrl: 'templates/config.html',
+            controller: 'ConfigController',
         })
 
 httpHeaders = $httpProvider.defaults.headers;
@@ -43,13 +63,25 @@ httpHeaders = $httpProvider.defaults.headers;
 
                 var pagesA = {};
                 pagesA["mprogramaciones"] = {
-                        authorizedRoles: [USER_ROLES.user]
+                        authorizedRoles: [USER_ROLES.admin,USER_ROLES.user]
                     };
                 pagesA["nprogramacion"] = {
-                        authorizedRoles: [USER_ROLES.user]
+                        authorizedRoles: [USER_ROLES.admin,USER_ROLES.user]
                     };
                 pagesA["login"] = {
                         authorizedRoles: [USER_ROLES.all]
+                    };
+                pagesA["logout"] = {
+                        authorizedRoles: [USER_ROLES.all]
+                    };
+                pagesA["error"] = {
+                        authorizedRoles: [USER_ROLES.all]
+                    };
+                pagesA["mintro"] = {
+                        authorizedRoles: [USER_ROLES.admin,USER_ROLES.user]
+                    };
+                pagesA["mconfiguracion"] = {
+                        authorizedRoles: [USER_ROLES.admin]
                     };
 
                 $rootScope.authenticated = false;
@@ -57,10 +89,12 @@ httpHeaders = $httpProvider.defaults.headers;
                     $rootScope.isAuthorized = AuthenticationSharedService.isAuthorized;
                     $rootScope.userRoles = USER_ROLES;
 
-                    if (next.segment) {
-                        AuthenticationSharedService.valid(pagesA[next.segment].authorizedRoles);
-                    } else {
-                       // AuthenticationSharedService.valid(pagesA[next.segment].authorizedRoles);
+                    if (typeof next !== "undefined") {
+                        if (typeof next.segment !== "undefined"){
+                            AuthenticationSharedService.valid(pagesA[next.segment].authorizedRoles);
+                        } else {
+                           // AuthenticationSharedService.valid(pagesA[next.segment].authorizedRoles);
+                        }
                     }
 
                 });
@@ -71,10 +105,14 @@ httpHeaders = $httpProvider.defaults.headers;
                     if ($location.path() === "/login") {
                         var search = $location.search();
                         if (search.redirect !== undefined) {
+                             //$location.path('/mprogramaciones').replace();
                             $location.path(search.redirect).search('redirect', null).replace();
                         } else {
-                            $location.path('/').replace();
+                            $location.path('/mprogramaciones').replace();
                         }
+                    }
+                    if ($location.path() === "/intro") {
+                        $location.path('/mprogramaciones').replace();
                     }
                 });
 

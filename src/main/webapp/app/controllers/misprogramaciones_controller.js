@@ -1,42 +1,40 @@
-angular.module('luckynumbersApp').controller('MisProgramacionesController',
-    ['$scope', function ($scope) {
+luckynumbersApp.controller('MisProgramacionesController', function ($scope, Jobs) {
 
+//angular.module('luckynumbersApp').controller('MisProgramacionesController',
+//    ['$scope', function ($scope, Jobs) {
 
-        $scope.programaciones = [
-            {
-                "id": '2560',
-                "sucursal": 'Cochabamba',
-                "desde": '77498989',
-                "hasta": '77499999',
-                 "tipo": 'Libres',
-                "programado": '26/10/2014:08:00PM'
-            },
-            {
-                "id": '2561',
-                "sucursal": 'Santa Cruz',
-               "desde": '77498989',
-                "hasta": '77499999',
-                 "tipo": 'Congelados',
-                "programado": '26/10/2014:08:00PM'
-            }
-            ,
-{
-                "id": '2562',
-                "sucursal": 'Montero',
-                "desde": '77498989',
-                "hasta": '77499999',
-                 "tipo": 'Libres',
-                "programado": '26/10/2014:08:00PM'
-            },
-            {
-                "id": '2563',
-                "sucursal": 'La Paz',
-                "desde": '77498989',
-                "hasta": '77499999',
-                "tipo": 'Libres',
-                "programado": '26/10/2014:08:00PM'
-            }
-        ];
+        $scope.success = null;
+        $scope.error = null;
+
+        var programaciones = Jobs.get();
+
+        $scope.programaciones = programaciones;
+
+        $scope.noIniciados  = 0;
+        $scope.enProceso = 0;
+        $scope.finalizados = 0;
+        $scope.showDetails = false;
+        $scope.filtroactual = '*';
+        $scope.totalJobs  = 0;
+
+        Jobs.get(function(data) {
+           programaciones = data;
+           $scope.seleccionado =  data[0];
+           $scope.totalJobs = data.length;
+           angular.forEach(data, function(job) {
+                       if (job.state == "NOT_STARTED") {
+                           $scope.noIniciados++;
+                       }
+
+                       if (job.state == "IN_PROGRESS") {
+                           $scope.enProceso++;
+                       }
+
+                       if (job.state == "DONE") {
+                           $scope.finalizados++;
+                       }
+                   });
+         });
 
         $scope.modal = {
         	"title":  "Confirmar",
@@ -48,6 +46,33 @@ angular.module('luckynumbersApp').controller('MisProgramacionesController',
 
         $scope.isModalOpen = false;
 
+        $scope.filterSeleccionado = function(job)
+        {
+            if ($scope.filtroactual == '*') {
+                return true;
+            }
+
+            if(job.state == $scope.filtroactual)
+            {
+                return true; // this will be listed in the results
+            }
+
+            return false; // otherwise it won't be within the results
+        };
+
+        $scope.changeSeleccionado = function(cual) {
+            $scope.filtroactual = cual;
+        }
+
+        $scope.showDetalles = function(id){
+          if (!$scope.showDetails){
+              $scope.seleccionado = $scope.programaciones[id];
+              $scope.showDetails = true;
+          } else {
+            $scope.showDetails = false;
+          }
+        }
+
         $scope.openModal = function(mensaje){
           if (!$scope.isModalOpen){
           	  $scope.modal.message = mensaje;
@@ -56,4 +81,4 @@ angular.module('luckynumbersApp').controller('MisProgramacionesController',
         }
 
 
-    }]);
+    });

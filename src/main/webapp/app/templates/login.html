@@ -3,8 +3,8 @@
         <div id="login" class="form-action show">
             <h4>Importacion de LuckyNumbers</h4>
 
-            <div class="alert alert-danger" ng-show="authenticationError" translate="login.messages.error.authentication">
-                <strong>Error al verificar sus datos!</strong>Por favor verifique sus credenciales e intente nuevamente.
+            <div class="alert alert-danger" ng-show="authenticationError">
+                <strong>Error al verificar sus datos! </strong>{{errorMessage}}.
             </div>
             <p>
                 Por favor ingrese al sistema con sus credenciales
