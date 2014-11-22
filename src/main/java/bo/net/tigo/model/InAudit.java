@@ -112,4 +112,5 @@ public class InAudit {
     public void setLastUpdate(Date lastUpdate) {
         this.lastUpdate = lastUpdate;
     }
+
 }

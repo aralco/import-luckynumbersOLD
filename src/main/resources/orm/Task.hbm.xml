@@ -39,7 +39,7 @@
             <column name="ILN_TASK_FAILED"/>
         </property>
         <property name="summary" type="java.lang.String">
-            <column name="ILN_TASK_SUMMARY"/>
+            <column name="ILN_TASK_SUMMARY" sql-type="clob"/>
         </property>
         <property name="coverage" type="java.lang.String">
             <column name="ILN_TASK_COVERAGE"/>

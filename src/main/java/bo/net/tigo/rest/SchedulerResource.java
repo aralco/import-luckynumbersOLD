@@ -84,7 +84,7 @@ public class SchedulerResource {
         return new ResponseEntity<Task>(task, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/task/{taskId:[\\p{Digit}]+}", method = RequestMethod.POST, consumes = "application/json")
+    @RequestMapping(value = "/task/{taskId:[\\p{Digit}]+}", method = RequestMethod.PUT, consumes = "application/json")
     @ResponseBody
     public ResponseEntity<Task> updateTask(@PathVariable Long taskId, @RequestBody @Valid Task task)   {
         Task updatedTask = schedulerService.updateTask(task);

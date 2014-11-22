@@ -8,6 +8,7 @@ import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -61,11 +62,17 @@ public class TaskDaoImpl implements TaskDao {
     @SuppressWarnings("unchecked")
     public List<Task> findScheduledAndReScheduledTasks(Date currentDate) {
         Session session = sessionFactory.getCurrentSession();
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.SECOND, -60);
+        Date pastDate = calendar.getTime();
+
         return session.createQuery("from Task " +
                 "where status in (:scheduled ,:rescheduled) " +
-                "and executionDate <= :currentDate")
+                "and executionDate between :pastDate "+
+                "and :currentDate")
                 .setParameter("scheduled", Status.SCHEDULED.name())
                 .setParameter("rescheduled", Status.RE_SCHEDULED.name())
+                .setParameter("pastDate", pastDate)
                 .setParameter("currentDate", currentDate).list();
     }
 

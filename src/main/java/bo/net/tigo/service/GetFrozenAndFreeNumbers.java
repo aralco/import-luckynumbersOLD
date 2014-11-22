@@ -1,6 +1,6 @@
 package bo.net.tigo.service;
 
-import bo.net.tigo.dao.FreeAndFrozenDao;
+import bo.net.tigo.dao.BCCSDao;
 import bo.net.tigo.dao.InAuditDao;
 import bo.net.tigo.dao.TaskDao;
 import bo.net.tigo.model.*;
@@ -34,7 +34,7 @@ public class GetFrozenAndFreeNumbers {
     @Autowired
     private MessageChannel ftpChannelOUT;
     @Autowired
-    private FreeAndFrozenDao freeAndFrozenDao;
+    private BCCSDao bccsDao;
     @Autowired
     private InAuditDao inAuditDao;
     @Value("${file.path.import.in}")
@@ -51,27 +51,37 @@ public class GetFrozenAndFreeNumbers {
         } else  {
             Calendar calendar = Calendar.getInstance();
             for(Task task:scheduledAndReScheduledTasks) {
+                StringBuilder taskLog = new StringBuilder();
                 Date currentDate = calendar.getTime();
                 Job job = task.getJob();
                 logger.info("Start task execution for task=> taskId:"+task.getId()+", status="+task.getStatus()+", executionDate="+task.getExecutionDate()+", job="+job);
+                taskLog.append("Task execution started.\n");
+                task.setSummary(taskLog.toString());
                 task.setStatus(Status.STARTED.name());
                 task.setExecutionDate(currentDate);
                 if(job.getState().equals(State.NOT_STARTED.name()))  {
                    job.setState(State.IN_PROGRESS.name());
                 }
-                logger.info("Start task execution for task=> taskId:"+task.getId()+", status="+task.getStatus()+", executionDate="+task.getExecutionDate()+", job="+task.getJob().getState());
+                logger.info("Start task execution for task=> taskId:" + task.getId() + ", status=" + task.getStatus() + ", executionDate=" + task.getExecutionDate() + ", job=" + task.getJob().getState());
+                taskLog.append("Retrieving numbers.\n");
+                task.setSummary(taskLog.toString());
                 List<InAudit> retrievedNumbers;
                 if(task.getType().equals(Type.FREE.name())) {
-                    retrievedNumbers = freeAndFrozenDao.getFreeNumbers(task.getCity(), task.getFrom(), task.getTo());
+                    retrievedNumbers = bccsDao.getFreeNumbers(task.getCity(), task.getFrom(), task.getTo());
                 } else  {
-                    retrievedNumbers = freeAndFrozenDao.getFrozenNumbers(task.getCity(), task.getFrom(), task.getTo());
+                    retrievedNumbers = bccsDao.getFrozenNumbers(task.getCity(), task.getFrom(), task.getTo());
                 }
-                logger.info("Values from Caller retrievedNumbers:"+retrievedNumbers);
+                logger.info("Values from Caller retrievedNumbers:"+retrievedNumbers.toString());
+                taskLog.append("Total retrieved numbers:"+retrievedNumbers.size()+"\n");
+                task.setSummary(taskLog.toString());
                 if(retrievedNumbers.size()>0)   {
                     String fileContent =
                             "Numero,Ciudad,Channel";
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
+                    String fileName = sdf.format(currentDate)+".in";
 
                     for(InAudit inAudit : retrievedNumbers) {
+                        task.setSummary(taskLog.toString());
                         fileContent=fileContent+"\n"+inAudit.getRow();
                         inAudit.setCreatedDate(currentDate);
                         inAudit.setCity(task.getCity());
@@ -81,14 +91,19 @@ public class GetFrozenAndFreeNumbers {
                         inAudit.setNumber(fields[0]);
                         inAudit.setCity(Integer.valueOf(fields[1]));
                         inAudit.setChannel(Integer.valueOf(fields[2]));
+                        inAudit.setFileName(fileName);
                         inAuditDao.save(inAudit);
+                        logger.info("Processing retrievedNumber:"+inAudit.toString());
+                        taskLog.append("Processing retrievedNumber:"+inAudit.toString()+"\n");
                     }
                     logger.info("File generation:"+retrievedNumbers);
 
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
-                    String fileName = sdf.format(currentDate)+".in";
+
                     File inFile = new File(filePath+"/"+fileName);
                     logger.info("File to copy:"+inFile);
+                    taskLog.append("File generation."+fileName+"\n");
+                    task.setSummary(taskLog.toString());
+
                     if(!inFile.exists())
                         inFile.createNewFile();
                     logger.info("File exists:"+inFile);
@@ -100,14 +115,20 @@ public class GetFrozenAndFreeNumbers {
 
                     final Message<File> fileMessage = MessageBuilder.withPayload(inFile).build();
                     ftpChannelOUT.send(fileMessage);
+                    taskLog.append("Sending file "+fileName+" to FTP server.\n");
+                    task.setSummary(taskLog.toString());
                     task.setStatus(Status.COMPLETED_PHASE1_OK.name());
+                    taskLog.append("Phase 1 completed successfully."+fileName+"\n");
+                    task.setSummary(taskLog.toString());
                     task.setUrlin(fileName);
                     calendar.add(Calendar.SECOND, +1);
                 } else  {
                     task.setStatus(Status.COMPLETED_PHASE1_WITHOUT_DATA.name());
+                    taskLog.append("Phase 1 completed without data.\n");
+                    task.setSummary(taskLog.toString());
                     task.setUrlin("NA");
                 }
-
+                task.setSummary(taskLog.toString());
             }
         }
     }

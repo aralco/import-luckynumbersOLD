@@ -9,10 +9,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
@@ -40,5 +37,22 @@ public class MonitorResource {
         List<Job> jobs = monitorService.monitorJobs(jobId, owner, jobState, from, to);
         return new ResponseEntity<List<Job>>(jobs, HttpStatus.OK);
     }
+
+    @RequestMapping(value = "/audit/in/{taskId}", method = RequestMethod.GET)
+    public @ResponseBody ResponseEntity<List<String>> getInFile(@PathVariable Long taskId)   {
+        logger.info("lookup InAudit for taskId:"+taskId);
+        List<String> rows = monitorService.getInFile(taskId);
+        logger.info("inFile: "+rows);
+        return new ResponseEntity<List<String>>(rows, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/audit/out/{taskId}", method = RequestMethod.GET)
+    public @ResponseBody ResponseEntity<List<String>> getOutFile(@PathVariable Long taskId)   {
+        logger.info("lookup OutAudit for taskId:"+taskId);
+        List<String> rows = monitorService.getOutFile(taskId);
+        logger.info("outFile: "+rows);
+        return new ResponseEntity<List<String>>(rows, HttpStatus.OK);
+    }
+
 
 }

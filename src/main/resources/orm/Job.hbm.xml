@@ -42,7 +42,7 @@
             <column name="ILN_JOB_TOTAL_COVERAGE"/>
         </property>
         <property name="summary" type="java.lang.String">
-            <column name="ILN_JOB_SUMMARY"/>
+            <column name="ILN_JOB_SUMMARY" sql-type="clob"/>
         </property>
         <property name="createdDate" type="java.util.Date">
             <column name="ILN_JOB_CREATED_DATE"/>

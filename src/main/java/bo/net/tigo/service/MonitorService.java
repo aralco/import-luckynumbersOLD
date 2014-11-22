@@ -1,6 +1,8 @@
 package bo.net.tigo.service;
 
+import bo.net.tigo.dao.InAuditDao;
 import bo.net.tigo.dao.JobDao;
+import bo.net.tigo.dao.OutAuditDao;
 import bo.net.tigo.model.Job;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +21,10 @@ import java.util.List;
 public class MonitorService {
     @Autowired
     private JobDao jobDao;
+    @Autowired
+    private InAuditDao inAuditDao;
+    @Autowired
+    private OutAuditDao outAuditDao;
 
     private static final Logger logger = LoggerFactory.getLogger(MonitorService.class);
 
@@ -33,5 +39,15 @@ public class MonitorService {
 //        }
         jobs = jobDao.findAll();
         return jobs;
+    }
+
+    @Transactional
+    public List<String> getInFile(Long taskId)   {
+        return inAuditDao.findRowsByTask(taskId);
+    }
+
+    @Transactional
+    public List<String> getOutFile(Long taskId)   {
+        return outAuditDao.findRowsByTask(taskId);
     }
 }

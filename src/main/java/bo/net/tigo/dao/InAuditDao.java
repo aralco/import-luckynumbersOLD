@@ -6,6 +6,8 @@ import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * Created by aralco on 11/18/14.
  */
@@ -18,5 +20,17 @@ public class InAuditDao {
         Session session = sessionFactory.getCurrentSession();
         session.save(inAudit);
     }
+
+    @SuppressWarnings("unchecked")
+    public List<String> findRowsByTask(Long taskId) {
+        Session session = sessionFactory.getCurrentSession();
+        return session.createQuery("" +
+                "select inaudit.row " +
+                "from InAudit inaudit " +
+                "where inaudit.taskId = :taskId")
+                .setParameter("taskId",taskId)
+                .list();
+    }
+
 
 }

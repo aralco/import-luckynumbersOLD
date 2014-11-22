@@ -25,14 +25,14 @@ import java.util.Map;
  * Created by aralco on 11/18/14.
  */
 @Repository
-public class FreeAndFrozenDao {
+public class BCCSDao {
 
     private SimpleJdbcCall freeNumbersProc;
     private SimpleJdbcCall frozenNumbersProc;
-    private SimpleJdbcCall reserveNumbersProc;
+    private SimpleJdbcCall reserveNumberProc;
     private SimpleJdbcCall unlockNumbersProc;
 
-    private static final Logger logger = LoggerFactory.getLogger(FreeAndFrozenDao.class);
+    private static final Logger logger = LoggerFactory.getLogger(BCCSDao.class);
 
     @Autowired
     public void setDataSource(@Qualifier("as400DataSource") DataSource dataSource) {
@@ -72,7 +72,7 @@ public class FreeAndFrozenDao {
                     }
                 });
 
-        this.reserveNumbersProc = new SimpleJdbcCall(jdbcTemplate)
+        this.reserveNumberProc = new SimpleJdbcCall(jdbcTemplate)
         .withProcedureName("SP3_RERSERVANL_NROCUENTACOYLC")
                 .declareParameters(
                         new SqlParameter("nrocuenta", Types.VARCHAR),
@@ -123,7 +123,7 @@ public class FreeAndFrozenDao {
         SqlParameterSource parameterSource = new MapSqlParameterSource()
                 .addValue("nrocuenta", number);
         logger.info("reserveNumbers::"+number);
-        Map result = reserveNumbersProc.execute(parameterSource);
+        Map result = reserveNumberProc.execute(parameterSource);
         return (String)result.get("mensaje");
     }
 
@@ -132,7 +132,7 @@ public class FreeAndFrozenDao {
                 .addValue("sucursal", city)
                 .addValue("nro_desde", from)
                 .addValue("nro_hasta", to);
-        Map out = freeNumbersProc
+        Map out = unlockNumbersProc
                 .execute(parameterSource);
         logger.info("unlockNumbers::"+out.get("unlockedNumbers"));
         return (List<InAudit>)out.get("unlockedNumbers");

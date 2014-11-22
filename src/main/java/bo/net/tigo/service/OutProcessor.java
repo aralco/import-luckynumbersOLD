@@ -1,6 +1,7 @@
 package bo.net.tigo.service;
 
-import bo.net.tigo.dao.FreeAndFrozenDao;
+import bo.net.tigo.dao.BCCSDao;
+import bo.net.tigo.dao.LuckyNumbersDao;
 import bo.net.tigo.dao.OutAuditDao;
 import bo.net.tigo.dao.TaskDao;
 import bo.net.tigo.model.*;
@@ -25,7 +26,9 @@ public class OutProcessor {
     @Autowired
     private TaskDao taskDao;
     @Autowired
-    private FreeAndFrozenDao freeAndFrozenDao;
+    private BCCSDao bccsDao;
+    @Autowired
+    private LuckyNumbersDao luckyNumbersDao;
 
     private static final Logger logger = LoggerFactory.getLogger(OutProcessor.class);
 
@@ -38,6 +41,7 @@ public class OutProcessor {
 
     @Transactional
     public File process(File file) throws Exception{
+        StringBuilder taskLog = new StringBuilder();
         logger.info("Processing File: " + file);
         BufferedReader bufferedReader = null;
         String splitBy = ",";
@@ -51,13 +55,18 @@ public class OutProcessor {
             logger.info("array Size:"+shortFilename.length()+",values:"+shortFilename);
             //TODO create a exception when file doesn't exist in db
             Task task = taskDao.findByFileName(shortFilename);
+            taskLog.append(task.getSummary()+"\n ************************** \n");
+            task.setSummary(taskLog.toString());
+            taskLog.append("Processing .out File: " + fileName+"\n");
             task.setUrlout(fileName);
             task.setLastUpdate(currentDate);
             task.setStatus(Status.STARTED_PHASE2.name());
-
+            boolean taskCompletedOK=true;
             while ((line = bufferedReader.readLine()) != null) {
                 // use comma as separator
                 logger.info("line to process:"+line);
+                taskLog.append("Processing line: " + line+"\n");
+                task.setSummary(taskLog.toString());
                 String[] outRow = line.split(splitBy);
                 logger.info("array Size:"+outRow.length+",vlaues:"+outRow);
                 OutAudit outAudit = new OutAudit();
@@ -72,13 +81,40 @@ public class OutProcessor {
                 outAudit.setJobId(task.getJob().getId());
                 outAuditDao.save(outAudit);
                 if(outAudit.getCodePassed().equals(0)) {
-                    String message = freeAndFrozenDao.reserveNumber(outAudit.getNumber());
-                    logger.info("ReservedNumber:"+message);
+                    logger.info("Number to be reserved:"+outAudit.getNumber());
+                    taskLog.append("Number to be reserved:"+outAudit.getNumber()+"\n");
+                    task.setSummary(taskLog.toString());
+                    String message = bccsDao.reserveNumber(outAudit.getNumber());
+                    if(message.contains("OK"))  {
+                        logger.info("Number has been reserved correctly:"+message);
+                        taskLog.append("Number has been reserved correctly:"+message+"\n");
+                        task.setSummary(taskLog.toString());
+                    } else  {
+                        logger.info("Number has NOT been reserved, calling rollback:"+message);
+                        taskLog.append("Number has NOT been reserved, calling rollback:"+message+"\n");
+                        task.setSummary(taskLog.toString());
+                        luckyNumbersDao.unReserveNumber(outAudit.getNumber(),false);
+                        taskCompletedOK=false;
+                        logger.info("Rollback completed:"+message);
+                        taskLog.append("Rollback completed:"+message+"\n");
+                        task.setSummary(taskLog.toString());
+                    }
                 }
             }
-            List<InAudit> unlockedNumbers = freeAndFrozenDao.unlockNumbers(task.getCity(),task.getFrom(),task.getTo());
+            logger.info("values:city="+task.getCity()+",from="+task.getFrom()+",to="+task.getTo());
+            List<InAudit> unlockedNumbers = bccsDao.unlockNumbers(task.getCity(),task.getFrom(),task.getTo());
             logger.info("unlockedNumbers: "+unlockedNumbers);
-            task.setStatus(Status.COMPLETED_OK.name());
+            taskLog.append("unlockedNumbers: "+unlockedNumbers+"\n");
+            task.setSummary(taskLog.toString());
+            //TODO ejecutar el query de conciliacion
+            if(taskCompletedOK)
+                task.setStatus(Status.COMPLETED_OK.name());
+            else
+                task.setStatus(Status.COMPLETED_WITH_ERRORS.name());
+
+            logger.info("Task completed: "+task.getStatus());
+            taskLog.append("Task completed: "+task.getStatus()+"\n");
+            task.setSummary(taskLog.toString());
 
 
         } catch (FileNotFoundException e) {
@@ -95,10 +131,6 @@ public class OutProcessor {
             }
         }
 
-        //TODO save in OUTAudit table
-        //TODO Extract luckynumbers
-        //TODO make reservation
-        //
         return file;
     }
 }

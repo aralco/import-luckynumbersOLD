@@ -46,12 +46,20 @@
         <property name="password" value="${as400.jdbc.password}"/>
     </bean>
 
-    <!--********** Oracle Spring Data Source **********-->
+    <!--********** Oracle IMPORTLUCKY Spring Data Source **********-->
     <bean id="oracleDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="${oracle.jdbc.driverClassName}"/>
         <property name="url" value="jdbc:oracle:thin:@//${oracle.jdbc.host}:${oracle.jdbc.port}/${oracle.jdbc.service.name}"/>
         <property name="username" value="${oracle.jdbc.username}"/>
         <property name="password" value="${oracle.jdbc.password}"/>
+    </bean>
+
+    <!--********** Oracle LUCKY_NUMBERS Spring Data Source **********-->
+    <bean id="lnOracleDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="${ln.oracle.jdbc.driverClassName}"/>
+        <property name="url" value="jdbc:oracle:thin:@//${ln.oracle.jdbc.host}:${ln.oracle.jdbc.port}/${ln.oracle.jdbc.service.name}"/>
+        <property name="username" value="${ln.oracle.jdbc.username}"/>
+        <property name="password" value="${ln.oracle.jdbc.password}"/>
     </bean>
 
     <!--********** SessionFactory **********-->
@@ -112,6 +120,7 @@
         <security:intercept-url pattern="/luckynumbers/config/accesslog/**" method="GET" access="ROLE_ADMIN"/>
         <security:intercept-url pattern="/luckynumbers/scheduler/**" method="GET" access="ROLE_USER, ROLE_ADMIN"/>
         <security:intercept-url pattern="/luckynumbers/scheduler/**" method="POST" access="ROLE_USER, ROLE_ADMIN"/>
+        <security:intercept-url pattern="/luckynumbers/scheduler/**" method="PUT" access="ROLE_USER, ROLE_ADMIN"/>
         <security:intercept-url pattern="/luckynumbers/scheduler/**" method="DELETE" access="ROLE_USER, ROLE_ADMIN"/>
         <security:intercept-url pattern="/luckynumbers/monitor/**" method="GET" access="ROLE_USER, ROLE_ADMIN"/>
         <security:intercept-url pattern="/luckynumbers/monitor/**" method="POST" access="ROLE_USER, ROLE_ADMIN"/>
