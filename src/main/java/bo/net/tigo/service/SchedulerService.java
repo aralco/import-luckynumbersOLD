@@ -100,6 +100,7 @@ public class SchedulerService {
             task.setExecutionDate(job.getScheduledDate());
             task.setLastUpdate(currentDate);
         }
+        job.setTotalTasks(job.getTasks().size());
         job.setLastUpdate(currentDate);
         jobDao.update(job);
         return job;
@@ -141,6 +142,7 @@ public class SchedulerService {
         task.setCoverage("0%");
         task.setCreatedDate(new Date());
         taskDao.save(task);
+        job.setTotalTasks(job.getTotalTasks()+1);
         return task;
     }
 
@@ -156,6 +158,8 @@ public class SchedulerService {
         Date currentDate = new Date();
         task.setLastUpdate(currentDate);
         taskDao.update(task);
+        Job job = task.getJob();
+        job.setTotalTasks(job.getTotalTasks()+1);
         return task;
     }
 
@@ -167,6 +171,8 @@ public class SchedulerService {
         if(!task.getStatus().equals(Status.SCHEDULED.name()))
             throw new LuckyNumbersGenericException(HttpStatus.PRECONDITION_FAILED.toString(),"Related Task must have NOT_SCHEDULED status");
         taskDao.delete(task);
+        Job job = task.getJob();
+        job.setTotalTasks(job.getTotalTasks()-1);
     }
 
 }

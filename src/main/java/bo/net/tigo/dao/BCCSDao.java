@@ -31,6 +31,8 @@ public class BCCSDao {
     private SimpleJdbcCall frozenNumbersProc;
     private SimpleJdbcCall reserveNumberProc;
     private SimpleJdbcCall unlockNumbersProc;
+    private SimpleJdbcCall lcNumbersProc;
+    private SimpleJdbcCall lnNumbersProc;
 
     private static final Logger logger = LoggerFactory.getLogger(BCCSDao.class);
 
@@ -95,6 +97,42 @@ public class BCCSDao {
                                 return inAudit;
                             }
                  });
+
+        this.lcNumbersProc = new SimpleJdbcCall(jdbcTemplate)
+                .withProcedureName("SP1_LNROSLCXSUCURSALNRODESDEHASTA")
+                .withoutProcedureColumnMetaDataAccess()
+                .declareParameters(
+                        new SqlParameter("sucursal", Types.NUMERIC),
+                        new SqlParameter("nro_desde", Types.VARCHAR),
+                        new SqlParameter("nro_hasta", Types.VARCHAR)
+                )
+                .returningResultSet("lcNumbers", new ParameterizedRowMapper<InAudit>() {
+                    @Override
+                    public InAudit mapRow(ResultSet resultSet, int i) throws SQLException {
+                        InAudit inAudit = new InAudit();
+                        inAudit.setRow(resultSet.getString(1));
+                        return inAudit;
+                    }
+                });
+
+        this.lnNumbersProc = new SimpleJdbcCall(jdbcTemplate)
+                .withProcedureName("SP1_LNROSLNXSUCURSALNRODESDEHASTA")
+                .withoutProcedureColumnMetaDataAccess()
+                .declareParameters(
+                        new SqlParameter("sucursal", Types.NUMERIC),
+                        new SqlParameter("nro_desde", Types.VARCHAR),
+                        new SqlParameter("nro_hasta", Types.VARCHAR)
+                )
+                .returningResultSet("lnNumbers", new ParameterizedRowMapper<InAudit>() {
+                    @Override
+                    public InAudit mapRow(ResultSet resultSet, int i) throws SQLException {
+                        InAudit inAudit = new InAudit();
+                        inAudit.setRow(resultSet.getString(1));
+                        return inAudit;
+                    }
+                });
+
+
     }
 
     public List<InAudit> getFrozenNumbers(int city, String from, String to)    {
@@ -137,6 +175,29 @@ public class BCCSDao {
         logger.info("unlockNumbers::"+out.get("unlockedNumbers"));
         return (List<InAudit>)out.get("unlockedNumbers");
     }
+
+    public List<InAudit> getLcNumbers(int city, String from, String to)    {
+        SqlParameterSource parameterSource = new MapSqlParameterSource()
+                .addValue("sucursal", city)
+                .addValue("nro_desde", from)
+                .addValue("nro_hasta", to);
+        Map out = frozenNumbersProc
+                .execute(parameterSource);
+        logger.info("getLcNumbers::"+out.get("lcNumbers"));
+        return (List<InAudit>)out.get("lcNumbers");
+    }
+
+    public List<InAudit> getLnNumbers(int city, String from, String to)    {
+        SqlParameterSource parameterSource = new MapSqlParameterSource()
+                .addValue("sucursal", city)
+                .addValue("nro_desde", from)
+                .addValue("nro_hasta", to);
+        Map out = freeNumbersProc
+                .execute(parameterSource);
+        logger.info("getLnNumbers::"+out.get("lnNumbers"));
+        return (List<InAudit>)out.get("lnNumbers");
+    }
+
 
 
 }

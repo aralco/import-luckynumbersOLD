@@ -32,4 +32,15 @@ public class OutAuditDao {
                 .list();
     }
 
+    public Long countOutFilesByJob(Long jobId) {
+        Session session = sessionFactory.getCurrentSession();
+        return (Long)session.createQuery("" +
+                "select count(distinct outaudit.fileName) " +
+                "from OutAudit outaudit " +
+                "where outaudit.jobId = :jobId "+
+                "group by outaudit.jobId")
+                .setParameter("jobId",jobId)
+                .uniqueResult();
+    }
+
 }

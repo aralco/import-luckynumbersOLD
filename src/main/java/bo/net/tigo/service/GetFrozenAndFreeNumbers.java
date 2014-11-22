@@ -2,6 +2,7 @@ package bo.net.tigo.service;
 
 import bo.net.tigo.dao.BCCSDao;
 import bo.net.tigo.dao.InAuditDao;
+import bo.net.tigo.dao.OutAuditDao;
 import bo.net.tigo.dao.TaskDao;
 import bo.net.tigo.model.*;
 import org.slf4j.Logger;
@@ -37,6 +38,8 @@ public class GetFrozenAndFreeNumbers {
     private BCCSDao bccsDao;
     @Autowired
     private InAuditDao inAuditDao;
+    @Autowired
+    private OutAuditDao outAuditDao;
     @Value("${file.path.import.in}")
     private String filePath;
 
@@ -55,7 +58,7 @@ public class GetFrozenAndFreeNumbers {
                 Date currentDate = calendar.getTime();
                 Job job = task.getJob();
                 logger.info("Start task execution for task=> taskId:"+task.getId()+", status="+task.getStatus()+", executionDate="+task.getExecutionDate()+", job="+job);
-                taskLog.append("Task execution started.\n");
+                taskLog.append("Task execution started.||");
                 task.setSummary(taskLog.toString());
                 task.setStatus(Status.STARTED.name());
                 task.setExecutionDate(currentDate);
@@ -63,7 +66,7 @@ public class GetFrozenAndFreeNumbers {
                    job.setState(State.IN_PROGRESS.name());
                 }
                 logger.info("Start task execution for task=> taskId:" + task.getId() + ", status=" + task.getStatus() + ", executionDate=" + task.getExecutionDate() + ", job=" + task.getJob().getState());
-                taskLog.append("Retrieving numbers.\n");
+                taskLog.append("Retrieving numbers.||");
                 task.setSummary(taskLog.toString());
                 List<InAudit> retrievedNumbers;
                 if(task.getType().equals(Type.FREE.name())) {
@@ -72,7 +75,7 @@ public class GetFrozenAndFreeNumbers {
                     retrievedNumbers = bccsDao.getFrozenNumbers(task.getCity(), task.getFrom(), task.getTo());
                 }
                 logger.info("Values from Caller retrievedNumbers:"+retrievedNumbers.toString());
-                taskLog.append("Total retrieved numbers:"+retrievedNumbers.size()+"\n");
+                taskLog.append("Total retrieved numbers:"+retrievedNumbers.size()+"||");
                 task.setSummary(taskLog.toString());
                 if(retrievedNumbers.size()>0)   {
                     String fileContent =
@@ -94,14 +97,14 @@ public class GetFrozenAndFreeNumbers {
                         inAudit.setFileName(fileName);
                         inAuditDao.save(inAudit);
                         logger.info("Processing retrievedNumber:"+inAudit.toString());
-                        taskLog.append("Processing retrievedNumber:"+inAudit.toString()+"\n");
+                        taskLog.append("Processing retrievedNumber:"+inAudit.toString()+"||");
                     }
                     logger.info("File generation:"+retrievedNumbers);
 
 
                     File inFile = new File(filePath+"/"+fileName);
                     logger.info("File to copy:"+inFile);
-                    taskLog.append("File generation."+fileName+"\n");
+                    taskLog.append("File generation."+fileName+"||");
                     task.setSummary(taskLog.toString());
 
                     if(!inFile.exists())
@@ -115,19 +118,20 @@ public class GetFrozenAndFreeNumbers {
 
                     final Message<File> fileMessage = MessageBuilder.withPayload(inFile).build();
                     ftpChannelOUT.send(fileMessage);
-                    taskLog.append("Sending file "+fileName+" to FTP server.\n");
+                    taskLog.append("Sending file "+fileName+" to FTP server.||");
                     task.setSummary(taskLog.toString());
                     task.setStatus(Status.COMPLETED_PHASE1_OK.name());
-                    taskLog.append("Phase 1 completed successfully."+fileName+"\n");
+                    taskLog.append("Phase 1 completed successfully."+fileName+"||");
                     task.setSummary(taskLog.toString());
                     task.setUrlin(fileName);
                     calendar.add(Calendar.SECOND, +1);
                 } else  {
                     task.setStatus(Status.COMPLETED_PHASE1_WITHOUT_DATA.name());
-                    taskLog.append("Phase 1 completed without data.\n");
+                    taskLog.append("Phase 1 completed without data.||");
                     task.setSummary(taskLog.toString());
                     task.setUrlin("NA");
                 }
+                job.setSummary(job.getSummary()+"Created files -> .in:"+(inAuditDao.countInFilesByJob(job.getId()))+" -VS- :.out"+(outAuditDao.countOutFilesByJob(job.getId()))+" ||");
                 task.setSummary(taskLog.toString());
             }
         }

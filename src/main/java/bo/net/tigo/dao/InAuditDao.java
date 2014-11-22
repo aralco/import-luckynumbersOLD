@@ -32,5 +32,15 @@ public class InAuditDao {
                 .list();
     }
 
+    public Long countInFilesByJob(Long jobId) {
+        Session session = sessionFactory.getCurrentSession();
+        return (Long)session.createQuery("" +
+                "select count(distinct inaudit.fileName) " +
+                "from InAudit inaudit " +
+                "where inaudit.jobId = :jobId "+
+                "group by inaudit.jobId")
+                .setParameter("jobId",jobId)
+                .uniqueResult();
+    }
 
 }

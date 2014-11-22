@@ -9,6 +9,7 @@ public class OutAudit {
     private Long id;
     private String row;
     private String number;
+    private Boolean luckyReserved;
     private Integer codePassed;
     private String codeFailed;
     private String message;
@@ -18,10 +19,11 @@ public class OutAudit {
     private Date createdDate;
     private Date lastUpdate;
 
-    public OutAudit(Long id, String row, String number, Integer codePassed, String codeFailed, String message, String fileName, Long taskId, Long jobId, Date createdDate, Date lastUpdate) {
+    public OutAudit(Long id, String row, String number, Boolean luckyReserved, Integer codePassed, String codeFailed, String message, String fileName, Long taskId, Long jobId, Date createdDate, Date lastUpdate) {
         this.id = id;
         this.row = row;
         this.number = number;
+        this.luckyReserved = luckyReserved;
         this.codePassed = codePassed;
         this.codeFailed = codeFailed;
         this.message = message;
@@ -57,6 +59,14 @@ public class OutAudit {
 
     public void setNumber(String number) {
         this.number = number;
+    }
+
+    public Boolean getLuckyReserved() {
+        return luckyReserved;
+    }
+
+    public void setLuckyReserved(Boolean luckyReserved) {
+        this.luckyReserved = luckyReserved;
     }
 
     public Integer getCodePassed() {

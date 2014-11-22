@@ -17,6 +17,9 @@
         <property name="number" type="java.lang.String">
             <column name="ILN_OUT_AUDIT_NUMBER"/>
         </property>
+        <property name="luckyReserved" type="java.lang.Boolean">
+            <column name="ILN_OUT_AUDIT_LUCKY_RESERVED" not-null="true"/>
+        </property>
         <property name="codePassed" type="java.lang.Integer">
             <column name="ILN_OUT_AUDIT_CODE_PASSED"/>
         </property>
