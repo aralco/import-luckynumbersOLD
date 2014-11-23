@@ -9,7 +9,6 @@
        xmlns:task="http://www.springframework.org/schema/task"
        xmlns:int="http://www.springframework.org/schema/integration"
        xmlns:int-ftp="http://www.springframework.org/schema/integration/ftp"
-       xmlns:int-file="http://www.springframework.org/schema/integration/file"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/context
@@ -25,9 +24,7 @@
        http://www.springframework.org/schema/task
        http://www.springframework.org/schema/task/spring-task.xsd
        http://www.springframework.org/schema/integration/ftp
-       http://www.springframework.org/schema/integration/ftp/spring-integration-ftp.xsd
-       http://www.springframework.org/schema/integration/file
-       http://www.springframework.org/schema/integration/file/spring-integration-file.xsd">
+       http://www.springframework.org/schema/integration/ftp/spring-integration-ftp.xsd">
     <context:component-scan base-package="bo.net.tigo"/>
     <mvc:annotation-driven />
     <mvc:default-servlet-handler />
@@ -73,7 +70,7 @@
                 <prop key="hibernate.show_sql">true</prop>
                 <prop key="hibernate.connection.SetBigStringTryClob">true</prop>
                 <!--On production must be changed to validate-->
-                <prop key="hibernate.hbm2ddl.auto">validate</prop>
+                <prop key="hibernate.hbm2ddl.auto">${valuefor.hibernate.hbm2ddl.auto}</prop>
             </props>
         </property>
         <property name="mappingResources">
@@ -267,28 +264,16 @@
             remote-file-separator="/"
             preserve-timestamp="true"
             temporary-file-suffix=".writing"
-            local-directory="${file.path.import.out}"
-            >
-        <int:poller max-messages-per-poll="-1" fixed-rate="${ftp.delay}"/>
+            local-directory="${file.path.import.out}">
+        <int:poller max-messages-per-poll="-1" fixed-rate="${ftp.rate}"/>
     </int-ftp:inbound-channel-adapter>
 
     <int:channel id="ftpChannelIN">
         <int:queue/>
     </int:channel>
 
-    <int:service-activator input-channel="filesInChannel" output-channel="filesOutChannel" method="process">
-        <bean class="bo.net.tigo.service.OutProcessor"/>
+    <int:service-activator input-channel="ftpChannelIN" ref="outProcessor" method="process">
+        <int:poller fixed-rate="${ftp.rate}"/>
     </int:service-activator>
-
-    <int-file:inbound-channel-adapter id="filesInChannel"
-                                      directory="${file.path.import.out}" prevent-duplicates="true">
-        <int:poller id="poller" fixed-rate="${ftp.delay}"/>
-    </int-file:inbound-channel-adapter>
-
-
-    <int:channel id="filesOutChannel">
-        <int:queue/>
-    </int:channel>
-
 
 </beans>

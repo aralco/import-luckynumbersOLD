@@ -2,7 +2,15 @@
 
 angular.module('luckynumbersApp')
 
-    .directive('activeLink', function(location) {
+
+    .directive('ngbkFocus', function() {
+        return {
+            link: function(scope, element, attrs, controller) {
+                attrs.Class = "Active";
+            }
+        };
+
+    }).directive('activeLink', function(location) {
         return {
             restrict: 'A',
             link: function(scope, element, attrs, controller) {

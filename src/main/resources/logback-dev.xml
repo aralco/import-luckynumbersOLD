@@ -12,7 +12,7 @@
         </layout>
     </appender>
 
-    <logger name="bo.net.tigo" level="TRACE"/>
+    <logger name="bo.net.tigo" level="DEBUG"/>
 
 
     <root level="debug">

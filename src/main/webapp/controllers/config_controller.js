@@ -1,1 +1,6 @@
-angular.module('luckynumbersApp').controller('ConfigController',['$scope', function($scope){}]);
+
+
+luckynumbersApp.controller('ConfigController', function ($scope, $filter, GetCities, GetUsers) {
+	var usuarios = GetUsers.get();
+
+	});

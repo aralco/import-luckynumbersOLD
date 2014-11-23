@@ -181,7 +181,7 @@ public class BCCSDao {
                 .addValue("sucursal", city)
                 .addValue("nro_desde", from)
                 .addValue("nro_hasta", to);
-        Map out = frozenNumbersProc
+        Map out = lcNumbersProc
                 .execute(parameterSource);
         logger.info("getLcNumbers::"+out.get("lcNumbers"));
         return (List<InAudit>)out.get("lcNumbers");
@@ -192,7 +192,7 @@ public class BCCSDao {
                 .addValue("sucursal", city)
                 .addValue("nro_desde", from)
                 .addValue("nro_hasta", to);
-        Map out = freeNumbersProc
+        Map out = lnNumbersProc
                 .execute(parameterSource);
         logger.info("getLnNumbers::"+out.get("lnNumbers"));
         return (List<InAudit>)out.get("lnNumbers");

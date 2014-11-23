@@ -8,7 +8,6 @@ import bo.net.tigo.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.integration.Message;
 import org.springframework.integration.MessageChannel;
@@ -40,8 +39,6 @@ public class GetFrozenAndFreeNumbers {
     private InAuditDao inAuditDao;
     @Autowired
     private OutAuditDao outAuditDao;
-    @Value("${file.path.import.in}")
-    private String filePath;
 
     private static final Logger logger = LoggerFactory.getLogger(GetFrozenAndFreeNumbers.class);
 
@@ -59,7 +56,6 @@ public class GetFrozenAndFreeNumbers {
                 Job job = task.getJob();
                 logger.info("Start task execution for task=> taskId:"+task.getId()+", status="+task.getStatus()+", executionDate="+task.getExecutionDate()+", job="+job);
                 taskLog.append("Task execution started.||");
-                task.setSummary(taskLog.toString());
                 task.setStatus(Status.STARTED.name());
                 task.setExecutionDate(currentDate);
                 if(job.getState().equals(State.NOT_STARTED.name()))  {
@@ -67,7 +63,6 @@ public class GetFrozenAndFreeNumbers {
                 }
                 logger.info("Start task execution for task=> taskId:" + task.getId() + ", status=" + task.getStatus() + ", executionDate=" + task.getExecutionDate() + ", job=" + task.getJob().getState());
                 taskLog.append("Retrieving numbers.||");
-                task.setSummary(taskLog.toString());
                 List<InAudit> retrievedNumbers;
                 if(task.getType().equals(Type.FREE.name())) {
                     retrievedNumbers = bccsDao.getFreeNumbers(task.getCity(), task.getFrom(), task.getTo());
@@ -75,8 +70,7 @@ public class GetFrozenAndFreeNumbers {
                     retrievedNumbers = bccsDao.getFrozenNumbers(task.getCity(), task.getFrom(), task.getTo());
                 }
                 logger.info("Values from Caller retrievedNumbers:"+retrievedNumbers.toString());
-                taskLog.append("Total retrieved numbers:"+retrievedNumbers.size()+"||");
-                task.setSummary(taskLog.toString());
+                taskLog.append("Total retrieved numbers:").append(retrievedNumbers.size()).append("||");
                 if(retrievedNumbers.size()>0)   {
                     String fileContent =
                             "Numero,Ciudad,Channel";
@@ -84,7 +78,6 @@ public class GetFrozenAndFreeNumbers {
                     String fileName = sdf.format(currentDate)+".in";
 
                     for(InAudit inAudit : retrievedNumbers) {
-                        task.setSummary(taskLog.toString());
                         fileContent=fileContent+"\n"+inAudit.getRow();
                         inAudit.setCreatedDate(currentDate);
                         inAudit.setCity(task.getCity());
@@ -96,16 +89,15 @@ public class GetFrozenAndFreeNumbers {
                         inAudit.setChannel(Integer.valueOf(fields[2]));
                         inAudit.setFileName(fileName);
                         inAuditDao.save(inAudit);
-                        logger.info("Processing retrievedNumber:"+inAudit.toString());
-                        taskLog.append("Processing retrievedNumber:"+inAudit.toString()+"||");
+                        logger.info("Processing retrievedNumber:"+inAudit.getRow());
+                        taskLog.append("Processing retrievedNumber:").append(inAudit.getRow()).append("||");
                     }
                     logger.info("File generation:"+retrievedNumbers);
 
 
-                    File inFile = new File(filePath+"/"+fileName);
+                    File inFile = new File(fileName);
                     logger.info("File to copy:"+inFile);
-                    taskLog.append("File generation."+fileName+"||");
-                    task.setSummary(taskLog.toString());
+                    taskLog.append("File generation.").append(fileName).append("||");
 
                     if(!inFile.exists())
                         inFile.createNewFile();
@@ -118,21 +110,23 @@ public class GetFrozenAndFreeNumbers {
 
                     final Message<File> fileMessage = MessageBuilder.withPayload(inFile).build();
                     ftpChannelOUT.send(fileMessage);
-                    taskLog.append("Sending file "+fileName+" to FTP server.||");
-                    task.setSummary(taskLog.toString());
+                    taskLog.append("Sending file ").append(fileName).append(" to FTP server.||");
                     task.setStatus(Status.COMPLETED_PHASE1_OK.name());
-                    taskLog.append("Phase 1 completed successfully."+fileName+"||");
-                    task.setSummary(taskLog.toString());
+                    taskLog.append("Phase 1 completed successfully.").append(fileName).append("||");
                     task.setUrlin(fileName);
                     calendar.add(Calendar.SECOND, +1);
                 } else  {
                     task.setStatus(Status.COMPLETED_PHASE1_WITHOUT_DATA.name());
                     taskLog.append("Phase 1 completed without data.||");
-                    task.setSummary(taskLog.toString());
                     task.setUrlin("NA");
                 }
-                job.setSummary(job.getSummary()+"Created files -> .in:"+(inAuditDao.countInFilesByJob(job.getId()))+" -VS- :.out"+(outAuditDao.countOutFilesByJob(job.getId()))+" ||");
-                task.setSummary(taskLog.toString());
+                Long inFiles = inAuditDao.countInFilesByJob(job.getId());
+                Long outFiles = outAuditDao.countOutFilesByJob(job.getId());
+                logger.info("Created files -> .in:"+inFiles+" -VS- .out:"+outFiles);
+                job.setSummary(job.getSummary()+"|| Created files -> .in:"+inFiles+" -VS- .out:"+outFiles+" ||");
+                job.setLastUpdate(currentDate);
+                task.setSummary(task.getSummary()+taskLog.toString());
+                task.setLastUpdate(currentDate);
             }
         }
     }

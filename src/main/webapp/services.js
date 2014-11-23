@@ -5,25 +5,52 @@
 var URL = {};
 URL.host = "http://localhost";
 
-luckynumbersApp.factory('Register', function ($resource) {
-        return $resource('app/rest/register', {}, {
+luckynumbersApp.factory('NewJob', function ($resource) {
+        return $resource(URL.host + ':7001/import-luckynumbers/luckynumbers/scheduler/job', {}, {
+            'post': { method: 'POST'}
         });
     });
 
-luckynumbersApp.factory('Activate', function ($resource) {
-        return $resource('app/rest/activate', {}, {
-            'get': { method: 'GET', params: {}, isArray: false}
+luckynumbersApp.factory('NewTask', function ($resource) {
+        return $resource(URL.host + ':7001/import-luckynumbers/luckynumbers/scheduler/task/:jobId', {jobId:'@jobId'}, {
+            'post': { method: 'POST'}
         });
     });
 
-luckynumbersApp.factory('Password', function ($resource) {
-        return $resource('app/rest/account/change_password', {}, {
+luckynumbersApp.factory('UpdateTask', function ($resource) {
+        return $resource(URL.host + ':7001/import-luckynumbers/luckynumbers/scheduler/task/:Id', {Id:'@jId'}, {
+            'post': { method: 'PUT'}
         });
     });
 
-luckynumbersApp.factory('Sessions', function ($resource) {
-        return $resource('app/rest/account/sessions/:series', {}, {
-            'get': { method: 'GET', isArray: true}
+luckynumbersApp.factory('GetCities', function ($resource) {
+        return $resource(URL.host + ':7001/import-luckynumbers/luckynumbers/config/city', {}, {
+             'get': { method: 'GET', params: {}, isArray: true}
+        });
+    });
+
+luckynumbersApp.factory('GetUsers', function ($resource) {
+        return $resource(URL.host + ':7001/import-luckynumbers/luckynumbers/config/user', {}, {
+             'get': { method: 'GET', params: {}, isArray: true}
+        });
+    });
+
+luckynumbersApp.factory('DeleteJob', function ($resource) {
+        return $resource(URL.host + ':7001/import-luckynumbers/luckynumbers/scheduler/job/:id1', {id1:'@id'}, {
+            'delete': { method: 'DELETE'}
+        });
+    });
+
+luckynumbersApp.factory('DeleteTask', function ($resource) {
+                return $resource(URL.host + ':7001/import-luckynumbers/luckynumbers/scheduler/task/:id1', {id1:'@id'}, {
+                    'delete': { method: 'DELETE'}
+                });
+            });
+
+luckynumbersApp.factory('ModifyJob', function ($resource) {
+        return $resource(URL.host + ':7001/import-luckynumbers/luckynumbers/scheduler/job/:id1',
+            {id1:'@id'}, {
+            'update': { method: 'POST'}
         });
     });
 
@@ -135,7 +162,11 @@ luckynumbersApp.factory('AuthenticationSharedService', function ($rootScope, $ht
                     AccessToken.remove();
                     delete httpHeaders.common['Authorization'];
 
-                    $rootScope.errorMessage=data.errors[0];
+                    if (typeof data.errors !== "undefined"){
+                        $rootScope.errorMessage=data.errors[0];
+                    } else {
+                       $rootScope.errorMessage="Error de contraseña"
+                    }
                     $rootScope.authenticationError = true;
                     $rootScope.$broadcast('event:auth-loginRequired', data);
 

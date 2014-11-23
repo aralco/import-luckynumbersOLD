@@ -13,7 +13,7 @@
             <form class="form-inline" role="form">
                <div class="form-group">
  			 					<label class="sr-only" for="dialogName">Nombre/Descripción</label>
- 			 					<input type="text" class="form-control flat" id="dialogName" name="name" placeholder="Nombre/Descripción">
+ 			 					<input type="text" class="form-control flat" id="dialogName" name="name" ng-model="new.nombre" placeholder="Nombre/Descripción">
  			 		 </div>
  			 		 <br>
  			 		 <br>
@@ -23,23 +23,23 @@
  			 					        Seleccionar fecha de inicio
  			 					    </a>
  			 					    <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
- 			 					        <datetimepicker data-ng-model="data.date"
+ 			 					        <datetimepicker data-ng-model="new.date"
  			 					                        data-datetimepicker-config="{ dropdownSelector: '.dropdown-toggle' }"></datetimepicker>
  			 					    </ul>
  			 					</div>
- 			 					<p>Fecha Seleccionada: {{ data.date | date:'dd-MM-yyyy HH:mm' }}</p>
+ 			 					<p>Fecha Seleccionada: {{ new.date | date:'yyyy-MM-ddThh:mm:ss±hh:mm' }}</p>
  			 		</div>
  			 		<br>
  			 		 <br>
  			 		  <label class="checkbox" for="checkbox1">
-            <input type="checkbox" value="" id="checkbox1" data-toggle="checkbox">
-            .......Ejecutar inmediatamente
-          </label>
+                            <input type="checkbox" id="checkbox1" data-toggle="checkbox" ng-model="inmediato">
+                            .......Ejecutar inmediatamente
+                          </label>
 
  			 		  <br>
  			 		 <br>
- 			         <button class="btn btn-primary btn-wide">Enviar</button>
- 			         <input type="hidden" name="description" value="">
+ 			         <button class="btn btn-primary btn-wide" ng-click="newJobFn()">Enviar</button>
+ 			         <input type="hidden" name="description" ng-model="new.descripcion" value="">
             </form>
         </div>
     </div>

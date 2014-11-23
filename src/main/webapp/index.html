@@ -31,7 +31,7 @@
         </button>
 
         <div class="navbar-brand"><div class="btn-group">
-                      <button class="btn btn-sm btn-default mlm fui-user" data-toggle="dropdown">
+                      <button class="btn btn-sm btn-primary mlm fui-user" data-toggle="dropdown">
                       <span class="caret"></span>
                       </button>
                       <span class="dropdown-arrow dropdown-arrow-inverse"></span>
@@ -45,7 +45,8 @@
         <ul class="nav navbar-nav">
             <li ng-class="{active: $routeSegment.name === 'mprogramaciones'}"><a href="#mprogramaciones">Mis Programaciones</a></li>
             <li ng-class="{active: $routeSegment.startsWith('nprogramacion')}"><a href="#nprogramacion">Nueva Programacion</a></li>
-            <li><a href="#configuracion">Configuracion</a></li>
+            <li><a href="#configuracion">Configuraciones y parámetros</a></li>
+            <li><a href="#" ng-click="location.reload();" class="btn btn-sm btn-primary"><span class="fui-eye"></span>&nbsp;&nbsp;Actualizar</a></li>
         </ul>
     </div>
     <!-- /.navbar-collapse -->

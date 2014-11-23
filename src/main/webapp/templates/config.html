@@ -44,13 +44,20 @@
                   <div class="table-responsive">
                               <table class="table table-bordered">
                                 <thead>
-                                  <tr>
+                                <tr>
                                     <th>Nombre</th>
                                     <th>Login</th>
                                     <th>ROL</th>
                                     <th>Habilitado</th>
                                   </tr>
                                 </thead>
+
+                                <tr usuario in usuarios>
+                                <td>{{user.name}}</td>
+                                <td>{{user.username}}</td>
+                                <td>{{user.role}}</td>
+                                <td>{{user.enabled}}</td>
+                                </tr>
                                 <tbody>
                                   <tr>
                                   </tr>
