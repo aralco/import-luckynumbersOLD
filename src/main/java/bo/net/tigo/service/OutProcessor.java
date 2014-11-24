@@ -72,7 +72,7 @@ public class OutProcessor {
             } else if(task.getUrlout()!=null) {
                 throw new LuckyNumbersGenericException(HttpStatus.CONFLICT.toString(),"Related task for filename:"+fileName+ " might already been processed. TaskId="+task.getId());
             }
-            taskLog.append(task.getSummary()).append("|| ************************** ||");
+            taskLog.append("|| ************************** ||");
             taskLog.append("Processing .out File: ").append(fileName).append("||");
             task.setUrlout(fileName);
             task.setLastUpdate(currentDate);
@@ -106,7 +106,7 @@ public class OutProcessor {
                     logger.info("Lucky Number to be reserved:"+outAudit.getNumber());
                     taskLog.append("Lucky Number to be reserved:").append(outAudit.getNumber()).append("||");
                     String message = bccsDao.reserveNumber(outAudit.getNumber());
-                    if(message.contains("OK"))  {
+                    if(message!=null && message.contains("OK"))  {
                         logger.info("Number has been correctly reserved :"+message);
                         taskLog.append("Number has been correctly reserved :").append(message).append("||");
                         outAudit.setLuckyReserved(true);
@@ -144,7 +144,7 @@ public class OutProcessor {
                 }
             } else {
                 logger.info("No Lucky Numbers found on processed file");
-                taskLog.append("No Lucky Numbers found on processed file");
+                taskLog.append("No Lucky Numbers found on processed file. ||");
             }
 
             //CONCILIATION: Call to BCCS to change state of numbers to LC only for FREE numbers
