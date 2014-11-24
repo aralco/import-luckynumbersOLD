@@ -76,6 +76,7 @@ public class BCCSDao {
 
         this.reserveNumberProc = new SimpleJdbcCall(jdbcTemplate)
         .withProcedureName("SP3_RERSERVANL_NROCUENTACOYLC")
+                .withoutProcedureColumnMetaDataAccess()
                 .declareParameters(
                         new SqlParameter("nrocuenta", Types.VARCHAR),
                         new SqlOutParameter("mensaje", Types.VARCHAR)

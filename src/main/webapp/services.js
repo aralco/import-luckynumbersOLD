@@ -3,78 +3,78 @@
 /* Services */
 
 var URL = {};
-URL.host = "http://10.211.55.11";
+URL.host = "http://172.31.80.5";
 URL.dirFiles ="http://localhost:9000/ftp/in/";
 
 luckynumbersApp.factory('NewJob', function ($resource) {
-        return $resource(URL.host + ':7001/import-luckynumbers/luckynumbers/scheduler/job', {}, {
+        return $resource(URL.host + ':7026/import-luckynumbers/luckynumbers/scheduler/job', {}, {
             'post': { method: 'POST'}
         });
     });
 
 luckynumbersApp.factory('NewTask', function ($resource) {
-        return $resource(URL.host + ':7001/import-luckynumbers/luckynumbers/scheduler/task/:jobId', {jobId:'@jobId'}, {
+        return $resource(URL.host + ':7026/import-luckynumbers/luckynumbers/scheduler/task/:jobId', {jobId:'@jobId'}, {
             'post': { method: 'POST'}
         });
     });
 
 luckynumbersApp.factory('UpdateTask', function ($resource) {
-        return $resource(URL.host + ':7001/import-luckynumbers/luckynumbers/scheduler/task/:Id', {Id:'@jId'}, {
+        return $resource(URL.host + ':7026/import-luckynumbers/luckynumbers/scheduler/task/:Id', {Id:'@jId'}, {
             'post': { method: 'PUT'}
         });
     });
 
 luckynumbersApp.factory('GetTaskFileIn', function ($resource) {
-        return $resource(URL.host + ':7001/import-luckynumbers/luckynumbers/monitor/audit/in/:Id', {Id:'@jId'}, {
+        return $resource(URL.host + ':7026/import-luckynumbers/luckynumbers/monitor/audit/in/:Id', {Id:'@jId'}, {
             'get': { method: 'GET', isArray: true}
         });
     });
 
 
 luckynumbersApp.factory('GetTaskFileOut', function ($resource) {
-        return $resource(URL.host + ':7001/import-luckynumbers/luckynumbers/monitor/audit/out/:Id', {Id:'@jId'}, {
+        return $resource(URL.host + ':7026/import-luckynumbers/luckynumbers/monitor/audit/out/:Id', {Id:'@jId'}, {
             'get': { method: 'GET', isArray: true}
         });
     });
 
 luckynumbersApp.factory('GetCities', function ($resource) {
-        return $resource(URL.host + ':7001/import-luckynumbers/luckynumbers/config/city', {}, {
+        return $resource(URL.host + ':7026/import-luckynumbers/luckynumbers/config/city', {}, {
              'get': { method: 'GET', params: {}, isArray: true}
         });
     });
 
 luckynumbersApp.factory('GetUsers', function ($resource) {
-        return $resource(URL.host + ':7001/import-luckynumbers/luckynumbers/config/user', {}, {
+        return $resource(URL.host + ':7026/import-luckynumbers/luckynumbers/config/user', {}, {
              'get': { method: 'GET', params: {}, isArray: true}
         });
     });
 
 luckynumbersApp.factory('DeleteJob', function ($resource) {
-        return $resource(URL.host + ':7001/import-luckynumbers/luckynumbers/scheduler/job/:id1', {id1:'@id'}, {
+        return $resource(URL.host + ':7026/import-luckynumbers/luckynumbers/scheduler/job/:id1', {id1:'@id'}, {
             'delete': { method: 'DELETE'}
         });
     });
 
 luckynumbersApp.factory('DeleteTask', function ($resource) {
-                return $resource(URL.host + ':7001/import-luckynumbers/luckynumbers/scheduler/task/:id1', {id1:'@id'}, {
+                return $resource(URL.host + ':7026/import-luckynumbers/luckynumbers/scheduler/task/:id1', {id1:'@id'}, {
                     'delete': { method: 'DELETE'}
                 });
             });
 
 luckynumbersApp.factory('ModifyJob', function ($resource) {
-        return $resource(URL.host + ':7001/import-luckynumbers/luckynumbers/scheduler/job/:id1',
+        return $resource(URL.host + ':7026/import-luckynumbers/luckynumbers/scheduler/job/:id1',
             {id1:'@id'}, {
             'update': { method: 'POST'}
         });
     });
 
 luckynumbersApp.factory('Account', function ($resource) {
-        return $resource(URL.host + ':7001/import-luckynumbers/luckynumbers/sysutils/loggeduser', {}, {
+        return $resource(URL.host + ':7026/import-luckynumbers/luckynumbers/sysutils/loggeduser', {}, {
         });
     });
 
 luckynumbersApp.factory('Jobs', function ($resource) {
-        return $resource(URL.host + ':7001/import-luckynumbers/luckynumbers/monitor', {}, {
+        return $resource(URL.host + ':7026/import-luckynumbers/luckynumbers/monitor', {}, {
             'get': { method: 'GET', isArray: true}
         });
     });
@@ -154,7 +154,7 @@ luckynumbersApp.factory('AuthenticationSharedService', function ($rootScope, $ht
         return {
             login: function (param) {
                 var data = "username=" + param.username + "&password=" + param.password + "&grant_type=password&scope=app&client_secret=botigo&client_id=tigobo";
-                $http.post(URL.host + ':7001/import-luckynumbers/oauth/token', data, {
+                $http.post(URL.host + ':7026/import-luckynumbers/oauth/token', data, {
                     headers: {
                         "Content-Type": "application/x-www-form-urlencoded",
                         "Accept": "application/json",
@@ -193,7 +193,7 @@ luckynumbersApp.factory('AuthenticationSharedService', function ($rootScope, $ht
 
                 $http({
                         method: 'GET',
-                        url: URL.host + ':7001/import-luckynumbers/luckynumbers/config/city',
+                        url: URL.host + ':7026/import-luckynumbers/luckynumbers/config/city',
                         data: {'key1':'value1', 'key2':'value2'},
                         headers: {"Content-Type": "application/json"},
                         ignoreAuthModule: 'ignoreAuthModule'
@@ -255,7 +255,7 @@ luckynumbersApp.factory('AuthenticationSharedService', function ($rootScope, $ht
                 $rootScope.account = null;
                 AccessToken.remove();
 
-                $http.get(URL.host + ':7001/import-luckynumbers/logout');
+                $http.get(URL.host + ':7026/import-luckynumbers/logout');
                 Session.invalidate();
                 delete httpHeaders.common['Authorization'];
                 authService.loginCancelled();
