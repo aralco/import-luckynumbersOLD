@@ -17,7 +17,7 @@
  			 		 </div>
  			 		 <br>
  			 		 <br>
- 			         <div class="form-group">
+ 			         <div class="form-group" ng-show="dateNow">
  			 					<div class="dropdown">
  			 					    <a class="dropdown-toggle" id="dLabel" role="button" data-toggle="dropdown" data-target="#" href="">
  			 					        Seleccionar fecha de inicio
@@ -27,14 +27,14 @@
  			 					                        data-datetimepicker-config="{ dropdownSelector: '.dropdown-toggle' }"></datetimepicker>
  			 					    </ul>
  			 					</div>
- 			 					<p>Fecha Seleccionada: {{ new.date | date:'yyyy-MM-ddThh:mm:ss±hh:mm' }}</p>
+ 			 					<p>Fecha Seleccionada: {{ new.date | date:'medium' }}</p>
  			 		</div>
  			 		<br>
  			 		 <br>
- 			 		  <label class="checkbox" for="checkbox1">
-                            <input type="checkbox" id="checkbox1" data-toggle="checkbox" ng-model="inmediato">
+ 			 		  <label class="checkbox" for="checkbox1" ng-click="changeClick();">
+                            <input type="checkbox" id="checkbox1" data-toggle="checkbox" ng-click="changeClick();"value="{{inmediato}}">
                             .......Ejecutar inmediatamente
-                          </label>
+                       </label>
 
  			 		  <br>
  			 		 <br>

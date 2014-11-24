@@ -1,8 +1,5 @@
 luckynumbersApp.controller('MisProgramacionesController', function ($scope, $filter, $location, Jobs, DeleteJob, ModifyJob, GetCities, NewTask, DeleteTask, UpdateTask, GetTaskFileIn, GetTaskFileOut) {
 
-//angular.module('luckynumbersApp').controller('MisProgramacionesController',
-//    ['$scope', function ($scope, Jobs) {
-
         $scope.success = null;
         $scope.error = null;
 
