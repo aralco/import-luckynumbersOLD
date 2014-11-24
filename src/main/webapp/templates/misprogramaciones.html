@@ -47,7 +47,7 @@
                     <th>Fecha</th>
                     <th>Tareas</th>
                     <th>Porcentaje</th>
-                    <th>Propietario</th>
+                    <th>Detalles</th>
                     <th>Opciones</th>
                 </tr>
             </thead>
@@ -59,11 +59,11 @@
                     <td>{{programa.scheduledDate | date:'medium'}}</td>
                     <td>{{programa.totalTasks}}</td>
                     <td>{{programa.totalCoverage}}</td>
-                    <td>{{programa.owner}}</td>
-                    <td><a href="#" class="btn btn-xs btn-primary mlm" data-toggle="tooltip" title="Detalles" ng-click="showDetalles($index)"><span class="fui-info"></span></a>
-                    <a href="#" class="btn btn-xs btn-primary mlm" data-toggle="tooltip" title="Cancelar ejecución" ng-click="openModal('¿Confirma eliminar?', $index)"><span class="fui-cross"></span></a>
-                    <a href="#" class="btn btn-xs btn-primary mlm" data-toggle="tooltip" title="Reprogramar" ng-click="editDate($index)"><span class="fui-calendar"></span></a>
-                    <a href="#" class="btn btn-xs btn-primary mlm" data-toggle="tooltip" title="Ejecutar ahora" ng-click="playNow('¿Ejecutar inmediatamente?', $index)"><span class="fui-play"></span></a>
+                    <td><a href="#" class="btn btn-xs btn-primary" ng-click="showSummaryLog($index);"><span class="fui-document"></span>&nbsp;&nbsp;Sumario</a></td>
+                    <td><a href="#" class="btn btn-xs btn-primary" data-toggle="tooltip" title="Detalles" ng-click="showDetalles($index)"><span class="fui-info"></span></a>
+                    <a href="#" class="btn btn-xs btn-primary" data-toggle="tooltip" title="Cancelar ejecución" ng-click="openModal('¿Confirma eliminar?', $index)"><span class="fui-cross"></span></a>
+                    <a href="#" class="btn btn-xs btn-primary" data-toggle="tooltip" title="Reprogramar" ng-click="editDate($index)"><span class="fui-calendar"></span></a>
+                    <a href="#" class="btn btn-xs btn-primary" data-toggle="tooltip" title="Ejecutar ahora" ng-click="playNow('¿Ejecutar inmediatamente?', $index)"><span class="fui-play"></span></a>
                     </td>
                 </tr>
             </tbody>
@@ -83,6 +83,7 @@
                                     <th>Sucursal</th>
                                     <th>Desde</th>
                                     <th>Hasta</th>
+                                    <th>Detalle</th>
                                     <th>Opciones</th>
                                   </tr>
                                 </thead>
@@ -91,6 +92,7 @@
                                   <td>{{friendlyCities[tarea.city]}}</td>
                                    <td>{{tarea.from}}</td>
                                     <td>{{tarea.to}}</td>
+                                    <td><a href="#" class="btn btn-xs btn-primary" ng-click="showSummaryTask($index);"><span class="fui-document"></span>&nbsp;&nbsp;Log</a>&nbsp;<a href="#" ng-click="showFileTask('In', $index);" class="btn btn-xs btn-primary"><span class="fui-clip"></span>&nbsp;&nbsp;In</a>&nbsp;<a href="#"  ng-click="showFileTask('Out', $index);" class="btn btn-xs btn-primary"><span class="fui-clip"></span>&nbsp;&nbsp;Out</a></td>
                                     <td>
                                     <a href="#" class="btn btn-xs btn-primary mlm" data-toggle="tooltip" title="Cancelar Tarea" ng-click="openDeleteTask('¿Eliminar Tarea?', $index)"><span class="fui-cross"></span></a>
                                     <a href="#" class="btn btn-xs btn-primary mlm" data-toggle="tooltip" title="Editar" ng-click="editRangos('Modifique los rangos', $index)"><span class="fui-new"></span></a>
@@ -189,7 +191,9 @@
 
         </div>
         <!-- ********************** -->
-
+        <div ng-show="modal.showSummary">
+                <textarea rows="4" class="form-control">{{modal.jobSummary}}</textarea>
+        </div>
     </div>
 
 
