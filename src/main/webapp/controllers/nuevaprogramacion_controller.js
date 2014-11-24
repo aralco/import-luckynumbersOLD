@@ -1,4 +1,4 @@
-luckynumbersApp.controller('NuevaProgramacionController', function ($scope, $filter, GetCities, NewTask, NewJob) {
+luckynumbersApp.controller('NuevaProgramacionController', function ($scope, $filter, $location, GetCities, NewTask, NewJob, Jobs) {
 
 	$scope.tareas = [];
 	$scope.inmediato = false;
@@ -9,6 +9,8 @@ luckynumbersApp.controller('NuevaProgramacionController', function ($scope, $fil
 		NewJob.post({},
 			{"name" : $scope.new.nombre,"description": $scope.new.nombre,
 			 "now" : $scope.inmediato,"scheduledDate": $scope.serverdate , 'tasks':$scope.tareas} );
+		$scope.data = function() { return Jobs.get(); }
+		$location.path('/mprogramaciones').replace();
 	}
 
 });

@@ -1,4 +1,4 @@
-luckynumbersApp.controller('MisProgramacionesController', function ($scope, $filter, Jobs, DeleteJob, ModifyJob, GetCities, NewTask, DeleteTask, UpdateTask, GetTaskFileIn, GetTaskFileOut) {
+luckynumbersApp.controller('MisProgramacionesController', function ($scope, $filter, $location, Jobs, DeleteJob, ModifyJob, GetCities, NewTask, DeleteTask, UpdateTask, GetTaskFileIn, GetTaskFileOut) {
 
 //angular.module('luckynumbersApp').controller('MisProgramacionesController',
 //    ['$scope', function ($scope, Jobs) {
@@ -129,11 +129,13 @@ luckynumbersApp.controller('MisProgramacionesController', function ($scope, $fil
         $scope.deleteJobByID = function(){
           var params = {id1:$scope.jobActivoId};
           DeleteJob.delete(params);
+          $scope.data = function() { return Jobs.get(); }
         }
 
         $scope.deleteTaskByID = function(){
           var params = {id1:$scope.taskActivaId};
           DeleteTask.delete(params);
+          $scope.data = function() { return Jobs.get(); }
         }
 
         $scope.modifyDateByID = function(){
@@ -141,12 +143,14 @@ luckynumbersApp.controller('MisProgramacionesController', function ($scope, $fil
           $scope.serverdate = $filter('date')($scope.modal.updateDate,'yyyy-MM-ddThh:mm:ss') + "-04:00";
           $scope.jobActivoRecord.scheduledDate = $scope.serverdate;
           ModifyJob.update(params,$scope.jobActivoRecord);
+          $scope.data = function() { return Jobs.get(); }
         }
 
         $scope.modifyNowByID = function(){
           var params = {id1:$scope.jobActivoId};
           $scope.jobActivoRecord.now = true;
           ModifyJob.update(params,$scope.jobActivoRecord);
+          $scope.data = function() { return Jobs.get(); }
         }
 
         $scope.updateTaskByID = function(){
@@ -157,10 +161,12 @@ luckynumbersApp.controller('MisProgramacionesController', function ($scope, $fil
           $scope.taskActiva.createdDate = $filter('date')($scope.taskActiva.createdDate,'yyyy-MM-ddThh:mm:ss') + "-04:00";
           $scope.taskActiva.lastUpdate = $filter('date')($scope.taskActiva.lastUpdate,'yyyy-MM-ddThh:mm:ss') + "-04:00";
           UpdateTask.post(params,$scope.taskActiva);
+          $scope.data = function() { return Jobs.get(); }
         }
 
         $scope.createTaskByID = function(){
           NewTask.post({jobId: $scope.jobActivoId}, {"city" : parseInt($scope.modal.ciudad),"type":$scope.tipoNumeros,"from" : $scope.modal.desde,"to": $scope.modal.hasta} );
+          $scope.data = function() { return Jobs.get(); }
         }
 
         $scope.editDate = function(indice) {
@@ -192,6 +198,7 @@ luckynumbersApp.controller('MisProgramacionesController', function ($scope, $fil
             $scope.jobActivoId = $scope.programaciones[indice].id;
             $scope.jobActivoRecord = $scope.programaciones[indice]
             $scope.funcionBorrar = $scope.modifyNowByID;
+
           }
         }
 
