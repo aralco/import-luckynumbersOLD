@@ -1,4 +1,4 @@
-luckynumbersApp.controller('MisProgramacionesController', function ($scope, $filter, Jobs, DeleteJob, ModifyJob, GetCities, NewTask, DeleteTask, UpdateTask) {
+luckynumbersApp.controller('MisProgramacionesController', function ($scope, $filter, Jobs, DeleteJob, ModifyJob, GetCities, NewTask, DeleteTask, UpdateTask, GetTaskFileIn, GetTaskFileOut) {
 
 //angular.module('luckynumbersApp').controller('MisProgramacionesController',
 //    ['$scope', function ($scope, Jobs) {
@@ -171,6 +171,7 @@ luckynumbersApp.controller('MisProgramacionesController', function ($scope, $fil
             $scope.isModalOpen = true;
             $scope.modal.showCTask = false;
             $scope.modal.showRangos = false;
+            $scope.modal.showSummary = false;
             $scope.modal.updateDate = $scope.programaciones[indice].scheduledDate;
             $scope.jobActivoId = $scope.programaciones[indice].id;
             $scope.jobActivoRecord = $scope.programaciones[indice];
@@ -186,7 +187,8 @@ luckynumbersApp.controller('MisProgramacionesController', function ($scope, $fil
             $scope.modal.showDate = false;
             $scope.isModalOpen = true;
             $scope.modal.showCTask = false;
-             $scope.modal.showRangos = false;
+            $scope.modal.showRangos = false;
+            $scope.modal.showSummary = false;
             $scope.jobActivoId = $scope.programaciones[indice].id;
             $scope.jobActivoRecord = $scope.programaciones[indice]
             $scope.funcionBorrar = $scope.modifyNowByID;
@@ -199,7 +201,8 @@ luckynumbersApp.controller('MisProgramacionesController', function ($scope, $fil
            $scope.modal.title = "Eliminar"
            $scope.modal.showDate = false;
            $scope.modal.showCTask = false;
-            $scope.modal.showRangos = false;
+           $scope.modal.showRangos = false;
+           $scope.modal.showSummary = false;
            $scope.isModalOpen = true;
            $scope.jobActivoId = $scope.programaciones[indice].id;
            $scope.funcionBorrar = $scope.deleteJobByID;
@@ -214,6 +217,7 @@ luckynumbersApp.controller('MisProgramacionesController', function ($scope, $fil
            $scope.modal.showCTask = false;
            $scope.modal.showRangos = true;
            $scope.isModalOpen = true;
+           $scope.modal.showSummary = false;
            $scope.taskActivaId = $scope.seleccionado.tasks[indice].id;
            $scope.taskActiva = $scope.seleccionado.tasks[indice];
            $scope.modal.desde = $scope.taskActiva.from;
@@ -228,7 +232,8 @@ luckynumbersApp.controller('MisProgramacionesController', function ($scope, $fil
            $scope.modal.title = "Eliminar"
            $scope.modal.showDate = false;
            $scope.modal.showCTask = false;
-            $scope.modal.showRangos = false;
+           $scope.modal.showRangos = false;
+           $scope.modal.showSummary = false;
            $scope.isModalOpen = true;
            $scope.taskActivaId = $scope.seleccionado.tasks[indice].id;
            $scope.funcionBorrar = $scope.deleteTaskByID;
@@ -242,10 +247,83 @@ luckynumbersApp.controller('MisProgramacionesController', function ($scope, $fil
           $scope.modal.showDate = false;
           $scope.modal.showCTask = true;
           $scope.isModalOpen = true;
+          $scope.modal.showSummary = false;
           $scope.modal.ciudad ="0";
           $scope.modal.desde = "";
           $scope.modal.hasta = "";
           $scope.funcionBorrar = $scope.createTaskByID;
+        }
+      }
+
+      $scope.showSummaryLog = function(indice)  {
+        if (!$scope.isModalOpen){
+          $scope.modal.message = "";
+          $scope.modal.title = "Detalle"
+          $scope.modal.showDate = false;
+          $scope.modal.showCTask = false;
+          $scope.modal.showRangos = false;
+          $scope.modal.showSummary = true;
+          $scope.isModalOpen = true;
+          $scope.modal.ciudad ="0";
+          $scope.modal.desde = "";
+          $scope.modal.hasta = "";
+          if ($scope.programaciones[indice].summary != null){
+               $scope.modal.jobSummary = $scope.programaciones[indice].summary.replace("||",String.fromCharCode(13));
+          } else {
+              $scope.modal.jobSummary = "";
+          }
+          $scope.funcionBorrar = null;
+        }
+      }
+
+
+      $scope.showSummaryTask = function(indice)  {
+        if (!$scope.isModalOpen){
+          $scope.modal.message = "";
+          $scope.modal.title = "Detalle"
+          $scope.modal.showDate = false;
+          $scope.modal.showCTask = false;
+          $scope.modal.showRangos = false;
+          $scope.modal.showSummary = true;
+          $scope.isModalOpen = true;
+          $scope.modal.ciudad ="0";
+          $scope.modal.desde = "";
+          $scope.modal.hasta = "";
+          if ($scope.seleccionado.tasks[indice].summary != null){
+               $scope.modal.jobSummary = $scope.seleccionado.tasks[indice].summary.replace("||",String.fromCharCode(13));
+          } else {
+              $scope.modal.jobSummary = "";
+          }
+          $scope.funcionBorrar = null;
+        }
+      }
+
+      $scope.showFileTask = function(inIs, indice) {
+
+        if (!$scope.isModalOpen){
+          $scope.modal.message = "";
+          $scope.modal.title = "File " + inIs;
+          $scope.modal.showDate = false;
+          $scope.modal.showCTask = false;
+          $scope.modal.showRangos = false;
+          $scope.modal.showSummary = true;
+          $scope.isModalOpen = true;
+          $scope.modal.ciudad ="0";
+          $scope.modal.desde = "";
+          $scope.modal.hasta = "";
+          $scope.taskActivaId = $scope.seleccionado.tasks[indice].id;
+          var params = {Id:$scope.taskActivaId};
+
+          if (inIs == "In") {
+          GetTaskFileIn.get(params, function(data) {
+             $scope.modal.jobSummary = data.toString();
+           });
+          } else {
+            GetTaskFileOut.get(params, function(data) {
+               $scope.modal.jobSummary = data.toString();
+             });
+          }
+          $scope.funcionBorrar = null;
         }
       }
 

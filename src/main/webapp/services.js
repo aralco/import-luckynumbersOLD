@@ -3,7 +3,8 @@
 /* Services */
 
 var URL = {};
-URL.host = "http://localhost";
+URL.host = "http://10.211.55.11";
+URL.dirFiles ="http://localhost:9000/ftp/in/";
 
 luckynumbersApp.factory('NewJob', function ($resource) {
         return $resource(URL.host + ':7001/import-luckynumbers/luckynumbers/scheduler/job', {}, {
@@ -20,6 +21,19 @@ luckynumbersApp.factory('NewTask', function ($resource) {
 luckynumbersApp.factory('UpdateTask', function ($resource) {
         return $resource(URL.host + ':7001/import-luckynumbers/luckynumbers/scheduler/task/:Id', {Id:'@jId'}, {
             'post': { method: 'PUT'}
+        });
+    });
+
+luckynumbersApp.factory('GetTaskFileIn', function ($resource) {
+        return $resource(URL.host + ':7001/import-luckynumbers/luckynumbers/monitor/audit/in/:Id', {Id:'@jId'}, {
+            'get': { method: 'GET', isArray: true}
+        });
+    });
+
+
+luckynumbersApp.factory('GetTaskFileOut', function ($resource) {
+        return $resource(URL.host + ':7001/import-luckynumbers/luckynumbers/monitor/audit/out/:Id', {Id:'@jId'}, {
+            'get': { method: 'GET', isArray: true}
         });
     });
 

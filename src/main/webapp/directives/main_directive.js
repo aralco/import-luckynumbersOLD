@@ -92,6 +92,19 @@ angular.module('luckynumbersApp')
             }
         }
     })
+
+.directive('myModal', ['$log', function ($log) {
+     return {
+         restrict: 'EA',
+
+         link: function (scope,element) {
+             scope.openWindow = function(){
+                 window.open(URL.actualFile, 'Archivo In', 'height=480,width=480');
+                //some other code
+             };
+         }
+     };
+ }])
     .directive('showValidation', function() {
         return {
             restrict: "A",
