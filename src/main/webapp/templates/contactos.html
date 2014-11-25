@@ -63,7 +63,7 @@
                 <input data-ng-show="editMode" type="text" data-ng-model="newContact.enabled" />
             </td>
             <td>
-                <p data-ng-hide="editMode"><a data-ng-click="toggleEdit()" href="javascript:;">Editar</a></p>
+                <p data-ng-hide="editMode"><a href="javascript:;" class="btn btn-sm btn-primary" data-ng-click="toggleEdit()"><span class="fui-new"></span>&nbsp;&nbsp;Editar</a></p>
                 <p data-ng-show="editMode"><a data-ng-click="save(newContact);" href="javascript:;">Guardar</a> | <a data-ng-click="toggleEdit()" href="javascript:;">Cancelar</a></p>
             </td>
         </tr>
