@@ -5,9 +5,7 @@
         <div class="demo-content">
 
           <ul class="nav nav-tabs nav-append-content">
-            <li class="active"><a href="#tab1">Usuarios</a></li>
-            <li><a href="#tab2">Sucursales</a></li>
-            <li><a href="#tab3">Contactos</a></li>
+            <li class="active"><a id="tab1" href="#">Usuarios</a></li>
           </ul> <!-- /tabs -->
 
           <div class="tab-content">
@@ -52,11 +50,11 @@
                                   </tr>
                                 </thead>
 
-                                <tr usuario in usuarios>
-                                <td>{{user.name}}</td>
-                                <td>{{user.username}}</td>
-                                <td>{{user.role}}</td>
-                                <td>{{user.enabled}}</td>
+                                <tr ng-repeat="usuario in usuarios">
+                                <td>{{usuario.name}}</td>
+                                <td>{{usuario.username}}</td>
+                                <td>{{usuario.role}}</td>
+                                <td>{{usuario.enabled}}</td>
                                 </tr>
                                 <tbody>
                                   <tr>
@@ -66,15 +64,6 @@
                             </div>
             </div>
 
-            <!-- /tabs -->
-            <div class="tab-pane" id="tab2">
-              <p>Howdy, I'm in Section 2.</p>
-            </div>
-
-            <!-- /tabs -->
-            <div class="tab-pane" id="tab3">
-              <p>Howdy, I'm in Section 3.</p>
-            </div>
           </div> <!-- /tab-content -->
 
         </div>
