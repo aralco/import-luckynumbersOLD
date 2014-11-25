@@ -1,4 +1,4 @@
-<h2>Ciudades</h2>
+<h3>Ciudades</h3>
 <style>
     #mydiv {
         position: absolute;
@@ -12,52 +12,49 @@
     }
 
 </style>
-<div data-ng-app data-ng-controller="ciudadesController" class="container">
+<div data-ng-app data-ng-controller="CiudadesController" class="container">
     <strong class="error">{{ error }}</strong>
 
     <p data-ng-hide="addMode"><a data-ng-click="toggleAdd()" href="javascript:;" class="btn btn-primary">Agregar nueva ciudad</a></p>
     <form name="addCity" data-ng-show="addMode" style="width:600px;margin:0px auto;">
-        <label>Código:</label><input type="text" data-ng-model="newCity.code" required />
-        <label>Nombre:</label><input type="text" data-ng-model="newCity.name" required />
-        <label>Descripción:</label><input type="text" data-ng-model="newCity.description" required />
-        <label>Habilitado:</label><input type="checkbox" ng-model="newCity.enabled" required />
+    <div class="dialog dialog-success">
+        <label>Código:</label><input type="text" data-ng-model="newCity.code" required /><br /><br>
+        <label>Nombre:</label><input type="text" data-ng-model="newCity.name" required /><br /><br>
+        <label>Descripción:</label><input type="text" data-ng-model="newCity.description" required /><br /><br>
+        <label>Habilitada:</label><input type="checkbox" ng-model="newCity.enabled" required /><br /><br>
         <br />
         <br />
         <input type="submit" value="Agregar" data-ng-click="add()" data-ng-disabled="!addCity.$valid" class="btn btn-primary" />
         <input type="button" value="Cancelar" data-ng-click="toggleAdd()" class="btn btn-primary" />
         <br /><br />
+    </div>
     </form>
     <table class="table table-bordered table-hover" style="width:800px">
         <tr>
-            <th>#</th>
-            <td>Code</td>
-            <th>Name</th>
+            <td>Codigo</td>
+            <th>Nombre</th>
             <th>Descripción</th>
-            <th>Habilitado</th>
+            <th>Habilitada</th>
         </tr>
 
-        <tr data-ng-repeat="city in cities">
-            <td><strong data-ng-hide="city.editMode">{{ newCity.id }}</strong></td>
+        <tr data-ng-repeat="newCity in ciudades">
             <td>
-                <p data-ng-hide="city.editMode">{{ newCity.code }}</p>
-                <input data-ng-show="city.editMode" type="text" data-ng-model="city.code" />
+                <p data-ng-hide="editMode">{{ newCity.code }}</p>
+                <input data-ng-show="editMode" type="text" data-ng-model="newCity.code" />
             </td>
             <td>
-                <p data-ng-hide="city.editMode">{{ newCity.name }}</p>
-                <input data-ng-show="city.editMode" type="text" data-ng-model="city.name" />
+                <p data-ng-hide="editMode">{{ newCity.name }}</p>
+                <input data-ng-show="editMode" type="text" data-ng-model="newCity.name" />
             </td>
             <td>
-                <p data-ng-hide="city.editMode">{{ newCity.description }}</p>
-                <input data-ng-show="city.editMode" type="text" data-ng-model="city.description" />
+                <p data-ng-hide="editMode">{{ newCity.description }}</p>
+                <input data-ng-show="editMode" type="text" data-ng-model="newCity.description" />
             </td>
             <td>
-                <p data-ng-hide="city.editMode">{{ newCity.enabled }}</p>
-                <input data-ng-show="city.editMode" type="text" data-ng-model="city.enabled" />
+                <p data-ng-hide="editMode">{{ newCity.enabled }}</p>
+                <label data-ng-show="editMode">Habilitada:</label><input data-ng-show="editMode" type="checkbox" ng-model="newCity.enabled" required />
             </td>
-            <td>
-                <p data-ng-hide="city.editMode"><a data-ng-click="toggleEdit(city)" href="javascript:;">Editar</a> | <a data-ng-click="deleteCity(city)" href="javascript:;">Borrar</a></p>
-                <p data-ng-show="city.editMode"><a data-ng-click="save(city)" href="javascript:;">Guardar</a> | <a data-ng-click="toggleEdit(city)" href="javascript:;">Cancelar</a></p>
-            </td>
+            
         </tr>
     </table>
     <hr />

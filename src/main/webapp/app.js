@@ -20,6 +20,9 @@ luckynumbersApp.config(function ($routeSegmentProvider, $httpProvider, USER_ROLE
         .when('/error', 'error')
         .when('/intro', 'mintro')
         .when('/configuracion', 'mconfiguracion')
+        .when('/usuarios', 'musuarios')
+        .when('/contactos', 'mcontactos')
+        .when('/ciudades', 'mciudades')
 
         .segment('mintro', {
             templateUrl: 'templates/intro.html',
@@ -54,6 +57,18 @@ luckynumbersApp.config(function ($routeSegmentProvider, $httpProvider, USER_ROLE
             templateUrl: 'templates/config.html',
             controller: 'ConfigController',
         })
+        .segment('musuarios', {
+            templateUrl: 'templates/usuarios.html',
+            controller: 'UsuariosController',
+        })
+        .segment('mcontactos', {
+            templateUrl: 'templates/contactos.html',
+            controller: 'ContactosController',
+        })
+        .segment('mciudades', {
+            templateUrl: 'templates/ciudades.html',
+            controller: 'CiudadesController',
+        })
 
 httpHeaders = $httpProvider.defaults.headers;
 
@@ -81,6 +96,15 @@ httpHeaders = $httpProvider.defaults.headers;
                         authorizedRoles: [USER_ROLES.admin,USER_ROLES.user]
                     };
                 pagesA["mconfiguracion"] = {
+                        authorizedRoles: [USER_ROLES.admin]
+                    };
+                pagesA["musuarios"] = {
+                        authorizedRoles: [USER_ROLES.admin]
+                    };
+                pagesA["mcontactos"] = {
+                        authorizedRoles: [USER_ROLES.admin]
+                    };
+                pagesA["mciudades"] = {
                         authorizedRoles: [USER_ROLES.admin]
                     };
 

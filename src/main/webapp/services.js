@@ -37,17 +37,68 @@ luckynumbersApp.factory('GetTaskFileOut', function ($resource) {
         });
     });
 
+
+
 luckynumbersApp.factory('GetCities', function ($resource) {
         return $resource(URL.host + ':7001/import-luckynumbers/luckynumbers/config/city', {}, {
              'get': { method: 'GET', params: {}, isArray: true}
         });
     });
 
+luckynumbersApp.factory('NewCity', function ($resource) {
+        return $resource(URL.host + ':7001/import-luckynumbers/luckynumbers/config/city', {}, {
+            'post': { method: 'POST'}
+        });
+    });
+
+luckynumbersApp.factory('UpdateCity', function ($resource) {
+        return $resource(URL.host + ':7001/import-luckynumbers/luckynumbers/config/city/:Id', {Id:'@jId'}, {
+            'post': { method: 'POST'}
+        });
+    });
+
+
+
 luckynumbersApp.factory('GetUsers', function ($resource) {
         return $resource(URL.host + ':7001/import-luckynumbers/luckynumbers/config/user', {}, {
              'get': { method: 'GET', params: {}, isArray: true}
         });
     });
+
+luckynumbersApp.factory('NewUser', function ($resource) {
+        return $resource(URL.host + ':7001/import-luckynumbers/luckynumbers/config/user', {}, {
+            'post': { method: 'POST'}
+        });
+    });
+
+luckynumbersApp.factory('UpdateUser', function ($resource) {
+        return $resource(URL.host + ':7001/import-luckynumbers/luckynumbers/config/user/:Id', {Id:'@jId'}, {
+            'post': { method: 'POST'}
+        });
+    });
+
+
+
+luckynumbersApp.factory('GetContacts', function ($resource) {
+        return $resource(URL.host + ':7001/import-luckynumbers/luckynumbers/config/contact', {}, {
+             'get': { method: 'GET', params: {}, isArray: true}
+        });
+    });
+
+luckynumbersApp.factory('NewContact', function ($resource) {
+        return $resource(URL.host + ':7001/import-luckynumbers/luckynumbers/config/contact', {}, {
+            'post': { method: 'POST'}
+        });
+    });
+
+luckynumbersApp.factory('UpdateContact', function ($resource) {
+        return $resource(URL.host + ':7001/import-luckynumbers/luckynumbers/config/contact/:Id', {Id:'@jId'}, {
+            'post': { method: 'POST'}
+        });
+    });
+
+
+
 
 luckynumbersApp.factory('DeleteJob', function ($resource) {
         return $resource(URL.host + ':7001/import-luckynumbers/luckynumbers/scheduler/job/:id1', {id1:'@id'}, {

@@ -1,4 +1,4 @@
-<h2>Contactos</h2>
+<h3>Contactos</h3>
 <style>
     #mydiv {
         position: absolute;
@@ -12,11 +12,12 @@
     }
 
 </style>
-<div data-ng-app data-ng-controller="contactosController" class="container">
+<div data-ng-app data-ng-controller="ContactosController" class="container">
     <strong class="error">{{ error }}</strong>
 
     <p data-ng-hide="addMode"><a data-ng-click="toggleAdd()" href="javascript:;" class="btn btn-primary">Agregar nuevo contacto</a></p>
     <form name="addContact" data-ng-show="addMode" style="width:600px;margin:0px auto;">
+    <div class="dialog dialog-success">
         <label>Nombre completo:</label><input type="text" data-ng-model="newContact.name" required />                
         <label>Descripcion:</label><input type="text" data-ng-model="newContact.description" required />
         <label>E-mail:</label><input type="text" data-ng-model="newContact.email1" required />        
@@ -27,6 +28,7 @@
         <input type="submit" value="Agregar" data-ng-click="add()" data-ng-disabled="!addContact.$valid" class="btn btn-primary" />
         <input type="button" value="Cancelar" data-ng-click="toggleAdd()" class="btn btn-primary" />
         <br /><br />
+    </div>
     </form>
     <table class="table table-bordered table-hover" style="width:800px">
         <tr>
@@ -38,31 +40,31 @@
             <th>Habilitado</th>
         </tr>
 
-        <tr data-ng-repeat="contact in contacts">
-            <td><strong data-ng-hide="contact.editMode">{{ newContact.id }}</strong></td>
+        <tr data-ng-repeat="newContact in contactos">
+            <td><strong data-ng-hide="editMode">{{ newContact.id }}</strong></td>
             <td>
-                <p data-ng-hide="contact.editMode">{{ newContact.name }}</p>
-                <input data-ng-show="contact.editMode" type="text" data-ng-model="contact.name" />
+                <p data-ng-hide="editMode">{{ newContact.name }}</p>
+                <input data-ng-show="editMode" type="text" data-ng-model="newContact.name" />
             </td>
             <td>
-                <p data-ng-hide="contact.editMode">{{ newContact.description }}</p>
-                <input data-ng-show="contact.editMode" type="text" data-ng-model="contact.description" />
+                <p data-ng-hide="editMode">{{ newContact.description }}</p>
+                <input data-ng-show="editMode" type="text" data-ng-model="newContact.description" />
             </td>
             <td>
-                <p data-ng-hide="contact.editMode">{{ newContact.email1 }}</p>
-                <input data-ng-show="contact.editMode" type="text" data-ng-model="contact.email1" />
+                <p data-ng-hide="editMode">{{ newContact.email1 }}</p>
+                <input data-ng-show="editMode" type="text" data-ng-model="newContact.email1" />
             </td>
             <td>
-                <p data-ng-hide="contact.editMode">{{ newContact.phone1 }}</p>
-                <input data-ng-show="contact.editMode" type="text" data-ng-model="contact.phone1" />
+                <p data-ng-hide="editMode">{{ newContact.phone1 }}</p>
+                <input data-ng-show="editMode" type="text" data-ng-model="newContact.phone1" />
             </td>
             <td>
-                <p data-ng-hide="contact.editMode">{{ newContact.enabled }}</p>
-                <input data-ng-show="contact.editMode" type="text" data-ng-model="contact.enabled" />
+                <p data-ng-hide="editMode">{{ newContact.enabled }}</p>
+                <input data-ng-show="editMode" type="text" data-ng-model="newContact.enabled" />
             </td>
             <td>
-                <p data-ng-hide="contact.editMode"><a data-ng-click="toggleEdit(contact)" href="javascript:;">Editar</a> | <a data-ng-click="deleteContact(contact)" href="javascript:;">Borrar</a></p>
-                <p data-ng-show="contact.editMode"><a data-ng-click="save(contact)" href="javascript:;">Guardar</a> | <a data-ng-click="toggleEdit(contact)" href="javascript:;">Cancelar</a></p>
+                <p data-ng-hide="editMode"><a data-ng-click="toggleEdit()" href="javascript:;">Editar</a></p>
+                <p data-ng-show="editMode"><a data-ng-click="save(newContact);" href="javascript:;">Guardar</a> | <a data-ng-click="toggleEdit()" href="javascript:;">Cancelar</a></p>
             </td>
         </tr>
     </table>
