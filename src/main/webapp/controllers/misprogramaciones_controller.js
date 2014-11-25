@@ -3,8 +3,9 @@ luckynumbersApp.controller('MisProgramacionesController', function ($scope, $fil
         $scope.success = null;
         $scope.error = null;
 
+        var orderBy = $filter('orderBy');
+
         var programaciones = Jobs.get();
-        //$scope.ciudades = GetCities.get();
 
         $scope.programaciones = programaciones;
 
@@ -47,7 +48,12 @@ luckynumbersApp.controller('MisProgramacionesController', function ($scope, $fil
                            $scope.finalizados++;
                        }
                    });
+           $scope.order('-scheduleDate',false);
          });
+
+        $scope.order = function(predicate, reverse) {
+            $scope.programaciones = orderBy($scope.programaciones, predicate, reverse);
+          };
 
         $scope.modal = {
         	"title":  "Confirmar",
@@ -98,6 +104,8 @@ luckynumbersApp.controller('MisProgramacionesController', function ($scope, $fil
             $( "#" +  $scope.filtroactual).removeClass( "active" );
             $scope.filtroactual = cual;
             $( "#" +  $scope.filtroactual).addClass( "active" );
+            $scope.showDetails = false;
+            $( "#" +  $scope.previusID).removeClass( "selected-row" );
         }
 
         $scope.changeFuenteNumeros = function(theCurrent, theOld) {
@@ -113,25 +121,54 @@ luckynumbersApp.controller('MisProgramacionesController', function ($scope, $fil
             }
         }
 
-        $scope.showDetalles = function(id){
+        $scope.showDetalles = function(programa){
           if (!$scope.showDetails){
-              $scope.seleccionado = $scope.programaciones[id];
-              $scope.jobActivoId = $scope.programaciones[id].id;
+              $scope.seleccionado = programa;
+              $scope.jobActivoId = programa.id;
               $scope.showDetails = true;
+              $( "#" +  programa.id).addClass( "selected-row" );
+              $scope.previusID = programa.id;
           } else {
+            $( "#" +  $scope.previusID).removeClass( "selected-row" );
             $scope.showDetails = false;
+            if (programa.id != $scope.previusID) {
+              $scope.seleccionado = programa;
+              $scope.jobActivoId = programa.id;
+              $scope.showDetails = true;
+              $( "#" +  programa.id).addClass( "selected-row" );
+              $scope.previusID = programa.id;
+            }
           }
+
         }
+
+        $scope.removeRow = function(id, deDonde){
+                 var index = -1;
+                 var comArr = eval( deDonde );
+                 for( var i = 0; i < comArr.length; i++ ) {
+                       if( comArr[i].id === id ) {
+                           index = i;
+                           break;
+                        }
+                 }
+                 if( index === -1 ) {
+                      //alert( "Error!" );
+                 }
+                 deDonde.splice( index, 1 );
+        };
 
         $scope.deleteJobByID = function(){
           var params = {id1:$scope.jobActivoId};
           DeleteJob.delete(params);
+          $scope.removeRow($scope.jobActivoId,$scope.programaciones);
+          $scope.noIniciados--;
           $scope.data = function() { return Jobs.get(); }
         }
 
         $scope.deleteTaskByID = function(){
           var params = {id1:$scope.taskActivaId};
           DeleteTask.delete(params);
+          $scope.removeRow($scope.taskActivaId,$scope.seleccionado.tasks);
           $scope.data = function() { return Jobs.get(); }
         }
 
@@ -166,7 +203,7 @@ luckynumbersApp.controller('MisProgramacionesController', function ($scope, $fil
           $scope.data = function() { return Jobs.get(); }
         }
 
-        $scope.editDate = function(indice) {
+        $scope.editDate = function(programa) {
           if (!$scope.isModalOpen){
             $scope.modal.title = "Modificar fecha programada";
             $scope.modal.showDate = true;
@@ -175,15 +212,15 @@ luckynumbersApp.controller('MisProgramacionesController', function ($scope, $fil
             $scope.modal.showCTask = false;
             $scope.modal.showRangos = false;
             $scope.modal.showSummary = false;
-            $scope.modal.updateDate = $scope.programaciones[indice].scheduledDate;
-            $scope.jobActivoId = $scope.programaciones[indice].id;
-            $scope.jobActivoRecord = $scope.programaciones[indice];
+            $scope.modal.updateDate = programa.scheduledDate;
+            $scope.jobActivoId = programa.id;
+            $scope.jobActivoRecord = programa;
             $scope.funcionBorrar = $scope.modifyDateByID;
           }
 
         }
 
-        $scope.playNow = function(mensaje, indice){
+        $scope.playNow = function(mensaje, programa){
           if (!$scope.isModalOpen){
             $scope.modal.message = mensaje;
             $scope.modal.title = "Ejecución"
@@ -192,14 +229,14 @@ luckynumbersApp.controller('MisProgramacionesController', function ($scope, $fil
             $scope.modal.showCTask = false;
             $scope.modal.showRangos = false;
             $scope.modal.showSummary = false;
-            $scope.jobActivoId = $scope.programaciones[indice].id;
-            $scope.jobActivoRecord = $scope.programaciones[indice]
+            $scope.jobActivoId = programa.id;
+            $scope.jobActivoRecord = programa;
             $scope.funcionBorrar = $scope.modifyNowByID;
 
           }
         }
 
-        $scope.openModal = function(mensaje, indice){
+        $scope.openModal = function(mensaje, programa){
           if (!$scope.isModalOpen){
            $scope.modal.message = mensaje;
            $scope.modal.title = "Eliminar"
@@ -208,7 +245,7 @@ luckynumbersApp.controller('MisProgramacionesController', function ($scope, $fil
            $scope.modal.showRangos = false;
            $scope.modal.showSummary = false;
            $scope.isModalOpen = true;
-           $scope.jobActivoId = $scope.programaciones[indice].id;
+           $scope.jobActivoId = programa.id;
            $scope.funcionBorrar = $scope.deleteJobByID;
          }
        }
@@ -259,7 +296,7 @@ luckynumbersApp.controller('MisProgramacionesController', function ($scope, $fil
         }
       }
 
-      $scope.showSummaryLog = function(indice)  {
+      $scope.showSummaryLog = function(programa)  {
         if (!$scope.isModalOpen){
           $scope.modal.message = "";
           $scope.modal.title = "Detalle"
@@ -271,8 +308,9 @@ luckynumbersApp.controller('MisProgramacionesController', function ($scope, $fil
           $scope.modal.ciudad ="0";
           $scope.modal.desde = "";
           $scope.modal.hasta = "";
-          if ($scope.programaciones[indice].summary != null){
-               $scope.modal.jobSummary = $scope.programaciones[indice].summary.replace("||",String.fromCharCode(13));
+          if (programa.summary != null){
+               //$scope.modal.jobSummary = programa.summary.replace("||",String.fromCharCode(13));
+               $scope.modal.jobSummary = programa.summary.split("||").join("\n");
           } else {
               $scope.modal.jobSummary = "";
           }
@@ -294,7 +332,8 @@ luckynumbersApp.controller('MisProgramacionesController', function ($scope, $fil
           $scope.modal.desde = "";
           $scope.modal.hasta = "";
           if ($scope.seleccionado.tasks[indice].summary != null){
-               $scope.modal.jobSummary = $scope.seleccionado.tasks[indice].summary.replace("||",String.fromCharCode(13));
+               //$scope.modal.jobSummary = $scope.seleccionado.tasks[indice].summary.replace("||",String.fromCharCode(13));
+               $scope.modal.jobSummary = $scope.seleccionado.tasks[indice].summary.split("||").join("\n");
           } else {
               $scope.modal.jobSummary = "";
           }
@@ -320,11 +359,13 @@ luckynumbersApp.controller('MisProgramacionesController', function ($scope, $fil
 
           if (inIs == "In") {
           GetTaskFileIn.get(params, function(data) {
-             $scope.modal.jobSummary = data.toString();
+             //$scope.modal.jobSummary = data.toString();
+             $scope.modal.jobSummary = data.toString().split(",").join("\n");
            });
           } else {
             GetTaskFileOut.get(params, function(data) {
-               $scope.modal.jobSummary = data.toString();
+               //$scope.modal.jobSummary = data.toString();
+               $scope.modal.jobSummary = data.toString().split(",").join("\n");
              });
           }
           $scope.funcionBorrar = null;

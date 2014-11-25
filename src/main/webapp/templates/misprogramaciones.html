@@ -39,44 +39,42 @@
         </ul>
     </div>
     <div class="col-md-10">
-        <table class="table table-striped">
+        <table class="table table-bordered">
             <thead>
                 <tr>
-                    <th>id</th>
+                    <th><a href="" ng-click="reverse=!reverse;order('id', reverse)">id</a></th>
                     <th>Estado</th>
-                    <th>Fecha</th>
-                    <th>Tareas</th>
-                    <th>Porcentaje</th>
+                    <th><a href="" ng-click="reverse=false;order('scheduledDate', false)">Fecha</a></th>
+                    <th><a href="" ng-click="reverse=!reverse;order('totalTasks', reverse)">Tareas</a></th>
+                    <th><a href="" ng-click="reverse=!reverse;order('totalCoverage', reverse)">Porcentaje</a></th>
                     <th>Detalles</th>
                     <th>Opciones</th>
                 </tr>
             </thead>
             <tbody>
-                <tr ng-repeat="programa in programaciones | filter:filterSeleccionado |
-                                orderBy: date">
+                <tr ng-repeat="programa in programaciones | filter:filterSeleccionado" id="{{programa.id}}">
                     <td>{{programa.id}}</td>
                     <td>{{friendlyState(programa.state)}}</td>
                     <td>{{programa.scheduledDate | date:'medium'}}</td>
                     <td>{{programa.totalTasks}}</td>
                     <td>{{programa.totalCoverage}}</td>
-                    <td><a href="#" class="btn btn-xs btn-primary" ng-click="showSummaryLog($index);"><span class="fui-document"></span>&nbsp;&nbsp;Sumario</a></td>
-                    <td><a href="#" class="btn btn-xs btn-primary" data-toggle="tooltip" title="Detalles" ng-click="showDetalles($index)"><span class="fui-info"></span></a>
-                    <a href="#" class="btn btn-xs btn-primary" data-toggle="tooltip" title="Cancelar ejecución" ng-click="openModal('¿Confirma eliminar?', $index)"><span class="fui-cross"></span></a>
-                    <a href="#" class="btn btn-xs btn-primary" data-toggle="tooltip" title="Reprogramar" ng-click="editDate($index)"><span class="fui-calendar"></span></a>
-                    <a href="#" class="btn btn-xs btn-primary" data-toggle="tooltip" title="Ejecutar ahora" ng-click="playNow('¿Ejecutar inmediatamente?', $index)"><span class="fui-play"></span></a>
+                    <td><a href="#" class="btn btn-xs btn-primary" ng-click="showSummaryLog(programa);"><span class="fui-document"></span>&nbsp;&nbsp;Sumario</a></td>
+                    <td><a href="#" class="btn btn-xs btn-primary" data-toggle="tooltip" title="Detalles" ng-click="showDetalles(programa)"><span class="fui-info"></span></a>
+                    <a href="#" class="btn btn-xs btn-primary" ng-show="!(programa.state != 'NOT_STARTED')" data-toggle="tooltip" title="Cancelar ejecución" ng-click="openModal('¿Confirma eliminar?', programa)"><span class="fui-cross"></span></a>
+                    <a href="#" class="btn btn-xs btn-primary" data-toggle="tooltip" ng-show="!(programa.state != 'NOT_STARTED')" title="Reprogramar" ng-click="editDate(programa)"><span class="fui-calendar"></span></a>
+                    <a href="#" class="btn btn-xs btn-primary" data-toggle="tooltip" ng-show="!(programa.state != 'NOT_STARTED')" title="Ejecutar ahora" ng-click="playNow('¿Ejecutar inmediatamente?', programa)"><span class="fui-play"></span></a>
                     </td>
                 </tr>
             </tbody>
         </table>
         <hr>
              <div ng-show="showDetails">
-
              <div class="demo-title">
-               <h3 class="demo-panel-title">Tareas</h3>
+               <p class="demo-panel-title">Tareas ({{seleccionado.name}})</p>
              </div>
              <div class="demo-content">
              <a href="#" ng-click="createTask();" class="btn btn-sm btn-primary"><span class="fui-plus"></span>&nbsp;&nbsp;Agregar Tarea</a>
-                <table class="table table-striped table-hover table-bordered">
+                <table class="table table-striped">
                                 <thead>
                                   <tr>
                                     <th>Tipo</th>
@@ -92,7 +90,7 @@
                                   <td>{{friendlyCities[tarea.city]}}</td>
                                    <td>{{tarea.from}}</td>
                                     <td>{{tarea.to}}</td>
-                                    <td><a href="#" class="btn btn-xs btn-primary" ng-click="showSummaryTask($index);"><span class="fui-document"></span>&nbsp;&nbsp;Log</a>&nbsp;<a href="#" ng-click="showFileTask('In', $index);" class="btn btn-xs btn-primary"><span class="fui-clip"></span>&nbsp;&nbsp;In</a>&nbsp;<a href="#"  ng-click="showFileTask('Out', $index);" class="btn btn-xs btn-primary"><span class="fui-clip"></span>&nbsp;&nbsp;Out</a></td>
+                                    <td><a href="#" class="btn btn-xs btn-primary" ng-click="showSummaryTask($index);"><span class="fui-document"></span>&nbsp;&nbsp;Log</a>&nbsp;<a href="#" ng-click="showFileTask('In', $index);" class="btn btn-xs btn-primary"><span class="fui-clip"></span>&nbsp;&nbsp;In</a>&nbsp;<a href="#"  ng-click="showFileTask('Out', $index);"  class="btn btn-xs btn-primary"><span class="fui-clip"></span>&nbsp;&nbsp;Out</a></td>
                                     <td>
                                     <a href="#" class="btn btn-xs btn-primary mlm" data-toggle="tooltip" title="Cancelar Tarea" ng-click="openDeleteTask('¿Eliminar Tarea?', $index)"><span class="fui-cross"></span></a>
                                     <a href="#" class="btn btn-xs btn-primary mlm" data-toggle="tooltip" title="Editar" ng-click="editRangos('Modifique los rangos', $index)"><span class="fui-new"></span></a>
