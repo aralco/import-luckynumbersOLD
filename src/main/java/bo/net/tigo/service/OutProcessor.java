@@ -43,7 +43,7 @@ public class OutProcessor {
 
     @Transactional
     public void process(File file) throws Exception{
-        StringBuilder taskLog = new StringBuilder();
+        StringBuffer taskLog = new StringBuffer();
         logger.info("Processing File: " + file);
         BufferedReader bufferedReader = null;
         String splitBy = ",";
@@ -81,13 +81,12 @@ public class OutProcessor {
             while ((line = bufferedReader.readLine()) != null) {
                 // use comma as separator
                 logger.info("line to process:"+line);
-                taskLog.append("Processing line: ").append(line).append("||");
                 task.setProcessed(processed);
                 task.setPassed(passed);
                 task.setFailed(failed);
                 task.setCoverage(String.valueOf(percentage)+" %");
                 String[] outRow = line.split(splitBy);
-                logger.info("array Size:"+outRow.length+",vlaues:"+outRow);
+                logger.info("array Size:"+outRow.length+",values:"+outRow);
                 OutAudit outAudit = new OutAudit();
                 outAudit.setFileName(fileName);
                 outAudit.setRow(line);
@@ -103,83 +102,76 @@ public class OutProcessor {
                 processed++;
                 if(outAudit.getCodePassed().equals(0)) {
                     passed++;
-                    logger.info("Lucky Number to be reserved:"+outAudit.getNumber());
-                    taskLog.append("Lucky Number to be reserved:").append(outAudit.getNumber()).append("||");
+                    logger.info("Lucky Number to be reserved, calling SP3_RERSERVANL_NROCUENTACOYLC:"+outAudit.getNumber());
                     String message = bccsDao.reserveNumber(outAudit.getNumber());
                     if(message!=null && message.contains("OK"))  {
-                        logger.info("Number has been correctly reserved :"+message);
-                        taskLog.append("Number has been correctly reserved :").append(message).append("||");
+                        logger.info("Lucky Number has been correctly reserved on BCCS:"+message);
                         outAudit.setLuckyReserved(true);
                         reservedLuckyNumbers++;
                     } else  {
-                        logger.info("Number has NOT been reserved, calling rollback:"+message);
-                        taskLog.append("Number has NOT been reserved, calling rollback:").append(message).append("||");
+                        logger.info("Number canNOT been reserved on BCCS, calling rollback CONCILI_RESERVE_LUCKY_BCCS:"+message);
+                        taskLog.append("Number canNOT been reserved on BCCS, calling rollback CONCILI_RESERVE_LUCKY_BCCS:").append(message).append("||");
                         luckyNumbersDao.unReserveNumber(outAudit.getNumber(),false);
                         taskCompletedOK=false;
                         logger.info("Rollback completed:"+message);
                         taskLog.append("Rollback completed:").append(message).append("||");
                     }
-                } else {
+                } else if(outAudit.getMessage().equals("Error al insertar el numero")){
                     failed++;
                     logger.info("Number processed is not lucky:"+outAudit.getNumber());
-                    taskLog.append("Number processed is not lucky:").append(outAudit.getNumber()).append("||");
+                } else {
+                    failed++;
+                    logger.info("Number processed is not lucky and has errors:"+outAudit.getNumber());
+                    taskCompletedOK=false;
                 }
             }
-            //CONCILIATION: Call BCCS to ask for LN numbers only if there are lucky numbers
+            //logging total of luckynumbers found
+            taskLog.append("LuckyNumbers reserved on BCCS: ").append(reservedLuckyNumbers).append(" ||");
+            //CONCILIATION of LuckyNumbers: Call BCCS to ask for LN numbers only if there are lucky numbers
             if(reservedLuckyNumbers>0)  {
-                logger.info("Calling BCCS:SP1_LNROSLNXSUCURSALNRODESDEHASTA to ask for conciliation of LN numbers using values:city="+task.getCity()+",from="+task.getFrom()+",to="+task.getTo());
-                taskLog.append("Calling BCCS:SP1_LNROSLNXSUCURSALNRODESDEHASTA to ask for conciliation of LN numbers using values:city=").append(task.getCity()).append(",from=").append(task.getFrom()).append(",to=").append(task.getTo()).append(" ||");
+                logger.info("Conciliation of LuckyNumbers: Calling BCCS:SP1_LNROSLNXSUCURSALNRODESDEHASTA to ask for LN numbers using values:city="+task.getCity()+",from="+task.getFrom()+",to="+task.getTo());
                 List<InAudit> lnNumbers = bccsDao.getLnNumbers(task.getCity(),task.getFrom(),task.getTo());
                 if(lnNumbers!=null) {
-                    if(lnNumbers.size()==reservedLuckyNumbers)
-                        taskCompletedOK=true;
-                    else
+                    if(lnNumbers.size()!=reservedLuckyNumbers)
                         taskCompletedOK=false;
-                    logger.info("LuckyNumbers in -> BCCS:"+lnNumbers.size()+" -VS- LUCKY_NUMBERS:"+reservedLuckyNumbers);
-                    taskLog.append("LuckyNumbers in -> BCCS:").append(lnNumbers.size()).append(" -VS- ").append(reservedLuckyNumbers).append(":LUCKY_NUMBERS ||");
+                    logger.info("Conciliation of LuckyNumbers: LuckyNumbers in BCCS: "+lnNumbers.size()+" -VS- LuckyNumbers in LUCKY_NUMBERS:"+reservedLuckyNumbers);
+                    taskLog.append("Conciliation of LuckyNumbers: LuckyNumbers in BCCS: ").append(lnNumbers.size()).append(" -VS- LuckyNumbers in LUCKY_NUMBERS:").append(reservedLuckyNumbers).append(" ||");
                 } else  {
                     taskCompletedOK=false;
-                    logger.info("LN Numbers in -> BCCS seems to be empty.");
-                    taskLog.append("LN Numbers in -> BCCS seems to be empty. ||");
+                    logger.info("Conciliation of LuckyNumbers: LN Numbers in BCCS seems to be empty.");
+                    taskLog.append("Conciliation of LuckyNumbers: LN Numbers in BCCS seems to be empty. ||");
                 }
             } else {
                 logger.info("No Lucky Numbers found on processed file");
-                taskLog.append("No Lucky Numbers found on processed file. ||");
             }
 
-            //CONCILIATION: Call to BCCS to change state of numbers to LC only for FREE numbers
+            //Call to BCCS to change state of numbers to LC only for FREE numbers
             if(task.getType().equals(Type.FREE.name())) {
-                logger.info("Calling BCCS:SP2_LNROSLCXSUCURSALNRODESDEHASTAPORC_ACTESTLI1 to unlock numbers using values:city="+task.getCity()+",from="+task.getFrom()+",to="+task.getTo());
-                taskLog.append("Calling BCCS:SP2_LNROSLCXSUCURSALNRODESDEHASTAPORC_ACTESTLI1 to unlock numbers using values:city=").append(task.getCity()).append(",from=").append(task.getFrom()).append(",to=").append(task.getTo()).append(" ||");
+                logger.info("Unlock free numbers on BCCS, calling :SP2_LNROSLCXSUCURSALNRODESDEHASTAPORC_ACTESTLI1 to unlock numbers using values:city="+task.getCity()+",from="+task.getFrom()+",to="+task.getTo());
                 List<InAudit> unlockedNumbers = bccsDao.unlockNumbers(task.getCity(),task.getFrom(),task.getTo());
                 if(unlockedNumbers!=null)   {
-                    if(unlockedNumbers.size()>0)
-                        taskCompletedOK=true;
-                    else
+                    if(!(unlockedNumbers.size()>0))
                         taskCompletedOK=false;
-                    logger.info("unlockedNumbers: "+unlockedNumbers);
-                    taskLog.append("unlockedNumbers: ").append(unlockedNumbers).append("||");
+                    logger.info("Total unlockedNumbers on BCCS: "+unlockedNumbers.size());
+                    taskLog.append("Total unlockedNumbers on BCCS: ").append(unlockedNumbers.size()).append(" ||");
                 } else  {
                     taskCompletedOK=false;
-                    logger.info("LCNumbers in -> BCCS seems to be empty.");
-                    taskLog.append("LCNumbers in -> BCCS seems to be empty. ||");
+                    logger.info("Total unlockedNumbers on BCCS seems to be empty.");
+                    taskLog.append("Total unlockedNumbers on BCCS seems to be empty. ||");
                 }
-                //Call to BCCS to ask for LC numbers only for FREE numbers
-                logger.info("Calling BCCS:SP1_LNROSLCXSUCURSALNRODESDEHASTA to list unlocked numbers using values:city="+task.getCity()+",from="+task.getFrom()+",to="+task.getTo());
-                taskLog.append("Calling BCCS:SP1_LNROSLCXSUCURSALNRODESDEHASTA to list unlocked numbers using values:city=").append(task.getCity()).append(",from=").append(task.getFrom()).append(",to=").append(task.getTo()).append(" ||");
+                //CONCILIATION: Call to BCCS to ask for LC numbers only for FREE numbers
+                logger.info("Conciliation of locked numbers on BCCS: Calling BCCS:SP1_LNROSLCXSUCURSALNRODESDEHASTA to list unlocked numbers using values:city="+task.getCity()+",from="+task.getFrom()+",to="+task.getTo());
                 List<InAudit> lcNumbers = bccsDao.getLcNumbers(task.getCity(), task.getFrom(), task.getTo());
                 if(lcNumbers!=null)  {
-                    if(lcNumbers.size()==0)
-                        taskCompletedOK=true;
-                    else
+                    if(lcNumbers.size()>0)
                         taskCompletedOK=false;
-                    logger.info("LCNumbers in -> BCCS:"+lcNumbers.size());
-                    taskLog.append("LCNumbers in -> BCCS:").append(lcNumbers.size()).append(" ||");
+                    logger.info("Conciliation for unlocked numbers with LC state in BCCS:"+lcNumbers.size());
+                    taskLog.append("Conciliation for unlocked numbers with LC state in BCCS:").append(lcNumbers.size()).append(" ||");
                 }
                 else    {
                     taskCompletedOK=false;
-                    logger.info("LCNumbers in -> BCCS seems to be empty.");
-                    taskLog.append("LCNumbers in -> BCCS seems to be empty. ||");
+                    logger.info("LC Numbers in BCCS seems to be empty.");
+                    taskLog.append("LC Numbers in BCCS seems to be empty. ||");
                 }
 
             }
@@ -193,7 +185,7 @@ public class OutProcessor {
             }
             else {
                 task.setStatus(Status.COMPLETED_WITH_ERRORS.name());
-                job.setPassedTasks(job.getFailedTasks()+1);
+                job.setFailedTasks(job.getFailedTasks()+1);
             }
             job.setTotalCoverage(jobPercentage+"%");
             //MEANS that a job is completed or requires some criteria acceptance
@@ -204,8 +196,8 @@ public class OutProcessor {
             }
             Long inFiles = inAuditDao.countInFilesByJob(job.getId());
             Long outFiles = outAuditDao.countOutFilesByJob(job.getId());
-            logger.info("Created files -> .in:"+inFiles+" -VS- .out:"+outFiles);
-            job.setSummary(job.getSummary()+"|| Created files -> .in:"+inFiles+" -VS- :.out"+outFiles+" ||");
+            logger.info("Total created files: "+(inFiles==null?0:inFiles)+"(.in) -VS- "+(outFiles==null?0:outFiles)+"(.out)");
+            job.setSummary(" Total archivos creados: "+(inFiles==null?0:inFiles)+"(.in) -VS- "+(outFiles==null?0:outFiles)+"(.out) ||");
             job.setLastUpdate(currentDate);
             logger.info("Task completed: "+task.getStatus());
             taskLog.append("Task completed: ").append(task.getStatus()).append("||");
@@ -222,7 +214,9 @@ public class OutProcessor {
             logger.error("IOException for file:" + file + ", with errors: " + e.getMessage());
             e.printStackTrace();
         } catch (LuckyNumbersGenericException e) {
-                logger.warn("LuckyNumbersGenericException -> error:"+e.getErrorCode()+", message: "+e.getErrorMessage());
+            logger.warn("LuckyNumbersGenericException -> error:" + e.getErrorCode() + ", message: " + e.getErrorMessage());
+        } catch (Exception e)  {
+            logger.error("Unknown exception -> error:" + e.toString() + ", message: " + e.getMessage());
         } finally {
             if (bufferedReader != null) {
                 try {

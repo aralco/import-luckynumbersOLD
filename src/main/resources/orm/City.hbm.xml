@@ -12,16 +12,16 @@
             </generator>
         </id>
         <property name="code" type="java.lang.Integer">
-            <column name="ILN_CITY_CODE"/>
+            <column name="ILN_CITY_CODE" not-null="true" unique="true"/>
         </property>
         <property name="name" type="java.lang.String">
-            <column name="ILN_CITY_NAME"/>
+            <column name="ILN_CITY_NAME" not-null="true" unique="true"/>
         </property>
         <property name="description" type="java.lang.String">
             <column name="ILN_CITY_DESCRIPTION"/>
         </property>
         <property name="enabled" type="java.lang.Boolean">
-            <column name="ILN_CITY_ENABLED"/>
+            <column name="ILN_CITY_ENABLED" not-null="true"/>
         </property>
         <property name="createdDate" type="java.util.Date">
             <column name="ILN_CITY_CREATED_DATE"/>

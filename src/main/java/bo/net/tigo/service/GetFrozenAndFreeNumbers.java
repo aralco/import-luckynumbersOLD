@@ -51,7 +51,7 @@ public class GetFrozenAndFreeNumbers {
         } else  {
             Calendar calendar = Calendar.getInstance();
             for(Task task:scheduledAndReScheduledTasks) {
-                StringBuilder taskLog = new StringBuilder();
+                StringBuffer taskLog = new StringBuffer();
                 Date currentDate = calendar.getTime();
                 Job job = task.getJob();
                 logger.info("Start task execution for task=> taskId:"+task.getId()+", status="+task.getStatus()+", executionDate="+task.getExecutionDate()+", job="+job);
@@ -90,14 +90,13 @@ public class GetFrozenAndFreeNumbers {
                         inAudit.setFileName(fileName);
                         inAuditDao.save(inAudit);
                         logger.info("Processing retrievedNumber:"+inAudit.getRow());
-                        taskLog.append("Processing retrievedNumber:").append(inAudit.getRow()).append("||");
                     }
                     logger.info("File generation:"+retrievedNumbers);
 
 
                     File inFile = new File(fileName);
-                    logger.info("File to copy:"+inFile);
-                    taskLog.append("File generation.").append(fileName).append("||");
+                    logger.info("File generated:"+inFile);
+                    taskLog.append("File generated:").append(fileName).append("||");
 
                     if(!inFile.exists())
                         inFile.createNewFile();
@@ -110,22 +109,28 @@ public class GetFrozenAndFreeNumbers {
 
                     final Message<File> fileMessage = MessageBuilder.withPayload(inFile).build();
                     ftpChannelOUT.send(fileMessage);
+                    logger.info("Sending file :"+fileName+" to FTP server.");
                     taskLog.append("Sending file ").append(fileName).append(" to FTP server.||");
                     task.setStatus(Status.COMPLETED_PHASE1_OK.name());
-                    taskLog.append("Phase 1 completed successfully.").append(fileName).append("||");
+                    logger.info("Phase 1 completed successfully.");
+                    taskLog.append("Phase 1 completed successfully.").append("||");
                     task.setUrlin(fileName);
                     calendar.add(Calendar.SECOND, +1);
                 } else  {
-                    task.setStatus(Status.COMPLETED_PHASE1_WITHOUT_DATA.name());
-                    taskLog.append("Phase 1 completed without data.||");
+                    task.setStatus(Status.COMPLETED_PHASE1_WITH_ERRORS.name());
+                    logger.warn("Phase 1 completed with errors. .in File could not be generated.");
+                    taskLog.append("Phase 1 completed with errors. .in File could not be generated. ||");
                     task.setUrlin("NA");
                 }
                 Long inFiles = inAuditDao.countInFilesByJob(job.getId());
                 Long outFiles = outAuditDao.countOutFilesByJob(job.getId());
-                logger.info("Created files -> .in:"+inFiles+" -VS- .out:"+outFiles);
-                job.setSummary(job.getSummary()+"|| Created files -> .in:"+inFiles+" -VS- .out:"+outFiles+" ||");
+                logger.info("Total created files: "+(inFiles==null?0:inFiles)+"(.in) -VS- "+(outFiles==null?0:outFiles)+"(.out)");
+                job.setSummary(" Total archivos creados: "+(inFiles==null?0:inFiles)+"(.in) -VS- "+(outFiles==null?0:outFiles)+"(.out) ||");
+                //TODO calculate the coverage based on tasks
+                float jobPercentage=50;
+                job.setTotalCoverage(jobPercentage+"%");
                 job.setLastUpdate(currentDate);
-                task.setSummary(task.getSummary()+taskLog.toString());
+                task.setSummary((task.getSummary()==null?"":task.getSummary())+taskLog.toString());
                 task.setLastUpdate(currentDate);
             }
         }

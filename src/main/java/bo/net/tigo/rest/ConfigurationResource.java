@@ -104,17 +104,5 @@ public class ConfigurationResource {
         List<AccessLog> accessLogs = configurationService.getAccessLogs();
         return new ResponseEntity<List<AccessLog>>(accessLogs, HttpStatus.OK);
     }
-//
-//    @RequestMapping(value = "/ftp", method = RequestMethod.GET)
-//    @ResponseBody
-//    public ResponseEntity<FTPParameter> viewFTPParameters()   {
-//        return null;
-//    }
-//
-//    @RequestMapping(value = "/ftp", method = RequestMethod.POST, consumes = "application/json")
-//    @ResponseBody
-//    public ResponseEntity<FTPParameter> updateFTPParameters(@RequestBody FTPParameter ftpParameter)   {
-//        return null;
-//    }
 
 }

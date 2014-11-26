@@ -78,7 +78,6 @@
                 <value>orm/AccessLog.hbm.xml</value>
                 <value>orm/City.hbm.xml</value>
                 <value>orm/Contact.hbm.xml</value>
-                <value>orm/FTPParameter.hbm.xml</value>
                 <value>orm/Job.hbm.xml</value>
                 <value>orm/Task.hbm.xml</value>
                 <value>orm/User.hbm.xml</value>

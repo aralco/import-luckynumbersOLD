@@ -39,7 +39,7 @@
             <column name="ILN_CONTACT_LAST_UPDATE"/>
         </property>
         <property name="enabled" type="java.lang.Boolean">
-            <column name="ILN_CONTACT_ENABLED"/>
+            <column name="ILN_CONTACT_ENABLED" not-null="true"/>
         </property>
     </class>
 </hibernate-mapping>
