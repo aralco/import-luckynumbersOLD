@@ -67,7 +67,8 @@
                 </tr>
                 <tr>
                         <td colspan="5" style="background-color: #f3f8fb;">
-                            <div class="demo-content" ng-show="showDetails && (seleccionado.id == programa.id)">
+                            <div ng-show="showDetails && (seleccionado.id == programa.id)">
+                            <p>{{programa.name}}</p>
                             <a href="#" ng-click="createTask();" class="btn btn-xs btn-primary"><span class="fui-plus"></span>&nbsp;&nbsp;Agregar Tarea</a>
                                <table class="table table-striped">
                                                <thead>
