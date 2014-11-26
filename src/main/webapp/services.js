@@ -3,7 +3,7 @@
 /* Services */
 
 var URL = {};
-URL.host = "http://localhost";
+URL.host = "http://10.211.55.11";
 URL.dirFiles ="http://localhost:9000/ftp/in/";
 
 luckynumbersApp.factory('NewJob', function ($resource) {

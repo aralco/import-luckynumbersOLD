@@ -174,7 +174,7 @@ luckynumbersApp.controller('MisProgramacionesController', function ($scope, $fil
 
         $scope.modifyDateByID = function(){
           var params = {id1:$scope.jobActivoId};
-          $scope.serverdate = $filter('date')($scope.modal.updateDate,'yyyy-MM-ddThh:mm:ss') + "-04:00";
+          $scope.serverdate = $filter('date')($scope.modal.updateDate,'yyyy-MM-ddTHH:mm:ss') + "-04:00";
           $scope.jobActivoRecord.scheduledDate = $scope.serverdate;
           ModifyJob.update(params,$scope.jobActivoRecord);
           $scope.data = function() { return Jobs.get(); }

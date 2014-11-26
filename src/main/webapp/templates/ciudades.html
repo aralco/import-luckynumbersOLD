@@ -13,7 +13,10 @@
 
 </style>
 <div data-ng-app data-ng-controller="CiudadesController" class="container">
-    <strong class="error">{{ error }}</strong>
+    <div class="alert alert-danger" ng-show="formError">
+                        <strong>Error! </strong>{{errorMessage}}.
+                    </div>
+
 
     <p data-ng-hide="addMode"><a data-ng-click="toggleAdd()" href="javascript:;" class="btn btn-primary">Agregar nueva ciudad</a></p>
     <form name="addCity" data-ng-show="addMode" style="width:600px;margin:0px auto;">

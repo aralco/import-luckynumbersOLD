@@ -51,8 +51,8 @@
                     <th>Opciones</th>
                 </tr>
             </thead>
-            <tbody>
-                <tr ng-repeat="programa in programaciones | filter:filterSeleccionado" id="{{programa.id}}">
+                <tbody ng-repeat="programa in programaciones | filter:filterSeleccionado">
+                <tr id="{{programa.id}}">
                     <td>{{programa.id}}</td>
                     <td>{{friendlyState(programa.state)}}</td>
                     <td>{{programa.scheduledDate | date:'medium'}}</td>
@@ -65,43 +65,39 @@
                     <a href="#" class="btn btn-xs btn-primary" data-toggle="tooltip" ng-show="!(programa.state != 'NOT_STARTED')" title="Ejecutar ahora" ng-click="playNow('¿Ejecutar inmediatamente?', programa)"><span class="fui-play"></span></a>
                     </td>
                 </tr>
+                <tr>
+                        <td colspan="5" style="background-color: #f3f8fb;">
+                            <div class="demo-content" ng-show="showDetails && (seleccionado.id == programa.id)">
+                            <a href="#" ng-click="createTask();" class="btn btn-xs btn-primary"><span class="fui-plus"></span>&nbsp;&nbsp;Agregar Tarea</a>
+                               <table class="table table-striped">
+                                               <thead>
+                                                 <tr>
+                                                   <th>Tipo</th>
+                                                   <th>Sucursal</th>
+                                                   <th>Desde</th>
+                                                   <th>Hasta</th>
+                                                   <th>Detalle</th>
+                                                   <th>Opciones</th>
+                                                 </tr>
+                                               </thead>
+                                               <tr ng-repeat="tarea in seleccionado.tasks">
+                                                <td>{{tarea.type}}</td>
+                                                 <td>{{friendlyCities[tarea.city]}}</td>
+                                                  <td>{{tarea.from}}</td>
+                                                   <td>{{tarea.to}}</td>
+                                                   <td><a href="#" class="btn btn-xs btn-primary" ng-click="showSummaryTask($index);"><span class="fui-document"></span>&nbsp;&nbsp;Log</a>&nbsp;<a href="#" ng-click="showFileTask('In', $index);" class="btn btn-xs btn-primary"><span class="fui-clip"></span>&nbsp;&nbsp;In</a>&nbsp;<a href="#"  ng-click="showFileTask('Out', $index);"  class="btn btn-xs btn-primary"><span class="fui-clip"></span>&nbsp;&nbsp;Out</a></td>
+                                                   <td>
+                                                   <a href="#" class="btn btn-xs btn-primary mlm" data-toggle="tooltip" ng-show="!(programa.state != 'NOT_STARTED')" title="Cancelar Tarea" ng-click="openDeleteTask('¿Eliminar Tarea?', $index)"><span class="fui-cross"></span></a>
+                                                   <a href="#" class="btn btn-xs btn-primary mlm" data-toggle="tooltip" title="Editar" ng-show="!(programa.state != 'NOT_STARTED')" ng-click="editRangos('Modifique los rangos', $index)"><span class="fui-new"></span></a>
+                                                   </td>
+                                               </tr>
+                               </table>
+                            </div>
+                        </td>
+                </tr>
             </tbody>
         </table>
-        <hr>
-             <div ng-show="showDetails">
-             <div class="demo-title">
-               <p class="demo-panel-title">Tareas ({{seleccionado.name}})</p>
-             </div>
-             <div class="demo-content">
-             <a href="#" ng-click="createTask();" class="btn btn-sm btn-primary"><span class="fui-plus"></span>&nbsp;&nbsp;Agregar Tarea</a>
-                <table class="table table-striped">
-                                <thead>
-                                  <tr>
-                                    <th>Tipo</th>
-                                    <th>Sucursal</th>
-                                    <th>Desde</th>
-                                    <th>Hasta</th>
-                                    <th>Detalle</th>
-                                    <th>Opciones</th>
-                                  </tr>
-                                </thead>
-                                <tr ng-repeat="tarea in seleccionado.tasks">
-                                 <td>{{tarea.type}}</td>
-                                  <td>{{friendlyCities[tarea.city]}}</td>
-                                   <td>{{tarea.from}}</td>
-                                    <td>{{tarea.to}}</td>
-                                    <td><a href="#" class="btn btn-xs btn-primary" ng-click="showSummaryTask($index);"><span class="fui-document"></span>&nbsp;&nbsp;Log</a>&nbsp;<a href="#" ng-click="showFileTask('In', $index);" class="btn btn-xs btn-primary"><span class="fui-clip"></span>&nbsp;&nbsp;In</a>&nbsp;<a href="#"  ng-click="showFileTask('Out', $index);"  class="btn btn-xs btn-primary"><span class="fui-clip"></span>&nbsp;&nbsp;Out</a></td>
-                                    <td>
-                                    <a href="#" class="btn btn-xs btn-primary mlm" data-toggle="tooltip" title="Cancelar Tarea" ng-click="openDeleteTask('¿Eliminar Tarea?', $index)"><span class="fui-cross"></span></a>
-                                    <a href="#" class="btn btn-xs btn-primary mlm" data-toggle="tooltip" title="Editar" ng-click="editRangos('Modifique los rangos', $index)"><span class="fui-new"></span></a>
-                                    </td>
-                                </tr>
-                                <tbody>
-                                </tbody>
-                </table>
-             </div>
-        <div>
-    </div>
+       <div>
     </div>
 </div>
 
@@ -133,16 +129,19 @@
        <!-- ********************** -->
         <div ng-show="modal.showDate">
                         <div class="form-group">
-                                    <div class="dropdown">
-                                        <a class="dropdown-toggle" id="dLabel" role="button" data-toggle="dropdown" data-target="#" href="">
-                                            Cambiar Fecha
-                                        </a>
-                                        <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                                            <datetimepicker data-ng-model="modal.updateDate"
-                                                            data-datetimepicker-config="{ dropdownSelector: '.dropdown-toggle' }"></datetimepicker>
-                                        </ul>
-                                    </div>
-                                    <p>Fecha Actual: {{ modal.updateDate | date:'dd-MM-yyyy HH:mm' }}</p>
+                        <p>Fecha Actual: {{ modal.updateDate | date:'medium' }}</p>
+
+                        <div class="dropdown">
+                          <a class="dropdown-toggle" id="dropdown2" role="button" data-toggle="dropdown" data-target="#" href="#">
+                            <div class="input-group">
+                            <input type="text" class="form-control" data-ng-model="modal.updateDate"><span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+                            </div>
+                          </a>
+                          <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                            <datetimepicker data-ng-model="modal.updateDate" data-datetimepicker-config="{ dropdownSelector: '#dropdown2' }"/>
+                          </ul>
+                        </div>
+
                         </div>
         </div>
         <!-- ********************** -->
