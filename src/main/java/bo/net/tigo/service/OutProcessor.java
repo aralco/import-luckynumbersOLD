@@ -109,12 +109,12 @@ public class OutProcessor {
                         outAudit.setLuckyReserved(true);
                         reservedLuckyNumbers++;
                     } else  {
-                        logger.info("Number canNOT been reserved on BCCS, calling rollback CONCILI_RESERVE_LUCKY_BCCS:"+message);
-                        taskLog.append("Number canNOT been reserved on BCCS, calling rollback CONCILI_RESERVE_LUCKY_BCCS:").append(message).append("||");
+                        logger.info("Lucky Number "+outAudit.getNumber()+" canNOT been reserved on BCCS, calling rollback CONCILI_RESERVE_LUCKY_BCCS:"+message);
+                        taskLog.append("Lucky Number ").append(outAudit.getNumber()).append(" cannot be reserved on BCCS, calling Rollback.").append(" ||");
                         luckyNumbersDao.unReserveNumber(outAudit.getNumber(),false);
                         taskCompletedOK=false;
                         logger.info("Rollback completed:"+message);
-                        taskLog.append("Rollback completed:").append(message).append("||");
+                        taskLog.append("Rollback completed for number:").append(outAudit.getNumber()).append("||");
                     }
                 } else if(outAudit.getMessage().equals("Error al insertar el numero")){
                     failed++;
