@@ -130,6 +130,7 @@ public class GetFrozenAndFreeNumbers {
                 float jobPercentage=50;
                 job.setTotalCoverage(jobPercentage+"%");
                 job.setLastUpdate(currentDate);
+                task.setCoverage(jobPercentage+"%");
                 task.setSummary((task.getSummary()==null?"":task.getSummary())+taskLog.toString());
                 task.setLastUpdate(currentDate);
             }

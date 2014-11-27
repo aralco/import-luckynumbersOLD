@@ -31,6 +31,23 @@ public class ConfigurationResource {
         return new ResponseEntity<City>(createdCity, HttpStatus.CREATED);
     }
 
+    @RequestMapping(value = "/city/{cityId}", method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseEntity<City> viewCity(@PathVariable Long cityId)   {
+        logger.info("City for lookup:"+cityId);
+        City city = configurationService.getCity(cityId);
+        logger.info("viewCity: "+city);
+        return new ResponseEntity<City>(city, HttpStatus.OK);
+    }
+
+
+    @RequestMapping(value = "/city/{cityId}", method = RequestMethod.POST, consumes = "application/json")
+    @ResponseBody
+    public ResponseEntity<City> updateCity(@PathVariable Long cityId, @RequestBody City city)   {
+        City updatedCity = configurationService.updateCity(city);
+        return new ResponseEntity<City>(updatedCity, HttpStatus.OK);
+    }
+
     @RequestMapping(value = "/city", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<List<City>> viewCities()   {

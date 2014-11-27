@@ -31,6 +31,8 @@ public class OutProcessor {
     private BCCSDao bccsDao;
     @Autowired
     private LuckyNumbersDao luckyNumbersDao;
+//    @Autowired
+//    private SmsServiceClient smsServiceClient;
 
     private static final Logger logger = LoggerFactory.getLogger(OutProcessor.class);
 
@@ -191,8 +193,12 @@ public class OutProcessor {
             //MEANS that a job is completed or requires some criteria acceptance
             if(job.getTotalTasks().equals(job.getPassedTasks()))    {
                 job.setState(State.DONE.name());
+//                smsServiceClient.sendSmsNotification("77390892", 333, "Programación finalizada correctamente.");
+//                smsServiceClient.sendSmsNotification("76496563", 333, "Programación finalizada correctamente.");
             } else if(job.getTotalTasks().equals(job.getPassedTasks()+job.getFailedTasks())) {
                 job.setState(State.CRITERIA_ACCEPTANCE.name());
+//                smsServiceClient.sendSmsNotification("77390892", 333, "Programación finalizada con errores.");
+//                smsServiceClient.sendSmsNotification("76496563", 333, "Programación finalizada con errores.");
             }
             Long inFiles = inAuditDao.countInFilesByJob(job.getId());
             Long outFiles = outAuditDao.countOutFilesByJob(job.getId());

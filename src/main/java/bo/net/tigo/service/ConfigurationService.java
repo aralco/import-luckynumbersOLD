@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -37,6 +38,7 @@ public class ConfigurationService {
 
     @Transactional
     public User createUser(User user)  {
+        user.setCreatedDate(new Date());
         userDao.save(user);
         return user;
     }
@@ -48,6 +50,7 @@ public class ConfigurationService {
 
     @Transactional
     public User updateUser(User user)  {
+        user.setLastUpdate(new Date());
         userDao.update(user);
         return user;
     }
@@ -59,6 +62,7 @@ public class ConfigurationService {
 
     @Transactional
     public Contact createContact(Contact contact)  {
+        contact.setCreatedDate(new Date());
         contactDao.save(contact);
         return contact;
     }
@@ -70,6 +74,7 @@ public class ConfigurationService {
 
     @Transactional
     public Contact updateContact(Contact contact)  {
+        contact.setLastUpdate(new Date());
         contactDao.update(contact);
         return contact;
     }
@@ -81,7 +86,21 @@ public class ConfigurationService {
 
     @Transactional
     public City createCity(City city)  {
+        city.setCreatedDate(new Date());
         cityDao.save(city);
+        return city;
+    }
+
+    @Transactional
+    public City getCity(Long cityId)  {
+        return cityDao.findOne(cityId);
+    }
+
+
+    @Transactional
+    public City updateCity(City city)  {
+        city.setLastUpdate(new Date());
+        cityDao.update(city);
         return city;
     }
 
