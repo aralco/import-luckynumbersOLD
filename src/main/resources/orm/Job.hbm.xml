@@ -41,6 +41,21 @@
         <property name="totalCoverage" type="java.lang.String">
             <column name="ILN_JOB_TOTAL_COVERAGE"/>
         </property>
+        <property name="lnNumbersInBccs" type="java.lang.Long">
+            <column name="ILN_JOB_LN_IN_BCCS"/>
+        </property>
+        <property name="reservedLuckyNumbers" type="java.lang.Long">
+            <column name="ILN_JOB_RESERVED_LUCKY_NUMBERS"/>
+        </property>
+        <property name="rolledBackNumbers" type="java.lang.Long">
+            <column name="ILN_JOB_ROLLEDBACK_NUMBERS"/>
+        </property>
+        <property name="unlockedNumbers" type="java.lang.Long">
+            <column name="ILN_JOB_UNLOCKED_NUMBERS"/>
+        </property>
+        <property name="lcNumbersInBccs" type="java.lang.Long">
+            <column name="ILN_JOB_LC_NUMBERS_IN_BCCS"/>
+        </property>
         <property name="summary" type="java.lang.String">
             <column name="ILN_JOB_SUMMARY" sql-type="clob"/>
         </property>

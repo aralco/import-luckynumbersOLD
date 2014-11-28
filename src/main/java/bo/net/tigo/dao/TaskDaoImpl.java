@@ -76,6 +76,16 @@ public class TaskDaoImpl implements TaskDao {
                 .setParameter("currentDate", currentDate).list();
     }
 
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<Task> findbyStatus(Status status) {
+        Session session = sessionFactory.getCurrentSession();
+        return session.createQuery("from Task " +
+                "where status = :status")
+                .setParameter("status", status.name())
+                .list();
+    }
+
     public Task findByFileName(String filename) {
         filename=filename+".in";
         Session session = sessionFactory.getCurrentSession();

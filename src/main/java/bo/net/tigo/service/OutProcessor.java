@@ -19,6 +19,7 @@ import java.util.regex.Pattern;
 /**
  * Created by aralco on 11/20/14.
  */
+@Deprecated
 @Service
 public class OutProcessor {
     @Autowired

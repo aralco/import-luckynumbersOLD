@@ -8,7 +8,6 @@ import bo.net.tigo.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.integration.Message;
 import org.springframework.integration.MessageChannel;
 import org.springframework.integration.support.MessageBuilder;
@@ -27,7 +26,6 @@ import java.util.List;
  * Created by aralco on 11/11/14.
  */
 @Service
-@PropertySource("classpath:luckynumbers.properties")
 public class GetFrozenAndFreeNumbers {
     @Autowired
     private TaskDao taskDao;
@@ -43,11 +41,11 @@ public class GetFrozenAndFreeNumbers {
     private static final Logger logger = LoggerFactory.getLogger(GetFrozenAndFreeNumbers.class);
 
     @Transactional
-    public void executeTasks() throws IOException {
+    public void processScheduledAndReScheduledTasks() throws IOException {
         List<Task> scheduledAndReScheduledTasks = taskDao.findScheduledAndReScheduledTasks(new Date());
         logger.info("Total ScheduledAndReScheduled Tasks:" + scheduledAndReScheduledTasks.size());
         if(scheduledAndReScheduledTasks.size()<=0)   {
-            logger.info("No tasks to execute:" + scheduledAndReScheduledTasks.size());
+            logger.info("No ScheduledAndReScheduled tasks to execute:" + scheduledAndReScheduledTasks.size());
         } else  {
             Calendar calendar = Calendar.getInstance();
             for(Task task:scheduledAndReScheduledTasks) {
@@ -127,8 +125,9 @@ public class GetFrozenAndFreeNumbers {
                 Long inFiles = inAuditDao.countInFilesByJob(job.getId());
                 Long outFiles = outAuditDao.countOutFilesByJob(job.getId());
                 logger.info("Total created files: "+(inFiles==null?0:inFiles)+"(.in) -VS- "+(outFiles==null?0:outFiles)+"(.out)");
-                String jobSummary = "Total de archivos .in creados: "+(inFiles==null?0:inFiles)+" ||"
-                        +"Total de archivos .out creados: "+(outFiles==null?0:outFiles)+" ||";
+                String jobSummary =
+                        "Total de archivos .in creados: "+(inFiles==null?0:inFiles)+" ||"+
+                        "Total de archivos .out creados: "+(outFiles==null?0:outFiles)+" ||";
                 job.setSummary(jobSummary);
                 //TODO calculate the coverage based on tasks
                 float jobPercentage=50;

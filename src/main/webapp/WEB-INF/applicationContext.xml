@@ -230,7 +230,8 @@
     <!--Starting taskScheduler-->
     <task:scheduled-tasks scheduler="luckyNumbersScheduler">
         <!--Improve to start using trigger-->
-        <task:scheduled ref="getFrozenAndFreeNumbers" method="executeTasks" fixed-delay="${scheduler.fixedDelay}"/>
+        <task:scheduled ref="getFrozenAndFreeNumbers" method="processScheduledAndReScheduledTasks" fixed-delay="${scheduler.fixedDelay}"/>
+        <task:scheduled ref="findAndSaveLuckyNumbers" method="processStartedPhase2Tasks" fixed-delay="${scheduler.fixedDelay}"/>
     </task:scheduled-tasks>
     <task:scheduler id="luckyNumbersScheduler" pool-size="10"/>
 
@@ -271,7 +272,7 @@
         <int:queue/>
     </int:channel>
 
-    <int:service-activator input-channel="ftpChannelIN" ref="outProcessor" method="process">
+    <int:service-activator input-channel="ftpChannelIN" ref="outFileProcessor" method="processOutFile">
         <int:poller fixed-delay="${ftp.delay}"/>
     </int:service-activator>
 

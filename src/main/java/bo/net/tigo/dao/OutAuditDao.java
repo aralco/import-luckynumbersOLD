@@ -24,10 +24,20 @@ public class OutAuditDao {
     @SuppressWarnings("unchecked")
     public List<String> findRowsByTask(Long taskId) {
         Session session = sessionFactory.getCurrentSession();
-        return session.createQuery("" +
+        return session.createQuery(
                 "select outaudit.row " +
                 "from OutAudit outaudit " +
                 "where outaudit.taskId = :taskId")
+                .setParameter("taskId",taskId)
+                .list();
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<OutAudit> findByTask(Long taskId) {
+        Session session = sessionFactory.getCurrentSession();
+        return session.createQuery(
+                "from OutAudit outaudit " +
+                "where taskId = :taskId")
                 .setParameter("taskId",taskId)
                 .list();
     }

@@ -1,6 +1,7 @@
 package bo.net.tigo.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.DateSerializer;
 
@@ -25,6 +26,16 @@ public class Task {
     private String coverage; //{0%-100%}
     private String urlin; //ftp link for .in file?
     private String urlout; //ftp link for .out file?
+    @JsonIgnore
+    private Long lnNumbersInBccs;
+    @JsonIgnore
+    private Long reservedLuckyNumbers;
+    @JsonIgnore
+    private Long rolledBackNumbers;
+    @JsonIgnore
+    private Long unlockedNumbers;
+    @JsonIgnore
+    private Long lcNumbersInBccs;
     @JsonSerialize(using=DateSerializer.class)
     private Date createdDate;
     @JsonSerialize(using=DateSerializer.class)
@@ -69,6 +80,31 @@ public class Task {
         this.urlout = urlout;
         this.createdDate = createdDate;
         this.lastUpdate = lastUpdate;
+    }
+
+    public Task(Long id, String type, Integer city, String from, String to, Date executionDate, String status, Integer processed, Integer passed, Integer failed, String summary, String coverage, String urlin, String urlout, Long lnNumbersInBccs, Long reservedLuckyNumbers, Long rolledBackNumbers, Long unlockedNumbers, Long lcNumbersInBccs, Date createdDate, Date lastUpdate, Job job) {
+        this.id = id;
+        this.type = type;
+        this.city = city;
+        this.from = from;
+        this.to = to;
+        this.executionDate = executionDate;
+        this.status = status;
+        this.processed = processed;
+        this.passed = passed;
+        this.failed = failed;
+        this.summary = summary;
+        this.coverage = coverage;
+        this.urlin = urlin;
+        this.urlout = urlout;
+        this.lnNumbersInBccs = lnNumbersInBccs;
+        this.reservedLuckyNumbers = reservedLuckyNumbers;
+        this.rolledBackNumbers = rolledBackNumbers;
+        this.unlockedNumbers = unlockedNumbers;
+        this.lcNumbersInBccs = lcNumbersInBccs;
+        this.createdDate = createdDate;
+        this.lastUpdate = lastUpdate;
+        this.job = job;
     }
 
     public Task() {
@@ -184,6 +220,46 @@ public class Task {
 
     public void setUrlout(String urlout) {
         this.urlout = urlout;
+    }
+
+    public Long getLnNumbersInBccs() {
+        return lnNumbersInBccs;
+    }
+
+    public void setLnNumbersInBccs(Long lnNumbersInBccs) {
+        this.lnNumbersInBccs = lnNumbersInBccs;
+    }
+
+    public Long getReservedLuckyNumbers() {
+        return reservedLuckyNumbers;
+    }
+
+    public void setReservedLuckyNumbers(Long reservedLuckyNumbers) {
+        this.reservedLuckyNumbers = reservedLuckyNumbers;
+    }
+
+    public Long getRolledBackNumbers() {
+        return rolledBackNumbers;
+    }
+
+    public void setRolledBackNumbers(Long rolledBackNumbers) {
+        this.rolledBackNumbers = rolledBackNumbers;
+    }
+
+    public Long getUnlockedNumbers() {
+        return unlockedNumbers;
+    }
+
+    public void setUnlockedNumbers(Long unlockedNumbers) {
+        this.unlockedNumbers = unlockedNumbers;
+    }
+
+    public Long getLcNumbersInBccs() {
+        return lcNumbersInBccs;
+    }
+
+    public void setLcNumbersInBccs(Long lcNumbersInBccs) {
+        this.lcNumbersInBccs = lcNumbersInBccs;
     }
 
     public Date getCreatedDate() {

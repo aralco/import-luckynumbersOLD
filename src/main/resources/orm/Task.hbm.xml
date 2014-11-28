@@ -50,6 +50,21 @@
         <property name="urlout" type="java.lang.String">
             <column name="ILN_TASK_URL_OUT"/>
         </property>
+        <property name="lnNumbersInBccs" type="java.lang.Long">
+            <column name="ILN_TASK_LN_IN_BCCS"/>
+        </property>
+        <property name="reservedLuckyNumbers" type="java.lang.Long">
+            <column name="ILN_TASK_RESERVED_LUCKY_NUMBER"/>
+        </property>
+        <property name="rolledBackNumbers" type="java.lang.Long">
+            <column name="ILN_TASK_ROLLEDBACK_NUMBERS"/>
+        </property>
+        <property name="unlockedNumbers" type="java.lang.Long">
+            <column name="ILN_TASK_UNLOCKED_NUMBERS"/>
+        </property>
+        <property name="lcNumbersInBccs" type="java.lang.Long">
+            <column name="ILN_TASK_LC_NUMBERS_IN_BCCS"/>
+        </property>
         <property name="createdDate" type="java.util.Date">
             <column name="ILN_TASK_CREATED_DATE"/>
         </property>

@@ -1,5 +1,6 @@
 package bo.net.tigo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.DateSerializer;
@@ -24,6 +25,16 @@ public class Job {
     private Integer passedTasks;	//total quantity of tasks that run without errors
     private Integer failedTasks;    //total quantity of tasks that run with errors
     private String totalCoverage; //{0%-100%}
+    @JsonIgnore
+    private Long lnNumbersInBccs;
+    @JsonIgnore
+    private Long reservedLuckyNumbers;
+    @JsonIgnore
+    private Long rolledBackNumbers;
+    @JsonIgnore
+    private Long unlockedNumbers;
+    @JsonIgnore
+    private Long lcNumbersInBccs;
     private String summary;
     @JsonSerialize(using=DateSerializer.class)
     private Date createdDate;
@@ -65,6 +76,29 @@ public class Job {
         this.summary = summary;
         this.createdDate = createdDate;
         this.lastUpdate = lastUpdate;
+    }
+
+    public Job(Long id, String name, String description, Date scheduledDate, Boolean now, String state, String owner, Integer totalTasks, Integer passedTasks, Integer failedTasks, String totalCoverage, Long lnNumbersInBccs, Long reservedLuckyNumbers, Long rolledBackNumbers, Long unlockedNumbers, Long lcNumbersInBccs, String summary, Date createdDate, Date lastUpdate, Set<Task> tasks) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.scheduledDate = scheduledDate;
+        this.now = now;
+        this.state = state;
+        this.owner = owner;
+        this.totalTasks = totalTasks;
+        this.passedTasks = passedTasks;
+        this.failedTasks = failedTasks;
+        this.totalCoverage = totalCoverage;
+        this.lnNumbersInBccs = lnNumbersInBccs;
+        this.reservedLuckyNumbers = reservedLuckyNumbers;
+        this.rolledBackNumbers = rolledBackNumbers;
+        this.unlockedNumbers = unlockedNumbers;
+        this.lcNumbersInBccs = lcNumbersInBccs;
+        this.summary = summary;
+        this.createdDate = createdDate;
+        this.lastUpdate = lastUpdate;
+        this.tasks = tasks;
     }
 
     public Job() {
@@ -156,6 +190,46 @@ public class Job {
 
     public void setTotalCoverage(String totalCoverage) {
         this.totalCoverage = totalCoverage;
+    }
+
+    public Long getLnNumbersInBccs() {
+        return lnNumbersInBccs;
+    }
+
+    public void setLnNumbersInBccs(Long lnNumbersInBccs) {
+        this.lnNumbersInBccs = lnNumbersInBccs;
+    }
+
+    public Long getReservedLuckyNumbers() {
+        return reservedLuckyNumbers;
+    }
+
+    public void setReservedLuckyNumbers(Long reservedLuckyNumbers) {
+        this.reservedLuckyNumbers = reservedLuckyNumbers;
+    }
+
+    public Long getRolledBackNumbers() {
+        return rolledBackNumbers;
+    }
+
+    public void setRolledBackNumbers(Long rolledBackNumbers) {
+        this.rolledBackNumbers = rolledBackNumbers;
+    }
+
+    public Long getUnlockedNumbers() {
+        return unlockedNumbers;
+    }
+
+    public void setUnlockedNumbers(Long unlockedNumbers) {
+        this.unlockedNumbers = unlockedNumbers;
+    }
+
+    public Long getLcNumbersInBccs() {
+        return lcNumbersInBccs;
+    }
+
+    public void setLcNumbersInBccs(Long lcNumbersInBccs) {
+        this.lcNumbersInBccs = lcNumbersInBccs;
     }
 
     public String getSummary() {
