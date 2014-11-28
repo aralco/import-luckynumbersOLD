@@ -264,7 +264,7 @@
             preserve-timestamp="true"
             temporary-file-suffix=".writing"
             local-directory="${file.path.import.out}">
-        <int:poller max-messages-per-poll="-1" fixed-rate="${ftp.rate}"/>
+        <int:poller max-messages-per-poll="-1" fixed-delay="${ftp.delay}"/>
     </int-ftp:inbound-channel-adapter>
 
     <int:channel id="ftpChannelIN">
@@ -272,7 +272,7 @@
     </int:channel>
 
     <int:service-activator input-channel="ftpChannelIN" ref="outProcessor" method="process">
-        <int:poller fixed-rate="${ftp.rate}"/>
+        <int:poller fixed-delay="${ftp.delay}"/>
     </int:service-activator>
 
     <!--web service configuration-->

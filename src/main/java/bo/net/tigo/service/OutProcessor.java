@@ -36,16 +36,9 @@ public class OutProcessor {
 
     private static final Logger logger = LoggerFactory.getLogger(OutProcessor.class);
 
-//    LOG.trace("Hello World!");
-//    LOG.debug("How are you today?");
-//    LOG.info("I am fine.");
-//    LOG.warn("I love programming.");
-//    LOG.error("I am programming.");
-
-
     @Transactional
     public void process(File file) throws Exception{
-        StringBuffer taskLog = new StringBuffer();
+        StringBuilder taskLog = new StringBuilder();
         logger.info("Processing File: " + file);
         BufferedReader bufferedReader = null;
         String splitBy = ",";

@@ -51,26 +51,28 @@ public class GetFrozenAndFreeNumbers {
         } else  {
             Calendar calendar = Calendar.getInstance();
             for(Task task:scheduledAndReScheduledTasks) {
-                StringBuffer taskLog = new StringBuffer();
+                StringBuilder taskLog = new StringBuilder();
                 Date currentDate = calendar.getTime();
                 Job job = task.getJob();
                 logger.info("Start task execution for task=> taskId:"+task.getId()+", status="+task.getStatus()+", executionDate="+task.getExecutionDate()+", job="+job);
-                taskLog.append("Task execution started.||");
+                taskLog.append("Tarea inicializada.||");
                 task.setStatus(Status.STARTED.name());
                 task.setExecutionDate(currentDate);
                 if(job.getState().equals(State.NOT_STARTED.name()))  {
                    job.setState(State.IN_PROGRESS.name());
                 }
                 logger.info("Start task execution for task=> taskId:" + task.getId() + ", status=" + task.getStatus() + ", executionDate=" + task.getExecutionDate() + ", job=" + task.getJob().getState());
-                taskLog.append("Retrieving numbers.||");
+                taskLog.append("Obteniendo números ");
                 List<InAudit> retrievedNumbers;
                 if(task.getType().equals(Type.FREE.name())) {
+                    taskLog.append("LIBRES. ||");
                     retrievedNumbers = bccsDao.getFreeNumbers(task.getCity(), task.getFrom(), task.getTo());
                 } else  {
+                    taskLog.append("CONGELADOS. ||");
                     retrievedNumbers = bccsDao.getFrozenNumbers(task.getCity(), task.getFrom(), task.getTo());
                 }
-                logger.info("Values from Caller retrievedNumbers:"+retrievedNumbers.toString());
-                taskLog.append("Total retrieved numbers:").append(retrievedNumbers.size()).append("||");
+                logger.info("Total retrieved numbers:"+retrievedNumbers.toString());
+                taskLog.append("Total de números obtenidos: ").append(retrievedNumbers.size()).append(" ||");
                 if(retrievedNumbers.size()>0)   {
                     String fileContent =
                             "Numero,Ciudad,Channel";
@@ -96,7 +98,7 @@ public class GetFrozenAndFreeNumbers {
 
                     File inFile = new File(fileName);
                     logger.info("File generated:"+inFile);
-                    taskLog.append("File generated:").append(fileName).append("||");
+                    taskLog.append("Archivo generado: ").append(fileName).append(" ||");
 
                     if(!inFile.exists())
                         inFile.createNewFile();
@@ -110,22 +112,24 @@ public class GetFrozenAndFreeNumbers {
                     final Message<File> fileMessage = MessageBuilder.withPayload(inFile).build();
                     ftpChannelOUT.send(fileMessage);
                     logger.info("Sending file :"+fileName+" to FTP server.");
-                    taskLog.append("Sending file ").append(fileName).append(" to FTP server.||");
+                    taskLog.append("Enviando archivo ").append(fileName).append(" al servidor FTP. ||");
                     task.setStatus(Status.COMPLETED_PHASE1_OK.name());
                     logger.info("Phase 1 completed successfully.");
-                    taskLog.append("Phase 1 completed successfully.").append("||");
+                    taskLog.append("Obtención de números completada exitosamente.").append("||");
                     task.setUrlin(fileName);
                     calendar.add(Calendar.SECOND, +1);
                 } else  {
                     task.setStatus(Status.COMPLETED_PHASE1_WITH_ERRORS.name());
                     logger.warn("Phase 1 completed with errors. .in File could not be generated.");
-                    taskLog.append("Phase 1 completed with errors. .in File could not be generated. ||");
+                    taskLog.append("Obtención de números completada con error. ||").append("Causa de error: El archivo .in no pudo ser generado. ||");
                     task.setUrlin("NA");
                 }
                 Long inFiles = inAuditDao.countInFilesByJob(job.getId());
                 Long outFiles = outAuditDao.countOutFilesByJob(job.getId());
                 logger.info("Total created files: "+(inFiles==null?0:inFiles)+"(.in) -VS- "+(outFiles==null?0:outFiles)+"(.out)");
-                job.setSummary(" Total archivos creados: "+(inFiles==null?0:inFiles)+"(.in) -VS- "+(outFiles==null?0:outFiles)+"(.out) ||");
+                String jobSummary = "Total de archivos .in creados: "+(inFiles==null?0:inFiles)+" ||"
+                        +"Total de archivos .out creados: "+(outFiles==null?0:outFiles)+" ||";
+                job.setSummary(jobSummary);
                 //TODO calculate the coverage based on tasks
                 float jobPercentage=50;
                 job.setTotalCoverage(jobPercentage+"%");
