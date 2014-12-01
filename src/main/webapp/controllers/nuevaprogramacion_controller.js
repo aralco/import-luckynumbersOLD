@@ -6,7 +6,6 @@ luckynumbersApp.controller('NuevaProgramacionController', function ($scope, $roo
 	$scope.dateNow  = !$scope.inmediato;
 	$scope.tipoNumeros = "FROZEN";
 	$scope.ciudad = 1;
-	$rootScope.formError = false;
 
 	GetCities.get(function(data) {
 	   $scope.ciudades = data;
@@ -42,7 +41,7 @@ luckynumbersApp.controller('NuevaProgramacionController', function ($scope, $roo
 		}
 
 		if (!$scope.inmediato) {
-			$scope.serverdate = $filter('date')($scope.new.date,'yyyy-MM-ddTHH:mm:ss') + "-04:00";
+			$scope.serverdate = $filter('date')($scope.new.date,'yyyy-MM-ddThh:mm:ss') + "-04:00";
 		} else {
 			$scope.serverdate = "0000-00-00T00:00:00-00:00";
 		}

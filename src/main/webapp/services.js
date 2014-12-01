@@ -26,14 +26,14 @@ luckynumbersApp.factory('UpdateTask', function ($resource) {
 
 luckynumbersApp.factory('GetTaskFileIn', function ($resource) {
         return $resource(URL.host + ':7001/import-luckynumbers/luckynumbers/monitor/audit/in/:Id', {Id:'@jId'}, {
-            'get': { method: 'GET', isArray: true, cache: false}
+            'get': { method: 'GET', isArray: true}
         });
     });
 
 
 luckynumbersApp.factory('GetTaskFileOut', function ($resource) {
         return $resource(URL.host + ':7001/import-luckynumbers/luckynumbers/monitor/audit/out/:Id', {Id:'@jId'}, {
-            'get': { method: 'GET', isArray: true, cache: false}
+            'get': { method: 'GET', isArray: true}
         });
     });
 
