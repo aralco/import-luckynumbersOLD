@@ -86,7 +86,7 @@
                                                  <td>{{friendlyCities[tarea.city]}}</td>
                                                   <td>{{tarea.from}}</td>
                                                    <td>{{tarea.to}}</td>
-                                                   <td><a href="#" class="btn btn-xs btn-primary" ng-click="showSummaryTask($index);"><span class="fui-document"></span>&nbsp;&nbsp;Log</a>&nbsp;<a href="#" ng-click="showFileTask('In', $index);" class="btn btn-xs btn-primary"><span class="fui-clip"></span>&nbsp;&nbsp;In</a>&nbsp;<a href="#"  ng-click="showFileTask('Out', $index);"  class="btn btn-xs btn-primary"><span class="fui-clip"></span>&nbsp;&nbsp;Out</a></td>
+                                                   <td><a href="#" class="btn btn-xs btn-primary" ng-click="showSummaryTask(tarea);"><span class="fui-document"></span>&nbsp;&nbsp;Log</a>&nbsp;<a href="#" ng-click="showFileTask('In', tarea);" class="btn btn-xs btn-primary"><span class="fui-clip"></span>&nbsp;&nbsp;In</a>&nbsp;<a href="#"  ng-click="showFileTask('Out', tarea);"  class="btn btn-xs btn-primary"><span class="fui-clip"></span>&nbsp;&nbsp;Out</a></td>
                                                    <td>
                                                    <a href="#" class="btn btn-xs btn-primary mlm" data-toggle="tooltip" ng-show="!(programa.state != 'NOT_STARTED')" title="Cancelar Tarea" ng-click="openDeleteTask('¿Eliminar Tarea?', $index)"><span class="fui-cross"></span></a>
                                                    <a href="#" class="btn btn-xs btn-primary mlm" data-toggle="tooltip" title="Editar" ng-show="!(programa.state != 'NOT_STARTED')" ng-click="editRangos('Modifique los rangos', $index)"><span class="fui-new"></span></a>
@@ -111,6 +111,9 @@
     <div class="modal-body">
 
        <p>{{modal.message}}</p>
+       <div class="alert alert-danger" ng-show="modal.modalError">
+           <strong>Error! </strong>{{modal.errorMessage}}.
+       </div>
 
         <!-- ********************** -->
 
@@ -149,10 +152,6 @@
         <div ng-show="modal.showCTask">
             <div class="dialog demo-dialog">
                 <div id="newTask" class="form-action show">
-
-                    <div class="alert alert-danger" ng-show="authenticationError">
-                        <strong>Error! </strong>{{errorMessage}}.
-                    </div>
 
                     <form class="form-inline" role="form">
                         <div class="form-group">
@@ -196,7 +195,7 @@
 
 
     <div class="modal-footer">
-        <button class="btn btn-primary btn-wide" data-dismiss="modal" ng-click="funcionBorrar();">{{modal.button1}}</button>
+        <button class="btn btn-primary btn-wide"  ng-click="funcionBorrar();">{{modal.button1}}</button>
         <button class="btn btn-danger btn-wide" data-dismiss="modal">{{modal.button2}}</button>
     </div>
 </modal>

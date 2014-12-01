@@ -174,6 +174,18 @@ luckynumbersApp.controller('MisProgramacionesController', function ($scope, $fil
 
         $scope.modifyDateByID = function(){
           var params = {id1:$scope.jobActivoId};
+
+          if ($scope.modal.updateDate < new Date()) {
+                $scope.modal.modalError = true;
+                $scope.modal.errorMessage = "La fecha no puede ser menor al día de hoy";
+                $scope.isModalOpen = true;
+                return false;
+          } else {
+            $scope.modal.modalError = false;
+            $scope.isModalOpen = false;
+          }
+
+
           $scope.serverdate = $filter('date')($scope.modal.updateDate,'yyyy-MM-ddTHH:mm:ss') + "-04:00";
           $scope.jobActivoRecord.scheduledDate = $scope.serverdate;
           ModifyJob.update(params,$scope.jobActivoRecord);
@@ -191,9 +203,9 @@ luckynumbersApp.controller('MisProgramacionesController', function ($scope, $fil
           var params = {Id:$scope.taskActivaId};
           $scope.taskActiva.from = $scope.modal.desde;
           $scope.taskActiva.to = $scope.modal.hasta;
-          $scope.taskActiva.executionDate = $filter('date')($scope.taskActiva.executionDate,'yyyy-MM-ddThh:mm:ss') + "-04:00";
-          $scope.taskActiva.createdDate = $filter('date')($scope.taskActiva.createdDate,'yyyy-MM-ddThh:mm:ss') + "-04:00";
-          $scope.taskActiva.lastUpdate = $filter('date')($scope.taskActiva.lastUpdate,'yyyy-MM-ddThh:mm:ss') + "-04:00";
+          $scope.taskActiva.executionDate = $filter('date')($scope.taskActiva.executionDate,'yyyy-MM-ddTHH:mm:ss') + "-04:00";
+          $scope.taskActiva.createdDate = $filter('date')($scope.taskActiva.createdDate,'yyyy-MM-ddTHH:mm:ss') + "-04:00";
+          $scope.taskActiva.lastUpdate = $filter('date')($scope.taskActiva.lastUpdate,'yyyy-MM-ddTHH:mm:ss') + "-04:00";
           UpdateTask.post(params,$scope.taskActiva);
           $scope.data = function() { return Jobs.get(); }
         }
@@ -206,6 +218,7 @@ luckynumbersApp.controller('MisProgramacionesController', function ($scope, $fil
         $scope.editDate = function(programa) {
           if (!$scope.isModalOpen){
             $scope.modal.title = "Modificar fecha programada";
+            $scope.modal.modalError = false;
             $scope.modal.showDate = true;
             $scope.modal.message =  "";
             $scope.isModalOpen = true;
@@ -239,6 +252,7 @@ luckynumbersApp.controller('MisProgramacionesController', function ($scope, $fil
         $scope.openModal = function(mensaje, programa){
           if (!$scope.isModalOpen){
            $scope.modal.message = mensaje;
+           $scope.modal.modalError = false;
            $scope.modal.title = "Eliminar"
            $scope.modal.showDate = false;
            $scope.modal.showCTask = false;
@@ -319,7 +333,7 @@ luckynumbersApp.controller('MisProgramacionesController', function ($scope, $fil
       }
 
 
-      $scope.showSummaryTask = function(indice)  {
+      $scope.showSummaryTask = function(tarea)  {
         if (!$scope.isModalOpen){
           $scope.modal.message = "";
           $scope.modal.title = "Detalle"
@@ -331,9 +345,8 @@ luckynumbersApp.controller('MisProgramacionesController', function ($scope, $fil
           $scope.modal.ciudad ="0";
           $scope.modal.desde = "";
           $scope.modal.hasta = "";
-          if ($scope.seleccionado.tasks[indice].summary != null){
-               //$scope.modal.jobSummary = $scope.seleccionado.tasks[indice].summary.replace("||",String.fromCharCode(13));
-               $scope.modal.jobSummary = $scope.seleccionado.tasks[indice].summary.split("||").join("\n");
+          if (tarea.summary != null){
+               $scope.modal.jobSummary = tarea.summary.split("||").join("\n");
           } else {
               $scope.modal.jobSummary = "";
           }
@@ -341,7 +354,7 @@ luckynumbersApp.controller('MisProgramacionesController', function ($scope, $fil
         }
       }
 
-      $scope.showFileTask = function(inIs, indice) {
+      $scope.showFileTask = function(inIs, tarea) {
 
         if (!$scope.isModalOpen){
           $scope.modal.message = "";
@@ -354,7 +367,7 @@ luckynumbersApp.controller('MisProgramacionesController', function ($scope, $fil
           $scope.modal.ciudad ="0";
           $scope.modal.desde = "";
           $scope.modal.hasta = "";
-          $scope.taskActivaId = $scope.seleccionado.tasks[indice].id;
+          $scope.taskActivaId = tarea.id;
           var params = {Id:$scope.taskActivaId};
 
           if (inIs == "In") {
