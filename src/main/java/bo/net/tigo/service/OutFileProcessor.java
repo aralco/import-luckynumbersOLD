@@ -4,7 +4,11 @@ import bo.net.tigo.dao.InAuditDao;
 import bo.net.tigo.dao.OutAuditDao;
 import bo.net.tigo.dao.TaskDao;
 import bo.net.tigo.exception.LuckyNumbersGenericException;
-import bo.net.tigo.model.*;
+import bo.net.tigo.exception.OutFileProcessorException;
+import bo.net.tigo.model.Job;
+import bo.net.tigo.model.OutAudit;
+import bo.net.tigo.model.Status;
+import bo.net.tigo.model.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,14 +17,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.regex.Pattern;
 
 /**
  * Created by aralco on 11/20/14.
  */
 @Service
+@Transactional
 public class OutFileProcessor {
     @Autowired
     private InAuditDao inAuditDao;
@@ -31,10 +38,10 @@ public class OutFileProcessor {
 
     private static final Logger logger = LoggerFactory.getLogger(OutFileProcessor.class);
 
-    @Transactional
     public void processOutFile(File file) throws Exception{
         StringBuilder taskLog = new StringBuilder();
         logger.info("Processing File: " + file);
+        String fileFullName = file.toString();
         BufferedReader bufferedReader = null;
         String splitBy = ",";
         try {
@@ -61,15 +68,11 @@ public class OutFileProcessor {
             } else if(task.getUrlout()!=null) {
                 throw new LuckyNumbersGenericException(HttpStatus.CONFLICT.toString(),"Related task for filename:"+fileName+ " might already been processed. TaskId="+task.getId());
             }
-            task.setUrlout(fileName);
-            task.setStatus(Status.STARTED_PHASE2.name());
-            taskLog.append("********************************************************** ||");
-            taskLog.append("Procesando archivo .out: ").append(fileName).append("||");
+            List<OutAudit> outAuditList = new ArrayList<OutAudit>(0);
             while ((line = bufferedReader.readLine()) != null) {
                 // use comma as separator
                 logger.info("line to process:"+line);
                 String[] outRow = line.split(splitBy);
-                logger.info("array Size:"+outRow.length+",values:"+outRow);
                 OutAudit outAudit = new OutAudit();
                 outAudit.setFileName(fileName);
                 outAudit.setRow(line);
@@ -81,12 +84,27 @@ public class OutFileProcessor {
                 outAudit.setCreatedDate(currentDate);
                 outAudit.setTaskId(task.getId());
                 outAudit.setJobId(task.getJob().getId());
-                outAuditDao.save(outAudit);
+                outAuditList.add(outAudit);
                 processed++;
                 if(outAudit.getCodePassed().equals(0)) {
                     passed++;
                 } else {
                     failed++;
+                }
+            }
+            Long rowsIn = inAuditDao.countInRowsByTask(task.getId());
+            if(rowsIn==outAuditList.size())    {
+                taskLog.append("********************************************************** ||");
+                taskLog.append("Procesando archivo .out: ").append(fileName).append("||");
+                for(OutAudit audit : outAuditList) {
+                    outAuditDao.save(audit);
+                }
+            } else  {
+
+                logger.info("Does file exists:"+file+", fullname:"+fileFullName);
+                if(file.delete())   {
+                    logger.info("File has been deleted:"+file);
+                    throw new OutFileProcessorException(HttpStatus.NOT_ACCEPTABLE.toString(),"File:"+fileName+" is not ready to be processed.");
                 }
             }
 
@@ -106,6 +124,8 @@ public class OutFileProcessor {
             job.setTotalCoverage(percentage+"%");
             job.setLastUpdate(currentDate);
 
+            task.setUrlout(fileName);
+            task.setStatus(Status.STARTED_PHASE2.name());
             task.setProcessed(processed);
             task.setPassed(passed);
             task.setFailed(failed);
@@ -119,6 +139,9 @@ public class OutFileProcessor {
         } catch (IOException e) {
             logger.error("IOException for file:" + file + ", with errors: " + e.getMessage());
             e.printStackTrace();
+        } catch (OutFileProcessorException e) {
+            logger.warn("OutFileProcessorException -> error:" + e.getErrorCode() + ", message: " + e.getErrorMessage());
+            processOutFile(new File(fileFullName));
         } catch (LuckyNumbersGenericException e) {
             logger.warn("LuckyNumbersGenericException -> error:" + e.getErrorCode() + ", message: " + e.getErrorMessage());
         } catch (Exception e)  {

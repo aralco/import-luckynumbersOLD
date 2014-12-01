@@ -24,7 +24,7 @@ public class InAuditDao {
     @SuppressWarnings("unchecked")
     public List<String> findRowsByTask(Long taskId) {
         Session session = sessionFactory.getCurrentSession();
-        return session.createQuery("" +
+        return session.createQuery(
                 "select inaudit.row " +
                 "from InAudit inaudit " +
                 "where inaudit.taskId = :taskId")
@@ -34,12 +34,22 @@ public class InAuditDao {
 
     public Long countInFilesByJob(Long jobId) {
         Session session = sessionFactory.getCurrentSession();
-        return (Long)session.createQuery("" +
+        return (Long)session.createQuery(
                 "select count(distinct inaudit.fileName) " +
                 "from InAudit inaudit " +
                 "where inaudit.jobId = :jobId "+
                 "group by inaudit.jobId")
                 .setParameter("jobId",jobId)
+                .uniqueResult();
+    }
+
+    public Long countInRowsByTask(Long taskId) {
+        Session session = sessionFactory.getCurrentSession();
+        return (Long)session.createQuery(
+                "select count(*) " +
+                "from InAudit inaudit " +
+                "where inaudit.taskId = :taskId ")
+                .setParameter("taskId",taskId)
                 .uniqueResult();
     }
 
